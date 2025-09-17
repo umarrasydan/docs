@@ -1,94 +1,120 @@
 ---
 title: 'Development'
-description: 'Preview changes locally to update your docs'
+description: 'Set up your development environment for Xendit integration'
 ---
 
 <Info>
   **Prerequisites**:
-  - Node.js version 19 or higher
-  - A docs repository with a `docs.json` file
+  - Node.js version 16 or higher
+  - A Xendit account with API credentials
+  - Your preferred programming language environment
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system.
+Follow these steps to set up your development environment for Xendit integration.
 
 <Steps>
-<Step title="Install the Mintlify CLI">
+<Step title="Install the Xendit SDK">
 
 ```bash
-npm i -g mint
+npm install xendit-node
 ```
+
+Or for other languages:
+```bash
+# Python
+pip install xendit
+
+# PHP
+composer require xendit/xendit-php
+
+# Java
+# Add to your pom.xml or build.gradle
 </Step>
 
-<Step title="Preview locally">
+<Step title="Set up environment variables">
 
-Navigate to your docs directory where your `docs.json` file is located, and run the following command:
+Create a `.env` file in your project root:
 
 ```bash
-mint dev
+XENDIT_SECRET_KEY=your_secret_key_here
+XENDIT_PUBLIC_KEY=your_public_key_here
 ```
 
-A local preview of your documentation will be available at `http://localhost:3000`.
+<Warning>Never commit your secret keys to version control!</Warning>
 
 </Step>
 </Steps>
 
-## Custom ports
+## Testing your integration
 
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. For example, to run Mintlify on port 3333, use this command:
+Use Xendit's sandbox environment to test your integration before going live:
+
+```javascript
+// Example: Create a virtual account
+const xendit = require('xendit-node');
+const client = new xendit.XenditClient({
+  secretKey: process.env.XENDIT_SECRET_KEY,
+});
+
+const virtualAccount = await client.VirtualAccount.create({
+  externalId: 'va-external-id',
+  bankCode: 'BCA',
+  name: 'John Doe',
+  virtualAccountNumber: '1234567890',
+});
+```
+
+## Webhook testing
+
+Test your webhook endpoints using tools like ngrok or similar:
 
 ```bash
-mint dev --port 3333
+# Install ngrok
+npm install -g ngrok
+
+# Expose your local server
+ngrok http 3000
 ```
 
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
+Use the ngrok URL as your webhook URL in the Xendit dashboard.
 
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
+## Going live
 
-## Mintlify versions
+When you're ready to go live:
 
-Please note that each CLI release is associated with a specific version of Mintlify. If your local preview does not align with the production version, please update the CLI:
-
-```bash
-npm mint update
-```
-
-## Validating links
-
-The CLI can assist with validating links in your documentation. To identify any broken links, use the following command:
-
-```bash
-mint broken-links
-```
-
-## Deployment
-
-If the deployment is successful, you should see the following:
-
-<Frame>
-  <img src="/images/checks-passed.png" alt="Screenshot of a deployment confirmation message that says All checks have passed." style={{ borderRadius: '0.5rem' }} />
-</Frame>
+1. Switch from sandbox to live API keys
+2. Update your webhook URLs to production endpoints
+3. Test thoroughly with small amounts first
+4. Monitor your integration for any issues
 
 ## Code formatting
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
+We recommend using proper code formatting tools for your chosen language:
+
+- **JavaScript/Node.js**: ESLint + Prettier
+- **Python**: Black + flake8
+- **PHP**: PHP CS Fixer
+- **Java**: Google Java Format
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
+  <Accordion title='Error: Invalid API key'>
 
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of the CLI: `npm remove -g mint`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall the CLI: `npm i -g mint`
+    Make sure you're using the correct API key for your environment:
+    - Use sandbox keys for testing
+    - Use live keys for production
+    - Check that the key is properly set in your environment variables
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
+  <Accordion title="Issue: Webhook not receiving events">
   
-    Solution: Go to the root of your device and delete the `~/.mintlify` folder. Then run `mint dev` again.
+    Common solutions:
+    1. Ensure your webhook URL is publicly accessible
+    2. Check that your server is running and responding
+    3. Verify the webhook URL in your Xendit dashboard
+    4. Check your server logs for any errors
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the latest CLI version? Check out the [CLI changelog](https://www.npmjs.com/package/mintlify?activeTab=versions).
+Need more help? Check our [API reference](/api-reference/introduction) or contact [support](mailto:help@xendit.co).
