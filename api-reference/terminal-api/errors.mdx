@@ -1,0 +1,237 @@
+---
+title: "Errors & Simulations"
+description: "Error handling and testing simulations for the Terminal API"
+---
+
+# Errors & Simulations
+
+Error handling is an essential part of integrating with the Xendit Terminal API. This section covers error codes, error handling best practices, and testing simulations.
+
+## Error Data Structure
+
+An error occurs when the HTTP status is not 200.
+
+<ResponseField name="error_code" type="string">
+  Error code
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error message
+</ResponseField>
+
+## Error Codes
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Code</TableHeader>
+      <TableHeader>Description</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell><Code>INVALID_REQUEST</Code></TableCell>
+      <TableCell>Missing or invalid parameters</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell><Code>DUPLICATED_REQUEST</Code></TableCell>
+      <TableCell>Duplicated reference id</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell><Code>UNAUTHORIZED</Code></TableCell>
+      <TableCell>Unauthorized, invalid API Key</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell><Code>CURRENCY_NOT_SUPPORTED</Code></TableCell>
+      <TableCell>Currency is not supported for your account</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell><Code>TERMINAL_NOT_FOUND</Code></TableCell>
+      <TableCell>The terminal id is not configured for your account</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell><Code>COMMAND_NOT_SUPPORTED</Code></TableCell>
+      <TableCell>The command currently not supported for this terminal</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Error Handling Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Parse Error Response" icon="code">
+    Always parse the error response and use the error code or message to determine the cause of the failure
+  </Card>
+  <Card title="Log Errors" icon="file-text">
+    Log error responses for debugging and monitoring purposes
+  </Card>
+  <Card title="Retry Logic" icon="refresh">
+    Implement appropriate retry logic for transient errors
+  </Card>
+  <Card title="User Feedback" icon="user">
+    Provide meaningful error messages to end users when appropriate
+  </Card>
+</CardGroup>
+
+## Example Error Response
+
+```json
+{
+  "error_code": "INVALID_REQUEST",
+  "message": "Missing required parameter: terminal_id"
+}
+```
+
+## Simulations
+
+For testing purposes in test mode, the following special amounts and terminal IDs can be used to trigger specific situations or errors. Otherwise the API will always succeed.
+
+<Warning>
+These simulations only work in test mode. In production mode, all transactions will be processed normally.
+</Warning>
+
+### Payment Session Simulations
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Case</TableHeader>
+      <TableHeader>Amount (6 digits)</TableHeader>
+      <TableHeader>Terminal ID</TableHeader>
+      <TableHeader>Description</TableHeader>
+      <TableHeader>Expected Behavior</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Failed to Pay</TableCell>
+      <TableCell><Code>400508</Code></TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>Emulates: Payment declined by terminal</TableCell>
+      <TableCell>Session created, transaction failed</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Channel Unavailable</TableCell>
+      <TableCell><Code>400509</Code></TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>Emulates: Channel is not available by any reason</TableCell>
+      <TableCell>Session failed to create</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Canceled</TableCell>
+      <TableCell><Code>400711</Code></TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>Emulates: User canceled on terminal</TableCell>
+      <TableCell>Session created, then canceled</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Invalid TID</TableCell>
+      <TableCell>Any</TableCell>
+      <TableCell><Code>4040404</Code></TableCell>
+      <TableCell>Invalid terminal ID</TableCell>
+      <TableCell>Session creation fails</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+### Testing with Real Terminals
+
+If merchants want to test with a physical payment terminal while still operating in test mode:
+
+<Steps>
+  <Step title="Terminal Registration">
+    The terminal must be registered with our system. Registration ensures that the terminal is recognized, and test transactions can be properly routed.
+  </Step>
+  <Step title="Contact Support">
+    Contact our support team to request registration
+  </Step>
+  <Step title="Provide Details">
+    Provide the required details:
+    - Terminal ID
+    - Xendit business ID
+  </Step>
+  <Step title="Wait for Confirmation">
+    Wait for confirmation from our system before attempting test transactions
+  </Step>
+</Steps>
+
+<Note>
+Only registered terminals can process requests in test mode; unregistered terminals will go with simulation payment.
+</Note>
+
+## Testing Scenarios
+
+<CardGroup cols={2}>
+  <Card title="Success Flow" icon="check-circle" color="green">
+    Use normal amounts and valid terminal IDs to test successful payment flows
+  </Card>
+  <Card title="Decline Flow" icon="x-circle" color="red">
+    Use amount 400508 to test payment decline scenarios
+  </Card>
+  <Card title="Channel Issues" icon="wifi" color="orange">
+    Use amount 400509 to test channel unavailability
+  </Card>
+  <Card title="User Cancellation" icon="ban" color="gray">
+    Use amount 400711 to test user cancellation flows
+  </Card>
+</CardGroup>
+
+## Error Recovery Strategies
+
+<AccordionGroup>
+  <Accordion title="INVALID_REQUEST">
+    <Steps>
+      <Step title="Check Parameters">
+        Verify all required parameters are present and correctly formatted
+      </Step>
+      <Step title="Validate Data Types">
+        Ensure data types match the API specification
+      </Step>
+      <Step title="Retry with Corrected Data">
+        Fix the request and retry
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="DUPLICATED_REQUEST">
+    <Steps>
+      <Step title="Check Idempotency Key">
+        Ensure the idempotency key is unique across all environments
+      </Step>
+      <Step title="Generate New Key">
+        Create a new unique idempotency key
+      </Step>
+      <Step title="Retry Request">
+        Retry with the new idempotency key
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="UNAUTHORIZED">
+    <Steps>
+      <Step title="Verify API Key">
+        Check that the API key is correct and active
+      </Step>
+      <Step title="Check Encoding">
+        Ensure the API key is properly base64 encoded with the colon
+      </Step>
+      <Step title="Contact Support">
+        If the issue persists, contact Xendit support
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="TERMINAL_NOT_FOUND">
+    <Steps>
+      <Step title="Verify Terminal ID">
+        Check that the terminal ID is correct
+      </Step>
+      <Step title="Check Registration">
+        Ensure the terminal is registered for your account
+      </Step>
+      <Step title="Contact Support">
+        If needed, contact support to register the terminal
+      </Step>
+    </Steps>
+  </Accordion>
+</AccordionGroup>

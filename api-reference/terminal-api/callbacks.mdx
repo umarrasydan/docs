@@ -1,0 +1,328 @@
+---
+title: "Callbacks"
+description: "Webhook callbacks for payment sessions and payment objects"
+---
+
+# Callbacks
+
+The Terminal API uses webhooks to notify your application about payment session and payment object events. This allows you to receive real-time updates about transaction status changes.
+
+## Webhook Configuration
+
+Webhooks are configured through the Xendit Dashboard. You'll need to provide a webhook URL where notifications will be sent.
+
+<Note>
+Make sure your webhook endpoint is publicly accessible and can handle POST requests with JSON payloads.
+</Note>
+
+## Authentication
+
+All webhook requests include authentication headers to verify the source:
+
+<ParamField query="x-callback-token" type="string" required>
+  Webhook verification token - can get from dashboard
+</ParamField>
+
+<ParamField query="webhook-id" type="string" required>
+  Unique identifier for the webhook request
+</ParamField>
+
+## Payment Session Callbacks
+
+These callbacks are triggered by payment session events.
+
+### Endpoint
+
+```
+POST <Webhook URL provided by Partner via Xendit dashboard>
+```
+
+### Events
+
+<CardGroup cols={2}>
+  <Card title="terminal_session.completed" icon="check-circle" color="green">
+    Payment session has been completed successfully
+  </Card>
+  <Card title="terminal_session.voided" icon="x-circle" color="red">
+    Payment session has been voided
+  </Card>
+  <Card title="terminal_session.canceled" icon="ban" color="orange">
+    Payment session has been canceled
+  </Card>
+</CardGroup>
+
+### Payload Structure
+
+<ResponseField name="event" type="string">
+  The event enum: `terminal_session.completed`, `terminal_session.voided`, `terminal_session.canceled`
+</ResponseField>
+
+<ResponseField name="business_id" type="string">
+  Xendit business ID
+</ResponseField>
+
+<ResponseField name="created_at" type="DateTime">
+  Timestamp for webhook notification creation
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Payment session data
+</ResponseField>
+
+<ResponseField name="data.business_id" type="string">
+  Xendit-generated identifier for business that owns the transaction
+</ResponseField>
+
+<ResponseField name="data.reference_id" type="string">
+  Merchant's reference ID
+</ResponseField>
+
+<ResponseField name="data.payment_session_id" type="string">
+  Payment Session ID
+</ResponseField>
+
+<ResponseField name="data.country" type="string">
+  Country where the payment happened
+</ResponseField>
+
+<ResponseField name="data.currency" type="string">
+  ISO 4217 Alpha-3 code
+</ResponseField>
+
+<ResponseField name="data.amount" type="number">
+  Amount of session
+</ResponseField>
+
+<ResponseField name="data.payment_details" type="object">
+  Payment details
+</ResponseField>
+
+<ResponseField name="data.payment_details.terminal_id" type="string">
+  Terminal's id
+</ResponseField>
+
+<ResponseField name="data.payment_details.order_id" type="string">
+  Merchant's Order ID
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  <Enum values={["COMPLETED", "CANCELED"]} />
+  
+  Payment status
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  A set of key-value pairs that can be used to store custom, unstructured information about the object
+</ResponseField>
+
+<ResponseField name="data.created" type="DateTime">
+  The timestamp indicates when the resource was created
+</ResponseField>
+
+<ResponseField name="data.updated" type="DateTime">
+  The timestamp indicates when the resource was last modified
+</ResponseField>
+
+### Example Payment Session Callback
+
+```json
+{
+  "event": "terminal_session.completed",
+  "business_id": "biz_1234567890",
+  "created_at": "2025-01-27T10:45:00Z",
+  "data": {
+    "business_id": "biz_1234567890",
+    "reference_id": "order-123",
+    "payment_session_id": "ps_1234567890abcdef",
+    "country": "ID",
+    "currency": "IDR",
+    "amount": 100000,
+    "payment_details": {
+      "terminal_id": "TERM001",
+      "order_id": "ORDER123"
+    },
+    "status": "COMPLETED",
+    "metadata": {
+      "store_id": "store_001"
+    },
+    "created": "2025-01-27T10:30:00Z",
+    "updated": "2025-01-27T10:45:00Z"
+  }
+}
+```
+
+## Payment Object Callbacks
+
+These callbacks are triggered by payment object events.
+
+### Endpoint
+
+```
+POST <Webhook URL provided by Partner via Xendit dashboard>
+```
+
+### Events
+
+<CardGroup cols={2}>
+  <Card title="terminal_payment.succeeded" icon="check-circle" color="green">
+    Payment has been successfully processed
+  </Card>
+  <Card title="terminal_payment.voided" icon="x-circle" color="red">
+    Payment has been voided
+  </Card>
+</CardGroup>
+
+### Payload Structure
+
+<ResponseField name="event" type="string">
+  The event enum: `terminal_payment.succeeded`, `terminal_payment.voided`
+</ResponseField>
+
+<ResponseField name="business_id" type="string">
+  Xendit business ID
+</ResponseField>
+
+<ResponseField name="created_at" type="DateTime">
+  Timestamp for webhook notification creation
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Payment object data
+</ResponseField>
+
+<ResponseField name="data.business_id" type="string">
+  Xendit-generated identifier for business that owns the transaction
+</ResponseField>
+
+<ResponseField name="data.reference_id" type="string">
+  Merchant's reference ID
+</ResponseField>
+
+<ResponseField name="data.payment_id" type="string">
+  Payment ID
+</ResponseField>
+
+<ResponseField name="data.country" type="string">
+  Country where the payment happened
+</ResponseField>
+
+<ResponseField name="data.currency" type="string">
+  ISO 4217 Alpha-3 code
+</ResponseField>
+
+<ResponseField name="data.request_amount" type="number">
+  Amount of payment
+</ResponseField>
+
+<ResponseField name="data.payment_details" type="object">
+  Payment details
+</ResponseField>
+
+<ResponseField name="data.payment_details.terminal_id" type="string">
+  Terminal's id
+</ResponseField>
+
+<ResponseField name="data.payment_details.order_id" type="string">
+  Merchant's Order ID
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  <Enum values={["SUCCEEDED", "VOIDED"]} />
+  
+  Payment status
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  A set of key-value pairs that can be used to store custom, unstructured information about the object
+</ResponseField>
+
+<ResponseField name="data.created" type="DateTime">
+  The timestamp indicates when the resource was created
+</ResponseField>
+
+<ResponseField name="data.updated" type="DateTime">
+  The timestamp indicates when the resource was last modified
+</ResponseField>
+
+### Example Payment Object Callback
+
+```json
+{
+  "event": "terminal_payment.succeeded",
+  "business_id": "biz_1234567890",
+  "created_at": "2025-01-27T10:45:00Z",
+  "data": {
+    "business_id": "biz_1234567890",
+    "reference_id": "order-123",
+    "payment_id": "pay_1234567890abcdef",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 100000,
+    "payment_details": {
+      "terminal_id": "TERM001",
+      "order_id": "ORDER123"
+    },
+    "status": "SUCCEEDED",
+    "metadata": {
+      "store_id": "store_001"
+    },
+    "created": "2025-01-27T10:35:00Z",
+    "updated": "2025-01-27T10:45:00Z"
+  }
+}
+```
+
+## Response Handling
+
+Your webhook endpoint should respond with appropriate HTTP status codes:
+
+<CardGroup cols={2}>
+  <Card title="Success" icon="check-circle" color="green">
+    HTTP status code = 200
+    
+    Indicates successful processing of the webhook
+  </Card>
+  <Card title="Error" icon="x-circle" color="red">
+    HTTP status code != 200
+    
+    Indicates an error in processing the webhook
+  </Card>
+</CardGroup>
+
+### Error Response Format
+
+If you need to return an error, include the following fields in your response:
+
+<ResponseField name="error_code" type="string">
+  Error code
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Providing additional information about the response
+</ResponseField>
+
+### Example Error Response
+
+```json
+{
+  "error_code": "PROCESSING_ERROR",
+  "message": "Unable to process webhook due to database connection issue"
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Idempotency" icon="repeat">
+    Implement idempotency to handle duplicate webhook deliveries
+  </Card>
+  <Card title="Retry Logic" icon="refresh">
+    Xendit will retry failed webhooks, so ensure your endpoint can handle retries
+  </Card>
+  <Card title="Security" icon="shield">
+    Always verify the webhook signature using the x-callback-token
+  </Card>
+  <Card title="Logging" icon="file-text">
+    Log all webhook events for debugging and audit purposes
+  </Card>
+</CardGroup>

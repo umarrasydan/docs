@@ -57,6 +57,20 @@
             ]
           },
           {
+            "group": "Terminal API",
+            "pages": [
+              "api-reference/terminal-api/introduction",
+              "api-reference/terminal-api/concepts",
+              "api-reference/terminal-api/create-payment-session",
+              "api-reference/terminal-api/get-payment-session",
+              "api-reference/terminal-api/void-payment",
+              "api-reference/terminal-api/get-payment-detail",
+              "api-reference/terminal-api/push-operation-command",
+              "api-reference/terminal-api/callbacks",
+              "api-reference/terminal-api/errors"
+            ]
+          },
+          {
             "group": "Endpoint examples",
             "pages": [
               "api-reference/endpoint/get",

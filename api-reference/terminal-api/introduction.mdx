@@ -1,0 +1,74 @@
+---
+title: "Terminal API"
+description: "API documentation for in-person payment using terminal devices"
+---
+
+# Terminal API
+
+This documentation provides details on the API to facilitate in-person payment using terminal devices. It covers how to create payment sessions, retrieve session details, void payment requests, push operation commands to terminals, and handle terminal callbacks.
+
+## Key Features
+
+- Create new payment sessions and retrieve session details
+- Push operational commands to terminal devices
+- Receive in-person payment callbacks for payment events
+- Handle errors and manage different payment scenarios
+
+## OpenAPI Specification
+
+<Note>
+The complete OpenAPI specification is available for download and integration with your development tools.
+</Note>
+
+<CardGroup cols={1}>
+  <Card title="OpenAPI Specification" icon="file-code">
+    Download the complete OpenAPI 3.0 specification for the Terminal API
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+You'll need an In-Person Payment API_KEY from the Xendit In-Person Payment team. This will be a different key from the ones you obtain from the Xendit Dashboard. We assume you have registered for the Xendit Dashboard.
+
+### Terminal Gateway App/SDK
+
+This application or SDK is mandatory. It streamlines the management of your terminal devices.
+
+#### Initializing the Terminal Gateway App/SDK
+
+- **For app configuration**: Please refer to this doc for more information. Windows and Mac OS are available
+- **For SDK**: Please refer to the respective doc for more information. Android (Kotlin) and iOS (Swift) are available
+
+## Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Development" icon="code">
+    `https://terminal-dev.xendit.co`
+  </Card>
+  <Card title="Live" icon="globe">
+    `https://terminal.xendit.co`
+  </Card>
+</CardGroup>
+
+## Authentication
+
+Merchants authenticate with the Xendit API using basic authentication.
+
+- **Username**: API_KEY
+- **Password**: (Empty string)
+
+<Warning>
+Make sure to include `:` at the end of the API key when encoding for basic authentication.
+</Warning>
+
+## Changelog
+
+<AccordionGroup>
+  <Accordion title="v0.4.1 - 26-August-2025">
+    Added Testing with real terminals section
+  </Accordion>
+  <Accordion title="v0.4.0 - 02-June-2025">
+    - Support API to create a new session and get session detail
+    - Support API to push operation commands to terminal devices
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,105 @@
+---
+title: "Concepts"
+description: "Understanding payment sessions and payment objects in the Terminal API"
+---
+
+# Concepts
+
+In the architecture of a payment API, the payment session and payment are distinct but related concepts that manage the lifecycle of a transaction, especially when interacting with hardware like a terminal device. The response containing both a `payment_session_id` and a `payment_id` provides a structured way to manage the initial user interaction and the subsequent financial transaction separately.
+
+## The Payment Session
+
+A payment session is a temporary and secure context that holds all the necessary information about a potential transaction. Think of it as a container or a digital folder for a specific payment interaction.
+
+### Purpose and Functionality
+
+<CardGroup cols={2}>
+  <Card title="Data Aggregation" icon="database">
+    Gathers and stores preliminary transaction details, such as the amount, currency, and items being purchased. This information is assembled before the actual payment is attempted.
+  </Card>
+  <Card title="State Management" icon="gear">
+    The session maintains the state of the payment process.
+  </Card>
+  <Card title="Security" icon="shield">
+    By using a session, sensitive data can be handled in a controlled environment. The payment_session_id acts as a secure reference to this information, reducing the need to pass sensitive details back and forth.
+  </Card>
+  <Card title="Terminal Abstraction" icon="terminal">
+    The creation of the payment session can initiate a command to the terminal devices, preparing them for a transaction.
+  </Card>
+</CardGroup>
+
+The `payment_session_id` is the unique identifier for this entire preparatory phase. It allows you to retrieve or update the session details as needed before a payment is committed.
+
+## The Payment Object
+
+A payment object represents the successful completion of a financial transaction. It is the official record created after the system confirms that funds have been successfully moved using the details from the payment session.
+
+### Purpose and Functionality
+
+<CardGroup cols={2}>
+  <Card title="Transaction Record" icon="receipt">
+    A payment object is created only after the payment gateway confirms a transaction has been successfully processed. It is not the trigger for the transaction but rather the result of a successful one (e.g., after a card has been tapped and the bank has approved the charge).
+  </Card>
+  <Card title="Voiding and Refunds" icon="undo">
+    The payment_id is the specific identifier for a single, unique, and successful transaction. Because this ID is tied to the actual movement of money, it is the correct and necessary identifier to use for voiding that specific transaction before it settles or issuing refunds after it has settled.
+  </Card>
+</CardGroup>
+
+## Key Differences
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Aspect</TableHeader>
+      <TableHeader>Payment Session</TableHeader>
+      <TableHeader>Payment Object</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Purpose</TableCell>
+      <TableCell>Preparation and setup</TableCell>
+      <TableCell>Completed transaction record</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>When Created</TableCell>
+      <TableCell>Before payment attempt</TableCell>
+      <TableCell>After successful payment</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>State</TableCell>
+      <TableCell>ACTIVE, COMPLETED, FAILED, CANCELED</TableCell>
+      <TableCell>SUCCEEDED, VOIDED</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Financial Impact</TableCell>
+      <TableCell>No money movement</TableCell>
+      <TableCell>Actual money movement</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Use Cases</TableCell>
+      <TableCell>Session management, terminal preparation</TableCell>
+      <TableCell>Voiding, refunds, transaction history</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Workflow Example
+
+<Steps>
+  <Step title="Create Payment Session">
+    A payment session is created with transaction details (amount, currency, terminal_id, etc.)
+  </Step>
+  <Step title="Terminal Preparation">
+    The terminal device is prepared and ready to accept payment
+  </Step>
+  <Step title="Payment Processing">
+    Customer interacts with terminal (card tap, QR scan, etc.)
+  </Step>
+  <Step title="Payment Object Creation">
+    Upon successful payment, a payment object is created with the transaction record
+  </Step>
+  <Step title="Session Completion">
+    The payment session status is updated to COMPLETED
+  </Step>
+</Steps>
