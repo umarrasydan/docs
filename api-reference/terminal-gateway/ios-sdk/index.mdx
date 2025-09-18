@@ -68,6 +68,10 @@ Install the Terminal Gateway SDK by adding it as a framework in Xcode:
   Click "Add Other..." and select "Add Files..."
   
   Search for TerminalGateway.xcframework, select it, and click "Open".
+  
+  <Frame>
+  <img src="/images/ios/import-framework-add-files.png" alt="Importing TerminalGateway.xcframework in Xcode using Add Files dialog" />
+  </Frame>
 </Step>
 
 <Step title="Configure build settings">
@@ -75,6 +79,10 @@ Install the Terminal Gateway SDK by adding it as a framework in Xcode:
   
   - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
   - Search for "Other Linker Flags" and add "-lsqlite3"
+  
+  <Frame>
+  <img src="/images/ios/enable-sandbox-no.png" alt="Setting ENABLE_USER_SCRIPT_SANDBOXING to NO in Xcode Build Settings" />
+  </Frame>
   
   <Frame>
   <img src="/images/ios/add-lsqlite3.png" alt="Adding -lsqlite3 to Other Linker Flags in Xcode Build Settings" />

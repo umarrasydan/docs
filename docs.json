@@ -3,13 +3,10 @@
   "theme": "mint",
   "name": "Xendit Documentation",
   "openapi": "api-reference/terminal-api/openapi-spec.yaml",
-  "api": {
-    "baseUrl": "https://terminal-dev.xendit.co"
-  },
   "colors": {
     "primary": "#1662EE",
     "light": "#03CF99",
-    "dark": "#1559D9"
+    "dark": "#1662EE"
   },
   "favicon": "/favicon.svg",
   "navigation": {
