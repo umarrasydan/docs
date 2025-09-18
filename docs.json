@@ -23,30 +23,6 @@
             ]
           },
           {
-            "group": "Customization",
-            "pages": [
-              "guides/customization/settings",
-              "guides/customization/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "guides/writing-content/markdown",
-              "guides/writing-content/code",
-              "guides/writing-content/images",
-              "guides/writing-content/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "guides/ai-tools/cursor",
-              "guides/ai-tools/claude-code",
-              "guides/ai-tools/windsurf"
-            ]
-          },
-          {
             "group": "Migration",
             "pages": [
               "guides/migration/xen-bri-to-terminal-gateway"
