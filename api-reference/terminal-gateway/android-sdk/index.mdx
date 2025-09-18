@@ -1,0 +1,461 @@
+---
+title: "Android SDK (Kotlin)"
+description: "Integrate Xendit Terminal Gateway into your Android applications with our comprehensive Kotlin SDK"
+---
+
+# Android SDK for Terminal Gateway
+
+The Xendit Terminal Gateway Android SDK enables you to integrate secure payment processing into your Android applications. Connect to physical payment terminals and process transactions seamlessly using our Kotlin-based SDK.
+
+<Info>
+This SDK works alongside the Terminal API to provide complete in-person payment functionality. You'll use the Terminal API to create payment sessions and this SDK to interact with physical payment devices.
+</Info>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="v0.4.0 — 13-May-2025">
+    XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+The SDK follows semantic versioning. Breaking changes will bump the major version number.
+</Note>
+
+## Installation
+
+Follow these steps to add the Terminal Gateway Android SDK to your project.
+
+<Steps>
+<Step title="Extract the SDK">
+  Extract the provided SDK zip file so that a `repository` directory is available in your project root.
+  
+  <Check>
+  Verify that the `repository` folder contains the necessary Maven artifacts for the SDK.
+  </Check>
+</Step>
+
+<Step title="Configure Gradle settings">
+  Add the repository to your Gradle settings file:
+  
+  ```kotlin settings.gradle(.kts)
+  dependencyResolutionManagement {
+    repositories {
+      // ... other repositories
+      maven("./repository")
+    }
+  }
+  ```
+  
+  <Note>
+  If your `repository` folder is located one level up from your project, use `maven("../repository")` instead.
+  </Note>
+</Step>
+
+<Step title="Add dependencies">
+  Add the required dependencies to your app module's `build.gradle` file:
+  
+  ```kotlin build.gradle
+  dependencies {
+    implementation("co.xendit.terminal:core:0.4.0")
+    implementation("co.xendit.terminal:gateway:0.4.0")
+    implementation("co.xendit.terminal:id-bri:0.4.0")
+
+    // GHL (Thailand) - uncomment if needed
+    // implementation("co.xendit.terminal:th-ghl:0.4.0")
+  }
+  ```
+  
+  <Warning>
+  Only add the terminal provider dependencies you actually need. Each provider adds to your app's size.
+  </Warning>
+</Step>
+</Steps>
+
+## Getting Started
+
+Before you begin, ensure you have the following:
+
+- **Client key**: Request an In-Person Payment `CLIENT_KEY` from the Xendit team
+- **Terminal device information**: Obtain the Terminal ID and IP address for each device
+- **Android project**: Set up with minimum SDK version 21 (Android 5.0)
+
+<Warning>
+Keep your client key secure and never commit it to version control. Use environment variables or secure storage for production applications.
+</Warning>
+
+### Step 1: Initialize the SDK
+
+Initialize the Terminal Gateway SDK in your Application class:
+
+```kotlin MyApp.kt
+class MyApp : Application() {
+  override fun onCreate() {
+    super.onCreate()
+
+    TerminalApp.initialize(
+      application = this,
+      clientKey = TEST_CLIENT_KEY,
+      mode = TerminalMode.INTEGRATION
+    )
+
+    // Add terminal providers based on your needs
+    TerminalGateway.addProvider(TerminalBRI)
+    // TerminalGateway.addProvider(TerminalGHL)
+  }
+}
+```
+
+<Note>
+Use `TerminalMode.INTEGRATION` for development and testing. Switch to `TerminalMode.LIVE` for production with a live client key.
+</Note>
+
+### Step 2: Register Terminal Devices
+
+Register your terminal devices with the SDK:
+
+```kotlin
+val error = TerminalGateway.registerDevice(
+  listOf(
+    TerminalDevice(TERMINAL_ID_1, TERMINAL_IP_1),
+    TerminalDevice(TERMINAL_ID_2, TERMINAL_IP_2)
+  )
+)
+
+when (error?.code) {
+  ErrorCode.AUTHENTICATION_FAILED -> {
+    // Handle unknown/unauthorized terminal device
+    Log.e("TerminalGateway", "Authentication failed: ${error.message}")
+  }
+  null -> {
+    // Success - devices registered
+    Log.i("TerminalGateway", "Devices registered successfully")
+  }
+  else -> {
+    // Handle other errors
+    Log.e("TerminalGateway", "Registration failed: ${error.message}")
+  }
+}
+```
+
+<Check>
+After successful registration, your terminal devices will be available for payment processing.
+</Check>
+
+## Configuration and Management
+
+### Set Operation Timeout
+
+Configure the timeout for terminal operations:
+
+```kotlin
+// Set timeout to 5 minutes (default)
+TerminalGateway.setOperationTimeout(minutes = 5)
+
+// Set custom timeout for longer operations
+TerminalGateway.setOperationTimeout(minutes = 10)
+```
+
+<Note>
+The default timeout is 5 minutes. Increase this value if you expect longer processing times for complex transactions.
+</Note>
+
+### Restart Terminal Connections
+
+Restart terminal connections when needed:
+
+```kotlin
+// Restart all terminal connections
+TerminalGateway.restart()
+
+// Restart a specific terminal connection
+TerminalGateway.restart(tid = TERMINAL_ID)
+```
+
+<Tip>
+Use restart functionality when terminals become unresponsive or after network connectivity issues.
+</Tip>
+
+### Monitor Connection State
+
+Observe terminal connection states in real-time:
+
+```kotlin
+// Using coroutine scope
+TerminalGateway.observeConnection(
+  CoroutineScope(Dispatchers.IO),
+  terminalDevice
+) { state ->
+  when (state) {
+    ConnectionState.CONNECTED -> {
+      // Terminal is ready for transactions
+      Log.i("Terminal", "Connected to ${terminalDevice.tid}")
+    }
+    ConnectionState.DISCONNECTED -> {
+      // Terminal is offline
+      Log.w("Terminal", "Disconnected from ${terminalDevice.tid}")
+    }
+    ConnectionState.CONNECTING_FAILED -> {
+      // Connection attempt failed
+      Log.e("Terminal", "Failed to connect to ${terminalDevice.tid}")
+    }
+    // ... handle other states
+  }
+}
+
+// Using Flow
+val connectionStateFlow = terminalDevice.connectionState
+connectionStateFlow.collect { state ->
+  // Handle connection state changes
+}
+```
+
+### Connection States
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>State</TableHeader>
+      <TableHeader>Description</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow><TableCell>CONNECTED</TableCell><TableCell>Device successfully connected to terminal and ready for transactions</TableCell></TableRow>
+    <TableRow><TableCell>DISCONNECTED</TableCell><TableCell>Device disconnected from terminal or network unavailable</TableCell></TableRow>
+    <TableRow><TableCell>UNKNOWN</TableCell><TableCell>Initial state before any connection attempt</TableCell></TableRow>
+    <TableRow><TableCell>CONNECTING</TableCell><TableCell>Currently establishing connection to terminal</TableCell></TableRow>
+    <TableRow><TableCell>CONNECTING_FAILED</TableCell><TableCell>Connection attempt failed due to network or authentication issues</TableCell></TableRow>
+    <TableRow><TableCell>UNSUPPORTED</TableCell><TableCell>Terminal type or connection method not supported</TableCell></TableRow>
+  </TableBody>
+</Table>
+
+### Monitor Error States
+
+Observe and handle errors across all terminal devices:
+
+```kotlin
+// Global error monitoring
+TerminalGateway.observeError(
+  CoroutineScope(Dispatchers.IO)
+) { device, error ->
+  Log.e("TerminalGateway", "Error on ${device.tid}: ${error.message}")
+  
+  when (error.code) {
+    ErrorCode.TERMINAL_BUSY -> {
+      // Terminal is processing another transaction
+      // Wait and retry later
+    }
+    ErrorCode.FAILED_TO_CONNECT -> {
+      // Network connectivity issue
+      // Check network connection and terminal IP
+    }
+    ErrorCode.AUTHENTICATION_FAILED -> {
+      // Invalid credentials or terminal ID
+      // Verify client key and terminal configuration
+    }
+    // ... handle other error codes
+  }
+}
+
+// Device-specific error monitoring
+val errorFlow = TerminalGateway.errorState(terminalDevice)
+val deviceErrorFlow = terminalDevice.error
+```
+
+## Error Handling
+
+### Error Data Structure
+
+All errors returned by the Terminal Gateway SDK follow this structure:
+
+```kotlin
+data class TerminalError(
+  val code: ErrorCode,
+  val message: String
+)
+```
+
+### Error Codes Reference
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Error Code</TableHeader>
+      <TableHeader>HTTP Status</TableHeader>
+      <TableHeader>Description</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow><TableCell>INVALID_CREDENTIAL</TableCell><TableCell>401</TableCell><TableCell>Provided credentials are invalid or expired</TableCell></TableRow>
+    <TableRow><TableCell>INVALID_REQUEST</TableCell><TableCell>400</TableCell><TableCell>Request format or parameters are invalid</TableCell></TableRow>
+    <TableRow><TableCell>INTERNAL_SERVER_ERROR</TableCell><TableCell>500</TableCell><TableCell>Server-side error occurred during processing</TableCell></TableRow>
+    <TableRow><TableCell>UNKNOWN_ERROR</TableCell><TableCell>0</TableCell><TableCell>Unexpected error that doesn't fit other categories</TableCell></TableRow>
+    <TableRow><TableCell>KEY_INVALID</TableCell><TableCell>-1</TableCell><TableCell>API key is invalid or not authorized</TableCell></TableRow>
+    <TableRow><TableCell>SEND_FAILED</TableCell><TableCell>-2</TableCell><TableCell>Failed to send data to the terminal device</TableCell></TableRow>
+    <TableRow><TableCell>NOT_CONNECTED</TableCell><TableCell>-3</TableCell><TableCell>No active connection to any terminal device</TableCell></TableRow>
+    <TableRow><TableCell>FAILED_TO_CONNECT</TableCell><TableCell>-4</TableCell><TableCell>Unable to establish connection to terminal</TableCell></TableRow>
+    <TableRow><TableCell>UNSUPPORTED</TableCell><TableCell>-5</TableCell><TableCell>Operation or platform not supported</TableCell></TableRow>
+    <TableRow><TableCell>TERMINAL_BUSY</TableCell><TableCell>-6</TableCell><TableCell>Terminal is processing another transaction</TableCell></TableRow>
+    <TableRow><TableCell>ENCRYPTION_FAILED</TableCell><TableCell>-7</TableCell><TableCell>Encryption key invalid or encryption process failed</TableCell></TableRow>
+    <TableRow><TableCell>AUTHENTICATION_FAILED</TableCell><TableCell>-21</TableCell><TableCell>Terminal authentication failed - check TID and credentials</TableCell></TableRow>
+  </TableBody>
+</Table>
+
+### Error Handling Best Practices
+
+Implement comprehensive error handling for robust payment processing:
+
+```kotlin
+fun handleTerminalError(error: TerminalError?) {
+  when (error?.code) {
+    ErrorCode.AUTHENTICATION_FAILED -> {
+      // Verify API key and terminal ID
+      Log.e("TerminalGateway", "Authentication failed: ${error.message}")
+      // Show user-friendly message and retry with correct credentials
+    }
+    
+    ErrorCode.TERMINAL_BUSY -> {
+      // Terminal is processing another transaction
+      Log.w("TerminalGateway", "Terminal busy: ${error.message}")
+      // Wait and retry after a delay
+      retryAfterDelay(5000) // 5 seconds
+    }
+    
+    ErrorCode.FAILED_TO_CONNECT, ErrorCode.NOT_CONNECTED -> {
+      // Network connectivity issues
+      Log.e("TerminalGateway", "Connection failed: ${error.message}")
+      // Check network connection and terminal IP address
+      checkNetworkConnectivity()
+    }
+    
+    ErrorCode.KEY_INVALID, ErrorCode.INVALID_CREDENTIAL -> {
+      // Credential issues
+      Log.e("TerminalGateway", "Invalid credentials: ${error.message}")
+      // Rotate or refresh API credentials
+      refreshCredentials()
+    }
+    
+    ErrorCode.ENCRYPTION_FAILED -> {
+      // Encryption key issues
+      Log.e("TerminalGateway", "Encryption failed: ${error.message}")
+      // Re-initialize SDK with correct encryption keys
+      reinitializeSDK()
+    }
+    
+    else -> {
+      // Log and escalate unknown errors
+      Log.e("TerminalGateway", "Unknown error: ${error?.message}")
+      // Report to monitoring system
+      reportError(error)
+    }
+  }
+}
+```
+
+<Tip>
+Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAILED_TO_CONNECT`. Use exponential backoff to avoid overwhelming the terminal.
+</Tip>
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Unresponsive EDC Machine">
+  **Problem**: The EDC (Electronic Data Capture) machine becomes unresponsive or stops processing transactions.
+
+  **Solution**: 
+  1. Restart the EDC machine by holding the power button and selecting "Restart"
+  2. Wait for the device to fully boot up and reconnect
+  3. Verify the terminal is back online using the connection monitoring features
+
+  <Warning>
+  Always ensure the EDC is properly restarted before attempting new transactions to avoid data corruption.
+  </Warning>
+</Accordion>
+
+<Accordion title="Kiosk Mode Configuration">
+  **Problem**: Unexpected behaviors or unauthorized access to terminal functions.
+
+  **Solution**:
+  1. Ensure all transactions are initiated only through the SDK
+  2. Contact the Xendit EDC team to enable POS-only mode for your Terminal IDs
+  3. Configure terminal settings to disable manual transaction entry
+
+  <Tip>
+  POS-only mode prevents manual transaction entry and ensures all operations go through your application.
+  </Tip>
+</Accordion>
+
+<Accordion title="No Response After Payment Completion">
+  **Problem**: EDC fails to send transaction results to the SDK after payment completion.
+
+  **Solution**:
+  1. Query the Payment Session using the Terminal API to retrieve the latest status
+  2. Check network connectivity between the EDC and your application
+  3. Verify the callback URL configuration in your payment session
+  4. Implement retry logic for failed status updates
+
+  ```kotlin
+  // Example: Query payment session status
+  val paymentSession = terminalApi.getPaymentSession(sessionId)
+  when (paymentSession.status) {
+    PaymentStatus.COMPLETED -> {
+      // Process successful payment
+    }
+    PaymentStatus.FAILED -> {
+      // Handle failed payment
+    }
+    PaymentStatus.PENDING -> {
+      // Payment still in progress
+    }
+  }
+  ```
+</Accordion>
+
+<Accordion title="Connection Issues">
+  **Problem**: Unable to establish or maintain connection with terminal devices.
+
+  **Solutions**:
+  - **Check network connectivity**: Ensure both devices are on the same network
+  - **Verify IP addresses**: Confirm terminal IP addresses are correct and accessible
+  - **Firewall settings**: Check if firewall is blocking the connection ports
+  - **Terminal status**: Ensure the terminal is powered on and in ready state
+  - **SDK initialization**: Verify client key and terminal configuration
+
+  <Note>
+  Use the connection monitoring features to diagnose specific connection issues.
+  </Note>
+</Accordion>
+</AccordionGroup>
+
+## Finding Terminal Information
+
+### BRI Terminals
+
+<Steps>
+<Step title="Find Terminal ID (TID)">
+  Open the BRI FMS app on the terminal device and locate the Terminal ID in the device information section.
+</Step>
+
+<Step title="Find IP Address">
+  Open the ECRLink app on the terminal and check the network settings for the IP address.
+</Step>
+</Steps>
+
+### GHL Terminals
+
+<Steps>
+<Step title="Find Terminal ID (TID)">
+  Look for the Terminal ID on the physical sticker attached to the device.
+</Step>
+
+<Step title="Find IP Address">
+  Open the GHL LinkPOS app on the terminal and navigate to network settings to find the IP address.
+</Step>
+</Steps>
+
+<Note>
+Screenshots and UI layouts may vary by firmware or app version. Refer to the latest vendor documentation if the interface differs from these instructions.
+</Note>

@@ -1,90 +1,142 @@
 ---
 title: "Xendit Documentation"
-description: "Welcome to Xendit's comprehensive documentation hub"
+description: "Complete guide to integrating Xendit's payment solutions for online and in-person transactions"
 ---
 
-## Getting Started
+## Welcome to Xendit
 
-Get started with Xendit's payment solutions in minutes.
+Xendit provides comprehensive payment solutions for businesses across Southeast Asia. Whether you need online payments, in-person transactions, or automated payment processing, our APIs and SDKs make integration simple and secure.
+
+<Info>
+**New to Xendit?** Start with our [quickstart guide](/quickstart) to get your first payment processed in under 10 minutes.
+</Info>
+
+## Get Started Quickly
 
 <Card
-  title="Quick Start"
+  title="Quick Start Guide"
   icon="rocket"
   href="/quickstart"
   horizontal
 >
-  Follow our quickstart guide to integrate Xendit payments.
+  Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction.
 </Card>
 
 ## Payment Solutions
 
-Explore Xendit's comprehensive payment platform and APIs.
+Choose the right payment solution for your business needs:
 
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
     title="Terminal API"
     icon="terminal"
     href="/api-reference/terminal-api/introduction"
   >
-    Integrate with Xendit's Terminal API for in-person payments.
+    Process in-person payments using terminal devices. Perfect for retail stores, restaurants, and point-of-sale systems.
+  </Card>
+  <Card
+    title="Terminal Gateway"
+    icon="smartphone"
+    href="/api-reference/terminal-gateway/introduction"
+  >
+    Manage terminal devices with our gateway solution. Available for Android and iOS platforms.
   </Card>
   <Card
     title="Payment Methods"
     icon="credit-card"
-    href="/api-reference/introduction"
+    href="/api-reference/terminal-api/introduction"
   >
-    Accept various payment methods including cards, e-wallets, and bank transfers.
+    Accept various payment methods including cards, e-wallets, and bank transfers across Southeast Asia.
   </Card>
   <Card
     title="Webhooks"
     icon="webhook"
-    href="/api-reference/endpoint/webhook"
+    href="/api-reference/terminal-api/callbacks"
   >
-    Set up webhooks to receive real-time payment notifications.
+    Receive real-time payment notifications and status updates through our webhook system.
   </Card>
-  <Card
-    title="API Reference"
-    icon="code"
-    href="/api-reference/introduction"
-  >
-    Complete API documentation for all Xendit services.
-  </Card>
-</Columns>
+</CardGroup>
 
 ## Developer Resources
 
-Everything you need to integrate with Xendit successfully.
+Everything you need to build with Xendit:
 
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="SDKs & Libraries"
+    title="Development Setup"
     icon="code"
-    href="/essentials/code"
+    href="/development"
   >
-    Official SDKs for popular programming languages.
+    Set up your development environment with our SDKs and testing tools.
   </Card>
   <Card
     title="Code Examples"
     icon="terminal"
     href="/essentials/code"
   >
-    Sample code and integration examples for all platforms.
+    Copy-paste ready code examples for all supported programming languages.
   </Card>
   <Card
-    title="Testing"
-    icon="flask"
-    href="/development"
+    title="API Reference"
+    icon="book"
+    href="/api-reference/terminal-api/introduction"
   >
-    Test your integration with our sandbox environment.
+    Complete API documentation with interactive examples and response schemas.
   </Card>
   <Card
-    title="Support"
+    title="Support & Help"
     icon="life-ring"
     href="mailto:help@xendit.co"
   >
-    Get help from our developer support team.
+    Get personalized assistance from our developer support team.
   </Card>
-</Columns>
+</CardGroup>
+
+## Popular Integration Paths
+
+<Tabs>
+<Tab title="E-commerce Store">
+  <Steps>
+  <Step title="Choose payment methods">
+    Select from cards, e-wallets, and bank transfers that work in your target markets.
+  </Step>
+  <Step title="Integrate checkout">
+    Use our web SDK or mobile SDKs to add payment processing to your store.
+  </Step>
+  <Step title="Handle webhooks">
+    Set up webhook endpoints to receive payment notifications and update order status.
+  </Step>
+  </Steps>
+</Tab>
+
+<Tab title="Retail POS System">
+  <Steps>
+  <Step title="Set up Terminal Gateway">
+    Install our Terminal Gateway app or SDK on your Android/iOS devices.
+  </Step>
+  <Step title="Configure Terminal API">
+    Connect your terminals to our API for payment processing.
+  </Step>
+  <Step title="Test transactions">
+    Use our sandbox environment to test all payment scenarios before going live.
+  </Step>
+  </Steps>
+</Tab>
+
+<Tab title="Mobile App">
+  <Steps>
+  <Step title="Install mobile SDK">
+    Add our mobile SDK to your iOS or Android application.
+  </Step>
+  <Step title="Implement payment flow">
+    Create payment screens using our pre-built UI components or custom implementations.
+  </Step>
+  <Step title="Process payments">
+    Handle payment processing, receipts, and error scenarios in your app.
+  </Step>
+  </Steps>
+</Tab>
+</Tabs>
 
 ## Need Help?
 
@@ -93,5 +145,5 @@ Everything you need to integrate with Xendit successfully.
   icon="envelope"
   href="mailto:help@xendit.co"
 >
-  Reach out to our support team for assistance with your integration.
+  Reach out to our support team for assistance with your integration or any questions about our payment solutions.
 </Card>

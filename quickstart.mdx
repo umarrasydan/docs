@@ -1,80 +1,325 @@
 ---
 title: "Quickstart"
-description: "Get started with Xendit's payment solutions in minutes"
+description: "Get your Xendit payment integration running in under 10 minutes with our step-by-step guide"
 ---
 
-## Get started in three steps
+## Prerequisites
 
-Get your Xendit integration up and running quickly.
+Before you begin, ensure you have:
 
-### Step 1: Set up your local environment
+- A Xendit account ([Sign up here](https://dashboard.xendit.co))
+- Node.js 16+ or your preferred programming language environment
+- A text editor or IDE for development
+
+<Info>
+**New to payments?** This guide covers the basics of integrating Xendit's payment solutions. For advanced features, see our [API reference](/api-reference/terminal-api/introduction).
+</Info>
+
+## Get Started in 3 Steps
+
+Follow these steps to process your first payment with Xendit:
+
+<Steps>
+<Step title="Get your API credentials">
+  Sign up for a Xendit account and retrieve your API credentials from the [Xendit Dashboard](https://dashboard.xendit.co).
+  
+  You'll need:
+  - **Public Key**: For client-side operations
+  - **Secret Key**: For server-side API calls
+  
+  <Warning>
+  Keep your secret key secure and never expose it in client-side code or version control.
+  </Warning>
+  
+  <Check>
+  Verify you can access the dashboard and see your API keys in the settings section.
+  </Check>
+</Step>
+
+<Step title="Install the SDK">
+  Install the Xendit SDK for your preferred programming language:
+  
+  <Tabs>
+  <Tab title="Node.js">
+    ```bash
+    npm install xendit-node
+    ```
+  </Tab>
+  
+  <Tab title="Python">
+    ```bash
+    pip install xendit
+    ```
+  </Tab>
+  
+  <Tab title="PHP">
+    ```bash
+    composer require xendit/xendit-php
+    ```
+  </Tab>
+  
+  <Tab title="Java">
+    ```xml
+    <!-- Add to pom.xml -->
+    <dependency>
+      <groupId>com.xendit</groupId>
+      <artifactId>xendit-java</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    ```
+  </Tab>
+  </Tabs>
+  
+  <Tip>
+  Check our [code examples](/essentials/code) for complete integration examples in your language.
+  </Tip>
+</Step>
+
+<Step title="Make your first API call">
+  Create a simple test to verify your integration works:
+  
+  ```javascript example.js
+  const xendit = require('xendit-node');
+  
+  const client = new xendit.XenditClient({
+    secretKey: process.env.XENDIT_SECRET_KEY,
+  });
+  
+  // Test API connection
+  async function testConnection() {
+    try {
+      const response = await client.VirtualAccount.getBanks();
+      console.log('✅ Connection successful!');
+      console.log('Available banks:', response.length);
+    } catch (error) {
+      console.error('❌ Connection failed:', error.message);
+    }
+  }
+  
+  testConnection();
+  ```
+  
+  <Check>
+  Run your test script and verify you see "Connection successful!" in the output.
+  </Check>
+</Step>
+</Steps>
+
+## Create Your First Payment
+
+Now let's create a simple payment to test the complete flow:
+
+<Steps>
+<Step title="Set up environment variables">
+  Create a `.env` file in your project root:
+  
+  ```bash .env
+  XENDIT_SECRET_KEY=your_secret_key_here
+  XENDIT_PUBLIC_KEY=your_public_key_here
+  ```
+  
+  <Warning>
+  Never commit your `.env` file to version control. Add it to your `.gitignore` file.
+  </Warning>
+</Step>
+
+<Step title="Create a virtual account">
+  Use our API to create a virtual account for testing:
+  
+  ```javascript create-va.js
+  const xendit = require('xendit-node');
+  require('dotenv').config();
+  
+  const client = new xendit.XenditClient({
+    secretKey: process.env.XENDIT_SECRET_KEY,
+  });
+  
+  async function createVirtualAccount() {
+    try {
+      const virtualAccount = await client.VirtualAccount.create({
+        externalId: 'va-test-' + Date.now(),
+        bankCode: 'BCA',
+        name: 'Test Customer',
+        virtualAccountNumber: '1234567890',
+        suggestedAmount: 10000,
+        isClosed: true,
+        expectedAmount: 10000,
+        expirationDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        isSingleUse: true,
+      });
+      
+      console.log('✅ Virtual Account created successfully!');
+      console.log('Account Number:', virtualAccount.accountNumber);
+      console.log('Bank Code:', virtualAccount.bankCode);
+      
+      return virtualAccount;
+    } catch (error) {
+      console.error('❌ Failed to create virtual account:', error.message);
+    }
+  }
+  
+  createVirtualAccount();
+  ```
+  
+  <Check>
+  Run the script and verify you receive a virtual account number and bank code.
+  </Check>
+</Step>
+
+<Step title="Test webhook handling">
+  Set up a simple webhook endpoint to receive payment notifications:
+  
+  ```javascript webhook-server.js
+  const express = require('express');
+  const app = express();
+  
+  app.use(express.json());
+  
+  // Webhook endpoint
+  app.post('/webhook', (req, res) => {
+    console.log('📨 Webhook received:', req.body);
+    
+    // Verify webhook signature (recommended)
+    // const signature = req.headers['x-xendit-signature'];
+    
+    // Process the payment notification
+    const { status, external_id, amount } = req.body;
+    
+    if (status === 'PAID') {
+      console.log('✅ Payment completed!');
+      console.log(`External ID: ${external_id}`);
+      console.log(`Amount: ${amount}`);
+    }
+    
+    res.status(200).send('OK');
+  });
+  
+  app.listen(3000, () => {
+    console.log('🚀 Webhook server running on port 3000');
+  });
+  ```
+  
+  <Tip>
+  Use tools like [ngrok](https://ngrok.com) to expose your local server for webhook testing.
+  </Tip>
+</Step>
+</Steps>
+
+## Test Your Integration
+
+Before going live, thoroughly test your integration:
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Get your API credentials">
-    Sign up for a Xendit account and get your API credentials from the [Xendit Dashboard](https://dashboard.xendit.co).
-    
-    You'll need your public key and secret key to start integrating with Xendit's APIs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Install the SDK">
-    1. Install the Xendit SDK: `npm install xendit-node`
-    2. Set up your environment variables with your API keys
-    3. Start making your first API call!
-    
-    <Tip>Check our code examples for your preferred programming language.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Make your first payment
-
-<AccordionGroup>
-  <Accordion icon="credit-card" title="Create a payment method">
-    Use Xendit's API to create payment methods like virtual accounts, e-wallets, or credit cards.
-    
-    Choose the payment method that works best for your customers in your region.
-</Accordion>
-<Accordion icon="code" title="Test your integration">
-    Test your integration using Xendit's sandbox environment.
-
-    1. Use test API keys for development
-    2. Create test payments to verify your integration
-    3. Check webhook notifications are working properly
-
-    <Tip>Always test in sandbox before going live!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Deploy to production">
-  1. Switch to your live API keys
-  2. Deploy your application to production
-  3. Start accepting real payments!
+<Accordion title="Sandbox Testing">
+  Use Xendit's sandbox environment for safe testing:
+  
+  - Use sandbox API keys for all development
+  - Test with small amounts (e.g., 1000 IDR)
+  - Verify webhook notifications work correctly
+  - Test error scenarios and edge cases
+  
+  <Check>
+  Confirm you can create payments, receive webhooks, and handle errors properly in sandbox.
+  </Check>
 </Accordion>
 
-## Next steps
+<Accordion title="Production Checklist">
+  Before going live, ensure you have:
+  
+  - [ ] Switched to live API keys
+  - [ ] Updated webhook URLs to production endpoints
+  - [ ] Implemented proper error handling
+  - [ ] Added logging and monitoring
+  - [ ] Tested with real payment methods
+  - [ ] Reviewed security best practices
+  
+  <Warning>
+  Start with small transaction amounts in production to verify everything works correctly.
+  </Warning>
+</Accordion>
+</AccordionGroup>
 
-Now that you have your integration running, explore these key features:
+## Next Steps
+
+Now that you have your basic integration working, explore these advanced features:
 
 <CardGroup cols={2}>
-
 <Card title="Terminal API" icon="terminal" href="/api-reference/terminal-api/introduction">
-  Learn about Xendit's Terminal API for in-person payments.
+  Learn about Xendit's Terminal API for in-person payments and POS systems.
 </Card>
 
-<Card title="Payment Methods" icon="credit-card" href="/api-reference/introduction">
-  Explore all available payment methods and integrations.
+<Card title="Terminal Gateway" icon="smartphone" href="/api-reference/terminal-gateway/introduction">
+  Manage terminal devices with our gateway solution for Android and iOS.
 </Card>
 
-<Card title="Webhooks" icon="webhook" href="/api-reference/endpoint/webhook">
-  Set up real-time payment notifications.
+<Card title="Webhooks & Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
+  Set up real-time payment notifications and status updates.
 </Card>
 
 <Card title="Code Examples" icon="code" href="/essentials/code">
-  Find code examples for your programming language.
+  Find complete code examples and integration patterns for your language.
 </Card>
 
+<Card title="Development Setup" icon="wrench" href="/development">
+  Configure your development environment with testing tools and best practices.
+</Card>
+
+<Card title="API Reference" icon="book" href="/api-reference/terminal-api/introduction">
+  Explore the complete API documentation with interactive examples.
+</Card>
 </CardGroup>
 
-<Note>
-  **Need help?** Contact our [support team](mailto:help@xendit.co) or check our [community](https://xendit.co/community).
-</Note>
+## Common Issues
+
+<AccordionGroup>
+<Accordion title="API Key Issues">
+  **Problem**: Getting "Invalid API key" errors
+  
+  **Solutions**:
+  - Verify you're using the correct environment (sandbox vs live)
+  - Check that your secret key is properly set in environment variables
+  - Ensure there are no extra spaces or characters in your API key
+  
+  <Check>
+  Test your API key by making a simple API call to verify authentication.
+  </Check>
+</Accordion>
+
+<Accordion title="Webhook Not Receiving Events">
+  **Problem**: Webhooks not being delivered to your endpoint
+  
+  **Solutions**:
+  - Ensure your webhook URL is publicly accessible (use ngrok for local testing)
+  - Check that your server responds with HTTP 200 status
+  - Verify the webhook URL in your Xendit dashboard
+  - Check server logs for any errors or timeouts
+  
+  <Tip>
+  Use webhook testing tools like [webhook.site](https://webhook.site) to verify your endpoint works.
+  </Tip>
+</Accordion>
+
+<Accordion title="Payment Creation Fails">
+  **Problem**: Unable to create payments or virtual accounts
+  
+  **Solutions**:
+  - Verify all required parameters are provided
+  - Check that bank codes and payment methods are valid
+  - Ensure amounts are within acceptable ranges
+  - Review error messages for specific validation issues
+  
+  <Warning>
+  Always test with sandbox environment first before attempting live payments.
+  </Warning>
+</Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+<Card
+  title="Contact Support"
+  icon="envelope"
+  href="mailto:help@xendit.co"
+>
+  Get personalized assistance from our developer support team for any integration questions or issues.
+</Card>

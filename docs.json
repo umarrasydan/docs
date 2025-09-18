@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Xendit Documentation",
+  "openapi": "api-reference/terminal-api/openapi-spec.yaml",
   "colors": {
     "primary": "#1662EE",
     "light": "#03CF99",
@@ -51,12 +52,6 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
             "group": "Terminal API",
             "pages": [
               "api-reference/terminal-api/introduction",
@@ -68,6 +63,13 @@
               "api-reference/terminal-api/push-operation-command",
               "api-reference/terminal-api/callbacks",
               "api-reference/terminal-api/errors"
+            ]
+          },
+          {
+            "group": "Terminal Gateway",
+            "pages": [
+              "api-reference/terminal-gateway/introduction",
+              "api-reference/terminal-gateway/android-sdk/index"
             ]
           }
         ]

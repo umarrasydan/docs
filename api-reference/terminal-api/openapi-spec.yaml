@@ -1,0 +1,500 @@
+openapi: 3.0.0
+info:
+  title: Xendit Terminal API
+  version: 1.0.1
+  description:
+    API specification for Xendit Terminal (Electronic Data Capture) Payment
+    Sessions and Commands
+servers:
+  - url: https://terminal-dev.xendit.co
+    description: Development
+  - url: https://terminal.xendit.co
+    description: Live
+paths:
+  /v1/terminal/sessions:
+    post:
+      tags:
+        - Payments Terminal Api
+      security:
+        - BasicAuth: []
+      operationId: createTerminalPaymentSession
+      summary: 'Create a Terminal Payment Session'
+      parameters:
+        - name: idempotency-key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'Idempotency key to ensure the request is not processed multiple times'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTerminalPaymentSession'
+      responses:
+        '200':
+          description: 'Terminal Payment Session created successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerminalPaymentSessionResponse'
+  /v1/terminal/sessions/{id}:
+    get:
+      tags:
+        - Payments Terminal Api
+      security:
+        - BasicAuth: []
+      operationId: fetchTerminalPaymentSession
+      summary: 'Fetch Terminal Payment Session'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: 'Terminal Payment Session ID'
+      responses:
+        '200':
+          description: 'Terminal Payment Session fetched successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerminalPaymentSessionResponse'
+        '404':
+          description: 'Terminal Payment Session not found'
+  /v1/terminal/payments/{id}/void:
+    post:
+      tags:
+        - Payments Terminal Api
+      security:
+        - BasicAuth: []
+      operationId: voidPayment
+      summary: 'Void a Terminal Payment'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: 'Terminal Payment ID'
+      responses:
+        '200':
+          description: 'Terminal void request created successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoidPaymentResponse'
+  /v1/terminal/commands:
+    post:
+      tags:
+        - Payments Terminal Api
+      security:
+        - BasicAuth: []
+      operationId: PushTerminalCommands
+      summary: 'Create Terminal commands'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushCommandRequest'
+      responses:
+        '200':
+          description: 'Create command successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushCommandResponse'
+  /public/v1/terminal/payments/{id}:
+    get:
+      tags:
+        - payments
+      operationId: getPayment
+      summary: 'Get a payment by ID'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: 'Payment ID'
+      responses:
+        '200':
+          description: 'Payment fetched successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    ChannelProperties:
+      type: object
+      required:
+        - terminal_id
+      properties:
+        terminal_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        order_id:
+          type: string
+          example: 'order-12345'
+          maxLength: 255
+        payment_methods:
+          type: array
+          items:
+            type: string
+            enum:
+              - ID_INSERT_CARD
+              - ID_CONTACTLESS
+              - ID_BRIZZI
+              - ID_QRIS
+              - VN_CARD
+              - VN_QR
+              - TH_ALIPAY_PLUS
+              - TH_WECHATPAY_CIL
+              - TH_WECHATPAY_OCGT
+              - TH_TRUEMONEY
+              - TH_LINEPAY
+              - TH_SHOPEEPAY
+              - TH_SABUYMONEY
+              - TH_MAXME
+              - TH_CARD
+              - TH_BBL_QRCS
+              - TH_MULTIIPP
+              - TH_QRCODE
+          nullable: true
+    CreateTerminalPaymentSession:
+      type: object
+      required:
+        - session_type
+        - mode
+        - currency
+        - amount
+        - country
+        - channel_properties
+      properties:
+        reference_id:
+          type: string
+          example: 'ref_123456789'
+        customer_id:
+          type: string
+          example: 'cus_123456789'
+        customer:
+          type: object
+          additionalProperties: true
+        currency:
+          type: string
+          enum:
+            - IDR
+            - VND
+            - THB
+        amount:
+          type: number
+          format: decimal
+          minimum: 1
+        country:
+          type: string
+          enum:
+            - ID
+            - VN
+            - TH
+        session_type:
+          type: string
+          enum:
+            - PAY
+        mode:
+          type: string
+          enum:
+            - TERMINAL
+        description:
+          type: string
+          nullable: true
+          example: 'Payment for order #123'
+        metadata:
+          type: object
+          additionalProperties: true
+        channel_properties:
+          $ref: '#/components/schemas/ChannelProperties'
+    TerminalPaymentSessionResponse:
+      type: object
+      required:
+        - payment_session_id
+        - reference_id
+        - business_id
+        - session_type
+        - mode
+        - country
+        - currency
+        - amount
+        - status
+        - channel_properties
+        - latest_payment_id
+        - created
+        - updated
+      properties:
+        payment_session_id:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+        latest_payment_id:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+        business_id:
+          type: string
+        reference_id:
+          type: string
+          example: 'ref_123456789'
+        customer_id:
+          type: string
+          example: 'cus_123456789'
+        session_type:
+          type: string
+          enum:
+            - PAY
+        currency:
+          type: string
+          enum:
+            - IDR
+            - VND
+            - THB
+        amount:
+          type: number
+          format: decimal
+          minimum: 1
+        country:
+          type: string
+          enum:
+            - ID
+            - VN
+            - TH
+        mode:
+          type: string
+          enum:
+            - TERMINAL
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - COMPLETED
+            - CANCELED
+        description:
+          type: string
+          nullable: true
+          example: 'Payment for order #123'
+        metadata:
+          type: object
+          additionalProperties: true
+        canceled_at:
+          type: string
+          format: date-time
+          nullable: true
+        channel_properties:
+          $ref: '#/components/schemas/ChannelProperties'
+        created:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+        updated:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+    PaymentDetails:
+      type: object
+      properties:
+        terminal_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        payment_method:
+          type: string
+          enum:
+            - ID_INSERT_CARD
+            - ID_CONTACTLESS
+            - ID_BRIZZI
+            - ID_QRIS
+            - VN_CARD
+            - VN_QR
+            - TH_ALIPAY_PLUS
+            - TH_WECHATPAY_CIL
+            - TH_WECHATPAY_OCGT
+            - TH_TRUEMONEY
+            - TH_LINEPAY
+            - TH_SHOPEEPAY
+            - TH_SABUYMONEY
+            - TH_MAXME
+            - TH_CARD
+            - TH_BBL_QRCS
+            - TH_MULTIIPP
+            - TH_QRCODE
+    PaymentResponse:
+      type: object
+      required:
+        - payment_id
+        - country
+        - currency
+        - request_amount
+        - status
+        - updated
+        - type
+        - payment_details
+      properties:
+        payment_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+          pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+        business_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        reference_id:
+          type: string
+          example: 'ref-12345'
+        customer_id:
+          type: string
+          example: 'cus-12345'
+        type:
+          type: string
+          enum:
+            - PAY
+            - PRE_AUTH
+        country:
+          type: string
+          enum:
+            - ID
+            - VN
+            - TH
+          example: 'ID'
+        currency:
+          type: string
+          enum:
+            - IDR
+            - VND
+            - THB
+          example: 'IDR'
+        request_amount:
+          type: number
+          minimum: 1
+          example: 100000.00
+        status:
+          type: string
+          enum:
+            - SUCCEEDED
+            - VOIDED
+            - AUTHORIZED
+          example: 'SUCCEEDED'
+        payment_details:
+          $ref: '#/components/schemas/PaymentDetails'
+        failure_code:
+          type: string
+          nullable: true
+          example: 'VOID_FAILED'
+        metadata:
+          type: object
+          additionalProperties: true
+        created:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+        updated:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+    PushCommandRequest:
+      type: object
+      properties:
+        terminal_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        type:
+          type: string
+          enum:
+            - PRINT_RECEIPT
+            - SETTLE
+        properties:
+          $ref: '#/components/schemas/CommandProperties'
+      required:
+        - terminal_id
+        - type
+    PushCommandResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - COMPLETED
+          example: 'ACTIVE'
+        terminal_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        business_id:
+          type: string
+          example: 'abcd-3254fsd-3242'
+        type:
+          type: string
+          enum:
+            - PRINT_RECEIPT
+            - SETTLE
+          example: 'PRINT_RECEIPT'
+        created:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+        updated:
+          type: string
+          format: date-time
+          example: '2024-11-06T15:32:42Z'
+      required:
+        - id
+        - status
+        - terminal_id
+        - business_id
+        - type
+    CommandProperties:
+      type: object
+      properties:
+        order_id:
+          type: string
+          example: 'order-12345'
+        payment_method:
+          type: string
+          enum:
+            - ID_INSERT_CARD
+            - ID_CONTACTLESS
+            - ID_BRIZZI
+            - ID_QRIS
+            - VN_CARD
+            - VN_QR
+            - TH_ALIPAY_PLUS
+            - TH_WECHATPAY_CIL
+            - TH_WECHATPAY_OCGT
+            - TH_TRUEMONEY
+            - TH_LINEPAY
+            - TH_SHOPEEPAY
+            - TH_SABUYMONEY
+            - TH_MAXME
+            - TH_CARD
+            - TH_BBL_QRCS
+            - TH_MULTIIPP
+            - TH_QRCODE
+    VoidPaymentResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'SUCCESS'
+        error_code:
+          type: string
+          example: 'PAYMENT_NOT_FOUND'
+        message:
+          type: string
+          example: 'Payment not found'
