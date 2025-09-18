@@ -3,7 +3,7 @@ title: "Android SDK (Kotlin)"
 description: "Integrate Xendit Terminal Gateway into your Android applications with our comprehensive Kotlin SDK"
 ---
 
-# Android SDK for Terminal Gateway
+# Terminal Gateway SDK for Android (Kotlin)
 
 The Xendit Terminal Gateway Android SDK enables you to integrate secure payment processing into your Android applications. Connect to physical payment terminals and process transactions seamlessly using our Kotlin-based SDK.
 
@@ -430,32 +430,6 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
 </Accordion>
 </AccordionGroup>
 
-## Finding Terminal Information
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
 
-### BRI Terminals
-
-<Steps>
-<Step title="Find Terminal ID (TID)">
-  Open the BRI FMS app on the terminal device and locate the Terminal ID in the device information section.
-</Step>
-
-<Step title="Find IP Address">
-  Open the ECRLink app on the terminal and check the network settings for the IP address.
-</Step>
-</Steps>
-
-### GHL Terminals
-
-<Steps>
-<Step title="Find Terminal ID (TID)">
-  Look for the Terminal ID on the physical sticker attached to the device.
-</Step>
-
-<Step title="Find IP Address">
-  Open the GHL LinkPOS app on the terminal and navigate to network settings to find the IP address.
-</Step>
-</Steps>
-
-<Note>
-Screenshots and UI layouts may vary by firmware or app version. Refer to the latest vendor documentation if the interface differs from these instructions.
-</Note>
+<FindingTerminalInformation />

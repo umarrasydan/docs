@@ -1,0 +1,338 @@
+---
+title: 'Migration Guide: Xen BRI SDK to Terminal Gateway SDK'
+description: 'Complete guide for migrating from Xen BRI SDK to Terminal Gateway SDK with step-by-step instructions and code examples'
+---
+
+# Migration Guide: Xen BRI SDK to Terminal Gateway SDK
+
+This comprehensive guide walks you through migrating your Android application from the standalone Xen BRI SDK (version 0.3.1) to the new Terminal Gateway SDK (version 0.4.0) and Terminal API (version 0.4.1). The new architecture provides better integration with the Xendit In-Person Payment platform and supports multiple terminal providers.
+
+<Info>
+This migration involves significant architectural changes. We recommend testing thoroughly in your development environment before deploying to production.
+</Info>
+
+## Overview of Changes
+
+The new architecture separates the concerns of direct terminal communication (handled by the Terminal Gateway SDK) and payment session management (handled by the Terminal API). This provides a more unified approach for different terminal providers and better integration with the Xendit In-Person Payment platform.
+
+**Key Changes:**
+
+* **SDK Consolidation:** The `XenBriTerminal` SDK is replaced by the `Terminal Gateway SDK`, which acts as a common interface for various terminal providers (e.g., `TerminalBRI`).  
+* **API for Payment Sessions:** Instead of direct `saleIntent` calls from the SDK, payment sessions are now managed via the Terminal API.  
+* **Simplified Connection Management:** Device registration and connection state observation are now handled more uniformly through the `TerminalGateway`.  
+* **Unified Error Handling:** Error codes are standardized across the Terminal Gateway SDK.
+
+## Migration Steps
+
+<Steps>
+<Step title="Update SDK Dependencies">
+  Remove the old `Xen BRI SDK` dependency and add the new `Terminal Gateway SDK` dependencies in your module's `build.gradle` file.
+
+  **Old Dependency (to remove):**
+  
+  ```kotlin
+  implementation("co.xendit:xen_edc_sdk-android:0.3.0")
+  ```
+
+  **New Dependencies (to add):**
+  
+  ```kotlin
+  implementation("co.xendit.terminal:core:0.4.0")
+  implementation("co.xendit.terminal:gateway:0.4.0")
+  implementation("co.xendit.terminal:id-bri:0.4.0") // For BRI terminals
+  // If you support GHL, also add:
+  // implementation("co.xendit.terminal:th-ghl:0.4.0")
+  ```
+
+  Also, ensure your project's `build.gradle` or `settings.gradle` has the maven local repository:
+
+  ```kotlin
+  repositories {
+    ...
+    maven("./repository") // in the project's settings.gradle, or
+    // maven("../repository") // in project's build.gradle
+    ...
+  }
+  ```
+</Step>
+
+<Step title="Initialize the SDK">
+  The initialization process changes from `XenBriTerminal.initialize()` to `TerminalApp.initialize()` and `TerminalGateway.addProvider()`.
+
+  **Old Initialization:**
+  
+  ```kotlin
+  override fun onCreate() {
+      super.onCreate()
+      XenBriTerminal.initialize(this, TEST_CLIENT_KEY,
+          XenTerminalMode.INTEGRATION)
+      // ...
+  }
+  ```
+
+  **New Initialization:**
+  
+  ```kotlin
+  override fun onCreate() {
+      super.onCreate()
+      TerminalApp.initialize(this, TEST_CLIENT_KEY,
+          TerminalMode.INTEGRATION) // Use TerminalMode from new SDK
+      TerminalGateway.addProvider(TerminalBRI) // Add the BRI provider
+      // If you support GHL, also add:
+      // TerminalGateway.addProvider(TerminalGHL)
+      // ...
+  }
+  ```
+
+  <Note>
+  **Client Key:** Note that for the Terminal API, you will need an `API_KEY` from the Xendit In-Person Payment team, which is different from the `CLIENT_KEY` used in the SDK initialization. The `TerminalApp.initialize` still uses a `CLIENT_KEY`.
+  </Note>
+
+  <Note>
+  **TerminalMode:** The `XenTerminalMode` enum is replaced by `TerminalMode`. Use `TerminalMode.INTEGRATION` for testing with physical terminals and `TerminalMode.LIVE` for production. `TerminalMode.SIMULATION` is no longer available directly in the `TerminalApp.initialize` method; instead, you would create payment sessions with appropriate simulation parameters via the Terminal API if needed.
+  </Note>
+</Step>
+
+<Step title="Register Terminal Devices">
+  Instead of `XenBriTerminal.useWifi()` or `XenBriTerminal.useBluetooth()`, you now register devices using `TerminalGateway.registerDevice()`.
+
+  **Old Device Connection (Example for WiFi):**
+  
+  ```kotlin
+  XenBriTerminal.useWifi(TID, "127.0.0.1")
+  ```
+
+  **New Device Registration:**
+  
+  ```kotlin
+  // Replace with your TID (Terminal ID) and IP address.
+  val error = TerminalGateway.registerDevice(listOf(
+      TerminalDevice(Terminal_ID_1, Terminal_IP_1),
+      TerminalDevice(Terminal_ID_2, Terminal_IP_2),
+      TerminalDevice(Terminal_ID_3, Terminal_IP_3),
+      ...
+  ))
+
+  if(error?.code == ErrorCode.AUTHENTICATION_FAILED) {
+      // Handle unknown Terminal device error
+  }
+  ```
+
+  The new `registerDevice` method allows you to register multiple terminals at once and provides error feedback for invalid device details. For obtaining TID and IP address for BRI terminals, the process remains the same (BRI FMS App for TID, ECRLink app for IP address).
+</Step>
+
+<Step title="Create Payment Transactions">
+  The `saleIntent` method is replaced by a two-step process:
+
+  1. **Create a Payment Session via Terminal API:** Your backend (or a direct API call from your app if applicable) initiates a payment session with the Xendit Terminal API.  
+  2. **The SDK will then handle the interaction with the physical terminal** to process the payment based on the created session.
+
+  **Old Payment Creation:**
+  
+  ```kotlin
+  val payment = PaymentIntentParametersBuilder(
+      transactionId = "123456",
+      amount = 1000,
+      method = SaleMethod.PURCHASE // Or other SaleMethod enums
+  ).build()
+  XenBriTerminal.saleIntent(payment = payment) { result, error ->
+      // handle result & error
+  }
+  ```
+
+  **New Payment Creation (High-Level Flow):**
+
+  1. **Your Application/Backend (using Terminal API):**  
+     * Make a POST request to `/v1/terminal/sessions` to create a payment session.  
+     * **Endpoint:** `https://terminal-dev.xendit.co` (Development) or `https://terminal.xendit.co` (Live)  
+     * **Headers:**  
+       * `Content-Type: application/json`  
+       * `Authorization: Basic <Base64Encode(API_KEY:)>`  
+       * `Idempotency-key`: A unique key for preventing duplicate requests.  
+     * **Request Body Example:**
+
+  ```json
+  {
+    "reference_id": "your-transaction-ref-123",
+    "session_type": "PAY",
+    "country": "ID",
+    "currency": "IDR",
+    "amount": 10000,
+    "mode": "TERMINAL",
+    "channel_properties": {
+      "terminal_id": "YOUR_TERMINAL_ID",
+      "order_id": "your-order-id-abc", // Required for IDR
+      "payment_methods": ["ID_INSERT_CARD"] // Or other valid methods
+    },
+    "description": "Payment for goods",
+    "metadata": {
+      "key": "value"
+    }
+  }
+  ```
+
+     * The API will return a `payment_session_id`. The Terminal Gateway SDK on the terminal device, observing the commands from the API, will then initiate the payment process on the physical terminal.  
+  2. **Terminal Gateway SDK (Observing Connection and Error States):**  
+     The Terminal Gateway SDK will automatically process the payment command received from the API for the registered terminal. Your app can observe the connection and error states to react to the payment flow.
+</Step>
+
+<Step title="Handle Optional Methods">
+  The `Terminal Gateway SDK` provides new methods for these operations, often correlating with the Terminal API's "Push Operation Command" functionality.
+
+  ### Reprint Receipt
+
+  **Old:**
+  
+  ```kotlin
+  XenBriTerminal.printReceiptIntent(result = result) { result, error ->
+      // handle result & error
+  }
+  // or by using trace number
+  XenBriTerminal.printReceiptIntent(method = SaleMethod.PURCHASE, traceNumber = "A001") { result, error ->
+      // handle result & error
+  }
+  ```
+
+  **New (using Terminal API's Push Operation Command - only supported for Indonesia's BRI terminals):**
+
+  Your application/backend would make a POST request to `/v1/terminal/commands`.
+
+  ```json
+  {
+    "terminal_id": "YOUR_TERMINAL_ID",
+    "command": "PRINT_RECEIPT",
+    "payment_id": "OPTIONAL_PAYMENT_ID_TO_REPRINT_SPECIFIC_RECEIPT"
+    // For reprint last, payment_id might be omitted based on API spec
+  }
+  ```
+
+  The Terminal Gateway SDK would then receive this command and execute the print operation.
+
+  ### Settlement
+
+  **Old:**
+  
+  ```kotlin
+  XenBriTerminal.settlementIntent(method = SaleMethod.PURCHASE) { result, error ->
+      // handle result & error
+  }
+  ```
+
+  **New (using Terminal API's Push Operation Command - only supported for Indonesia's BRI terminals):**
+
+  Your application/backend would make a POST request to `/v1/terminal/commands`.
+
+  ```json
+  {
+    "terminal_id": "YOUR_TERMINAL_ID",
+    "command": "SETTLE"
+  }
+  ```
+
+  ### Cancel Payment (Void Transaction)
+
+  **Old:**
+  
+  ```kotlin
+  XenBriTerminal.cancelPaymentIntent(result = result) { result, error ->
+      // handle result & error
+  }
+  // or by using trace number
+  XenBriTerminal.cancelPaymentIntent(method = SaleMethod.PURCHASE, traceNumber = "A001") { result, error ->
+      // handle result & error
+  }
+  ```
+
+  **New (using Terminal API's Void a Payment):**
+
+  Your application/backend would make a POST request to `/v1/terminal/payments/:payment_id/void`.
+
+  **Path:** `/v1/terminal/payments/:payment_id/void`  
+  **Method:** POST  
+  **Headers:**
+  * `Content-Type: application/json`  
+  * `Authorization: Basic <Base64Encode(API_KEY:)>`
+
+  The `payment_id` would be obtained from the response of the "Create Payment Session" or "Get Payment Session Detail" API calls.
+</Step>
+
+<Step title="Observe Connection and Error States">
+  The methods for observing connection and error states have been updated in the Terminal Gateway SDK.
+
+  ### Observing Connection State
+
+  **Old:**
+  
+  ```kotlin
+  XenBriTerminal.observeConnection(CoroutineScope(Dispatchers.IO)) { state ->
+     // handle state event
+  }
+  // or, using flow
+  val flow = XenBriTerminal.connectionState
+  ```
+
+  **New:**
+  
+  ```kotlin
+  TerminalGateway.observeConnection(
+    CoroutineScope(Dispatchers.IO),
+    terminalDevice // Pass the specific TerminalDevice instance
+  ) { state ->
+     // handle state event
+  }
+  // Or with Flow,
+  val flow = terminalDevice.connectionState
+  ```
+
+  The connection states (`CONNECTED`, `DISCONNECTED`, `UNKNOWN`, `CONNECTING`, `CONNECTING_FAILED`, `UNSUPPORTED`) are similar but are now part of the `TerminalGateway` and tied to a specific `TerminalDevice`.
+
+  ### Observing Error State
+
+  **Old:** Error handling was integrated into the `saleIntent` callback.
+
+  **New:** A dedicated `observeError` method is available.
+
+  ```kotlin
+  TerminalGateway.observeError(
+    CoroutineScope(Dispatchers.IO)
+  ) { device, error ->
+     // handle state event
+  }
+  // Or with Flow,
+  val flow = TerminalGateway.errorState(terminalDevice)
+  // or
+  val flow = terminalDevice.error
+  ```
+
+  The `Error Data Structure` and `Error Codes` have been standardized and are detailed in the `Terminal Gateway SDK for Android (Kotlin)` documentation. Review these to update your error handling logic accordingly.
+</Step>
+
+<Step title="Troubleshooting and Kiosk Mode">
+  The troubleshooting section regarding "Unresponsive EDC Machine" and "No Response from SDK on EDC payment completion" remains relevant and similar in concept.
+
+  For **Kiosk mode**, the recommendation to enable "POS only mode" by providing Terminal IDs to the Xendit EDC team remains valid. This ensures transactions are initiated via the SDK/API and not directly on the terminal.
+</Step>
+</Steps>
+
+## Summary of Key Changes for BRI Terminals
+
+| Feature / Method | Old Xen BRI SDK (0.3.1) | New Terminal Gateway SDK (0.4.0) + Terminal API (0.4.1) |
+| :---- | :---- | :---- |
+| SDK Dependency | `implementation("co.xendit:xen_edc_sdk-android:0.3.0")` | `implementation("co.xendit.terminal:core:0.4.0")`<br/>`implementation("co.xendit.terminal:gateway:0.4.0")`<br/>`implementation("co.xendit.terminal:id-bri:0.4.0")` |
+| SDK Initialization | `XenBriTerminal.initialize(context, CLIENT_KEY, XenTerminalMode.MODE)` | `TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.MODE)`<br/>`TerminalGateway.addProvider(TerminalBRI)` |
+| Device Connection | `XenBriTerminal.useWifi(TID, IP)`<br/>`XenBriTerminal.useBluetooth(context, TID)` | `TerminalGateway.registerDevice(listOf(TerminalDevice(TID, IP)))` |
+| Create Payment | `XenBriTerminal.saleIntent(...)` | **API Call:** `POST /v1/terminal/sessions` to create a payment session.<br/>**SDK:** Handles the initiated session automatically. |
+| Void Payment | `XenBriTerminal.cancelPaymentIntent(...)` | **API Call:** `POST /v1/terminal/payments/:payment_id/void` |
+| Reprint Receipt | `XenBriTerminal.printReceiptIntent(...)` | **API Call:** `POST /v1/terminal/commands` with `command: PRINT_RECEIPT` (Indonesia only) |
+| Settlement | `XenBriTerminal.settlementIntent(...)` | **API Call:** `POST /v1/terminal/commands` with `command: SETTLE` (Indonesia only) |
+| Observe Connection State | `XenBriTerminal.observeConnection(...)` | `TerminalGateway.observeConnection(..., terminalDevice)` |
+| Observe Error State | Part of `saleIntent` callback | `TerminalGateway.observeError(...)` |
+| Simulation Mode | `XenTerminalMode.SIMULATION` | Not directly in `initialize`. Use Terminal API for testing with real terminals in test mode. |
+
+<Warning>
+This migration involves significant architectural changes. Make sure to test thoroughly in your development environment before deploying to production.
+</Warning>
+
+<Tip>
+For additional support during migration, contact the Xendit In-Person Payment team at help@xendit.co.
+</Tip>

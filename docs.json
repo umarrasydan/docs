@@ -17,33 +17,39 @@
           {
             "group": "Getting started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "guides/getting-started/index",
+              "guides/getting-started/quickstart",
+              "guides/getting-started/development"
             ]
           },
           {
             "group": "Customization",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "guides/customization/settings",
+              "guides/customization/navigation"
             ]
           },
           {
             "group": "Writing content",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "guides/writing-content/markdown",
+              "guides/writing-content/code",
+              "guides/writing-content/images",
+              "guides/writing-content/reusable-snippets"
             ]
           },
           {
             "group": "AI tools",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/ai-tools/cursor",
+              "guides/ai-tools/claude-code",
+              "guides/ai-tools/windsurf"
+            ]
+          },
+          {
+            "group": "Migration",
+            "pages": [
+              "guides/migration/xen-bri-to-terminal-gateway"
             ]
           }
         ]
@@ -69,7 +75,8 @@
             "group": "Terminal Gateway",
             "pages": [
               "api-reference/terminal-gateway/introduction",
-              "api-reference/terminal-gateway/android-sdk/index"
+              "api-reference/terminal-gateway/android-sdk/index",
+              "api-reference/terminal-gateway/ios-sdk/index"
             ]
           }
         ]

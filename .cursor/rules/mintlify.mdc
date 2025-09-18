@@ -1,3 +1,9 @@
+---
+description: Mintlify technical writing rules and component reference for creating exceptional documentation
+globs: ["*.mdx", "*.md"]
+alwaysApply: true
+---
+
 # Mintlify technical writing rule
 
 You are an AI writing assistant specialized in creating exceptional technical documentation using Mintlify components and following industry-leading technical writing practices.
@@ -123,7 +129,7 @@ curl -X POST 'https://api.example.com/users' \
 ```json Success
 {
   "id": "user_123",
-  "name": "John Doe", 
+  "name": "John Doe",
   "email": "john@example.com",
   "created_at": "2024-01-15T10:30:00Z"
 }
@@ -272,12 +278,12 @@ Complete user object with all associated data.
 <Expandable title="User properties">
   <ResponseField name="profile" type="object">
   User profile information including personal details.
-  
+
   <Expandable title="Profile details">
     <ResponseField name="first_name" type="string">
     User's first name as entered during registration.
     </ResponseField>
-    
+
     <ResponseField name="avatar_url" type="string | null">
     URL to user's profile picture. Returns null if no avatar is set.
     </ResponseField>

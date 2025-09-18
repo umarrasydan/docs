@@ -1,0 +1,348 @@
+---
+title: "iOS SDK (Swift)"
+description: "Integrate payment processing with physical terminals using the Terminal Gateway SDK for iOS (Swift)"
+---
+
+# Terminal Gateway SDK for iOS (Swift)
+
+The Terminal Gateway SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals and process transactions seamlessly using our comprehensive Swift SDK.
+
+<Info>
+This SDK works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal Gateway SDK to interact with physical payment devices.
+</Info>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="v0.4.0 — 13-May-2025">
+    XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+The SDK follows semantic versioning. Breaking changes will bump the major version number.
+</Note>
+
+## Installation
+
+Install the Terminal Gateway SDK by adding it as a framework in Xcode:
+
+<Steps>
+<Step title="Add Sentry dependency">
+  Add the Sentry pod to your Podfile:
+  
+  ```ruby Podfile
+  target 'YourApp' do
+    pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
+  end
+  ```
+  
+  <Check>
+  Run `pod install` to install the dependency.
+  </Check>
+</Step>
+
+<Step title="Extract framework">
+  Extract the TerminalGateway.xcframework zip file in your project directory.
+</Step>
+
+<Step title="Add framework to project">
+  In Xcode, select your target and navigate to the "General" tab.
+  
+  Find "Frameworks, Libraries, and Embedded Content" and click the "+" button.
+</Step>
+
+<Step title="Import framework">
+  Click "Add Other..." and select "Add Files..."
+  
+  Search for TerminalGateway.xcframework, select it, and click "Open".
+</Step>
+
+<Step title="Configure build settings">
+  Go to "Build Settings" and make the following changes:
+  
+  - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
+  - Search for "Other Linker Flags" and add "-lsqlite3"
+</Step>
+</Steps>
+
+## Getting Started
+
+Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal IP address.
+
+<Warning>
+Terminal Gateway requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
+</Warning>
+
+### Step 1: Initialize SDK
+
+Call the `XenTerminal.initialize()` method within the Application class of your app:
+
+```swift AppDelegate.swift
+TerminalApp.shared.initialize(
+   clientKey: TEST_CLIENT_KEY,
+   mode: TerminalMode.integration
+)
+
+TerminalGateway.shared.addProvider(provider: TerminalBRI.shared)
+// For GHL
+// TerminalGateway.shared.addProvider(provider: TerminalGHL.shared)
+```
+
+The SDK supports two modes:
+
+<Tabs>
+<Tab title="Integration Mode">
+  Use `TerminalMode.integration` for development and testing with physical terminals. Transactions are sent to Test Mode on the Xendit Dashboard.
+</Tab>
+
+<Tab title="Live Mode">
+  Use `TerminalMode.live` for production builds. Data is pushed to your Live Xendit Dashboard and requires a LIVE_CLIENT_KEY.
+</Tab>
+</Tabs>
+
+### Step 2: Register Terminal Device
+
+Register multiple devices by calling the `registerDevices` method:
+
+```swift
+let result = TerminalGateway.shared.registerDevices(devices: [ 
+  TerminalDevice(id: Terminal_ID_1, ipAddress: Terminal_IP_1),    
+  TerminalDevice(id: Terminal_ID_2, ipAddress: Terminal_IP_2), 
+  TerminalDevice(id: Terminal_ID_3, ipAddress: Terminal_IP_3) 
+  // Add more TerminalDevice instances as needed 
+])
+```
+
+<Tip>
+- **BRI Terminal**: TID can be obtained from BRI FMS App, while the IP address can be found in the ECRLink app, both on the terminal device.
+- **GHL Terminal**: TID can be found on the sticker on the terminal, while the IP address can be obtained from GHL LinkPOS App, both on the terminal device.
+</Tip>
+
+## Optional Methods
+
+### Set Operation Timeout
+
+Configure the maximum allowed time for operations to complete before the service cancels and retries the transaction:
+
+```swift
+TerminalGateway.shared.setOperationTimeout(minutes: 5) // default value is 5 minutes
+```
+
+### Restart Terminal Connection
+
+Manage and restart terminal service connections:
+
+<Tabs>
+<Tab title="Restart All Connections">
+  Call the method without parameters to restart all connections and tasks:
+  
+  ```swift
+  // This restarts all connections
+  TerminalGateway.shared.restart(tid: nil)
+  ```
+</Tab>
+
+<Tab title="Restart Single Connection">
+  Provide the terminal ID to restart a specific terminal connection:
+  
+  ```swift
+  // This restarts the connection to a specific Terminal
+  TerminalGateway.shared.restart(tid: TERMINAL_ID)
+  ```
+</Tab>
+</Tabs>
+
+### Observing Connection State
+
+Monitor Terminal connection status using the `observeEDCConnection` method:
+
+```swift
+TerminalGateway.shared
+  .observeEDCConnection(terminalID: TERMINAL_ID) { state in     
+   // Handle connection state changes
+}
+```
+
+The SDK handles the following connection states:
+
+| Code | Description |
+|------|-------------|
+| `connected` | Device connected to Terminal |
+| `disconnected` | Device disconnected to Terminal |
+| `unknown` | When no connection has been established yet |
+| `connecting` | Device requesting connection to Terminal |
+| `connectingFailed` | Device unable to connect with Terminal |
+| `unsupported` | Connection not supported |
+
+### Observing Error State
+
+Monitor Terminal error states using the `observeError` method:
+
+```swift
+TerminalGateway.shared.observeError(onResult: { device, error in
+    // Handle error state events
+})
+```
+
+## Error Handling
+
+### Error Data Structure
+
+All errors returned by the Terminal Gateway SDK follow this structure:
+
+```swift
+struct TerminalError {
+    let code: ErrorCode
+    let message: String
+}
+```
+
+### Error Codes Reference
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Error Code</TableHeader>
+      <TableHeader>HTTP Status</TableHeader>
+      <TableHeader>Description</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow><TableCell>INVALID_CREDENTIAL</TableCell><TableCell>401</TableCell><TableCell>Provided credentials are invalid or expired</TableCell></TableRow>
+    <TableRow><TableCell>INVALID_REQUEST</TableCell><TableCell>400</TableCell><TableCell>Request format or parameters are invalid</TableCell></TableRow>
+    <TableRow><TableCell>INTERNAL_SERVER_ERROR</TableCell><TableCell>500</TableCell><TableCell>Server-side error occurred during processing</TableCell></TableRow>
+    <TableRow><TableCell>UNKNOWN_ERROR</TableCell><TableCell>0</TableCell><TableCell>Unexpected error that doesn't fit other categories</TableCell></TableRow>
+    <TableRow><TableCell>KEY_INVALID</TableCell><TableCell>-1</TableCell><TableCell>API key is invalid or not authorized</TableCell></TableRow>
+    <TableRow><TableCell>SEND_FAILED</TableCell><TableCell>-2</TableCell><TableCell>Failed to send data to the terminal device</TableCell></TableRow>
+    <TableRow><TableCell>NOT_CONNECTED</TableCell><TableCell>-3</TableCell><TableCell>No active connection to any terminal device</TableCell></TableRow>
+    <TableRow><TableCell>FAILED_TO_CONNECT</TableCell><TableCell>-4</TableCell><TableCell>Unable to establish connection to terminal</TableCell></TableRow>
+    <TableRow><TableCell>UNSUPPORTED</TableCell><TableCell>-5</TableCell><TableCell>Operation or platform not supported</TableCell></TableRow>
+    <TableRow><TableCell>TERMINAL_BUSY</TableCell><TableCell>-6</TableCell><TableCell>Terminal is processing another transaction</TableCell></TableRow>
+    <TableRow><TableCell>ENCRYPTION_FAILED</TableCell><TableCell>-7</TableCell><TableCell>Encryption key invalid or encryption process failed</TableCell></TableRow>
+    <TableRow><TableCell>AUTHENTICATION_FAILED</TableCell><TableCell>-21</TableCell><TableCell>Terminal authentication failed - check TID and credentials</TableCell></TableRow>
+  </TableBody>
+</Table>
+
+### Error Handling Best Practices
+
+Implement comprehensive error handling for robust payment processing:
+
+```swift
+func handleTerminalError(_ error: TerminalError?) {
+    switch error?.code {
+    case .authenticationFailed:
+        // Verify API key and terminal ID
+        print("Authentication failed: \(error?.message ?? "")")
+        // Show user-friendly message and retry with correct credentials
+        
+    case .terminalBusy:
+        // Terminal is processing another transaction
+        print("Terminal busy: \(error?.message ?? "")")
+        // Wait and retry after a delay
+        retryAfterDelay(5.0) // 5 seconds
+        
+    case .failedToConnect, .notConnected:
+        // Network connectivity issues
+        print("Connection failed: \(error?.message ?? "")")
+        // Check network connection and terminal IP address
+        checkNetworkConnectivity()
+        
+    case .keyInvalid, .invalidCredential:
+        // Credential issues
+        print("Invalid credentials: \(error?.message ?? "")")
+        // Rotate or refresh API credentials
+        refreshCredentials()
+        
+    case .encryptionFailed:
+        // Encryption key issues
+        print("Encryption failed: \(error?.message ?? "")")
+        // Re-initialize SDK with correct encryption keys
+        reinitializeSDK()
+        
+    default:
+        // Log and escalate unknown errors
+        print("Unknown error: \(error?.message ?? "")")
+        // Report to monitoring system
+        reportError(error)
+    }
+}
+```
+
+<Tip>
+Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAILED_TO_CONNECT`. Use exponential backoff to avoid overwhelming the terminal.
+</Tip>
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Unresponsive EDC Machine">
+  **Problem**: The EDC (Electronic Data Capture) machine becomes unresponsive or stops processing transactions.
+
+  **Solution**: 
+  1. Restart the EDC machine by holding the power button and selecting "Restart"
+  2. Wait for the device to fully boot up and reconnect
+  3. Verify the terminal is back online using the connection monitoring features
+
+  <Warning>
+  Always ensure the EDC is properly restarted before attempting new transactions to avoid data corruption.
+  </Warning>
+</Accordion>
+
+<Accordion title="Kiosk Mode Configuration">
+  **Problem**: Unexpected behaviors or unauthorized access to terminal functions.
+
+  **Solution**:
+  1. Ensure all transactions are initiated only through the SDK
+  2. Contact the Xendit EDC team to enable POS-only mode for your Terminal IDs
+  3. Configure terminal settings to disable manual transaction entry
+
+  <Tip>
+  POS-only mode prevents manual transaction entry and ensures all operations go through your application.
+  </Tip>
+</Accordion>
+
+<Accordion title="No Response After Payment Completion">
+  **Problem**: EDC fails to send transaction results to the SDK after payment completion.
+
+  **Solution**:
+  1. Query the Payment Session using the Terminal API to retrieve the latest status
+  2. Check network connectivity between the EDC and your application
+  3. Verify the callback URL configuration in your payment session
+  4. Implement retry logic for failed status updates
+
+  ```swift
+  // Example: Query payment session status
+  let paymentSession = terminalApi.getPaymentSession(sessionId)
+  switch paymentSession.status {
+  case .completed:
+      // Process successful payment
+  case .failed:
+      // Handle failed payment
+  case .pending:
+      // Payment still in progress
+  }
+  ```
+</Accordion>
+
+<Accordion title="Connection Issues">
+  **Problem**: Unable to establish or maintain connection with terminal devices.
+
+  **Solutions**:
+  - **Check network connectivity**: Ensure both devices are on the same network
+  - **Verify IP addresses**: Confirm terminal IP addresses are correct and accessible
+  - **Firewall settings**: Check if firewall is blocking the connection ports
+  - **Terminal status**: Ensure the terminal is powered on and in ready state
+  - **SDK initialization**: Verify client key and terminal configuration
+
+  <Note>
+  Use the connection monitoring features to diagnose specific connection issues.
+  </Note>
+</Accordion>
+</AccordionGroup>
+
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
+
+<FindingTerminalInformation />
