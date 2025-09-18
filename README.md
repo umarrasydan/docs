@@ -1,47 +1,43 @@
-# Xendit Documentation
+# Mintlify Starter Kit
 
-Welcome to Xendit's comprehensive documentation for payment solutions.
+Use the starter kit to get your docs deployed and ready to customize.
 
-This documentation covers:
+Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
 
-- Payment APIs and integrations
-- Terminal API for in-person payments
-- Webhook configurations
-- Code examples and SDKs
-- Best practices and troubleshooting
+- Guide pages
+- Navigation
+- Customizations
+- API reference pages
+- Use of popular components
 
-**[Get started with our quickstart guide](/quickstart)**
+**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
 
 ## Development
 
-To set up your development environment for Xendit integration:
+Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
 
-1. **Install the Xendit SDK** for your preferred language:
-   ```bash
-   # Node.js
-   npm install xendit-node
-   
-   # Python
-   pip install xendit
-   
-   # PHP
-   composer require xendit/xendit-php
-   ```
+```
+npm i -g mint
+```
 
-2. **Get your API credentials** from the [Xendit Dashboard](https://dashboard.xendit.co)
+Run the following command at the root of your documentation, where your `docs.json` is located:
 
-3. **Set up environment variables** with your API keys
+```
+mint dev
+```
 
-4. **Test your integration** using the sandbox environment
+View your local preview at `http://localhost:3000`.
 
-## Getting Help
+## Publishing changes
 
-### Support
-- **Email**: [inpersonpayments@xendit.co](mailto:inpersonpayments@xendit.co)
-- **Community**: [Xendit Community](https://xendit.co/community)
-- **Documentation**: [docs.xendit.co](https://docs.xendit.co)
+Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+
+## Need help?
+
+### Troubleshooting
+
+- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
+- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
 
 ### Resources
-- [API Reference](/api-reference/introduction)
-- [Code Examples](/essentials/code)
-- [Webhook Guide](/api-reference/endpoint/webhook)
+- [Mintlify documentation](https://mintlify.com/docs)
