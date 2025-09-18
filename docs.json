@@ -17,6 +17,7 @@
           {
             "group": "Getting started",
             "pages": [
+              "index",
               "guides/getting-started/index",
               "guides/getting-started/quickstart"
             ]

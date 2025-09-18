@@ -36,7 +36,7 @@ Xendit Terminal consists of two main components that work together:
   </Card>
   <Card
     title="Terminal Gateway"
-    icon="smartphone"
+    icon="globe"
     href="/api-reference/terminal-gateway/introduction"
   >
     Connect and manage physical terminal devices. Available as desktop app and mobile SDKs for Android and iOS.
@@ -50,7 +50,7 @@ Xendit Terminal consists of two main components that work together:
   </Card>
   <Card
     title="Device Management"
-    icon="settings"
+    icon="circle-nodes"
     href="/api-reference/terminal-gateway/app-configuration"
   >
     Configure and manage your terminal devices using the Terminal Gateway application with step-by-step setup guides.
@@ -131,23 +131,6 @@ Everything you need to build with Xendit Terminal:
   </Step>
   <Step title="Monitor transactions">
     Observe connection states and handle payment results through SDK callbacks.
-  </Step>
-  </Steps>
-</Tab>
-
-<Tab title="Migration from Xen BRI">
-  <Steps>
-  <Step title="Update dependencies">
-    Replace Xen BRI SDK with Terminal Gateway SDK and update import statements.
-  </Step>
-  <Step title="Change initialization">
-    Switch from XenBriTerminal.initialize() to TerminalApp.initialize() and add providers.
-  </Step>
-  <Step title="Update payment flow">
-    Replace direct saleIntent calls with Terminal API payment session creation.
-  </Step>
-  <Step title="Handle new callbacks">
-    Update error handling and connection state observation to use new SDK methods.
   </Step>
   </Steps>
 </Tab>
