@@ -1,6 +1,6 @@
 ---
-title: "Terminal API"
-description: "Complete API reference for in-person payment processing using Xendit terminal devices"
+title: 'Introduction'
+description: 'Complete API reference for in-person payment processing using Xendit terminal devices'
 ---
 
 ## Overview
@@ -8,7 +8,8 @@ description: "Complete API reference for in-person payment processing using Xend
 The Terminal API enables you to process in-person payments using Xendit's terminal devices. This API provides comprehensive functionality for creating payment sessions, managing terminal operations, and handling real-time payment callbacks.
 
 <Info>
-**New to Terminal API?** Start with our [quickstart guide](/quickstart) to get your first terminal payment processed in under 10 minutes.
+  **New to Terminal API?** Start with our [quickstart guide](/quickstart) to get
+  your first terminal payment processed in under 10 minutes.
 </Info>
 
 ## Key Features
@@ -31,7 +32,9 @@ Before using the Terminal API, ensure you have:
 - **Network Access**: Terminal devices must have internet connectivity
 
 <Warning>
-**Important**: The Terminal API requires a separate API key from your standard Xendit Dashboard credentials. Contact the Xendit In-Person Payment team to obtain your Terminal API key.
+  **Important**: The Terminal API requires a separate API key from your standard
+  Xendit Dashboard credentials. Contact the Xendit In-Person Payment team to
+  obtain your Terminal API key.
 </Warning>
 
 ## API Endpoints
@@ -40,14 +43,12 @@ Choose the appropriate endpoint for your environment:
 
 <CardGroup cols={2}>
   <Card title="Development" icon="code">
-    **Base URL**: `https://terminal-dev.xendit.co`
-    
-    Use this endpoint for testing and development with sandbox data.
+    **Base URL**: `https://terminal-dev.xendit.co` Use this endpoint for testing
+    and development with sandbox data.
   </Card>
   <Card title="Production" icon="globe">
-    **Base URL**: `https://terminal.xendit.co`
-    
-    Use this endpoint for live transactions and production use.
+    **Base URL**: `https://terminal.xendit.co` Use this endpoint for live
+    transactions and production use.
   </Card>
 </CardGroup>
 
@@ -60,19 +61,26 @@ The Terminal API uses HTTP Basic Authentication for all requests:
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://terminal-dev.xendit.co/api/v1/sessions' \
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   -u 'your_terminal_api_key:' \
   -H 'Content-Type: application/json' \
+  -H 'Idempotency-key: unique-key-123' \
   -d '{
-    "amount": 10000,
+    "session_type": "PAY",
+    "mode": "TERMINAL",
     "currency": "IDR",
-    "external_id": "session_123"
+    "amount": 10000,
+    "country": "ID",
+    "channel_properties": {
+      "terminal_id": "TERM001"
+    }
   }'
 ```
 </RequestExample>
 
 <Warning>
-**Critical**: Always include the colon (`:`) after your API key when encoding for Basic Authentication, even though the password is empty.
+  **Critical**: Always include the colon (`:`) after your API key when encoding
+  for Basic Authentication, even though the password is empty.
 </Warning>
 
 ## Terminal Gateway Setup
@@ -131,9 +139,8 @@ Get started with the Terminal API in three simple steps:
 
 <Step title="Set up Terminal Gateway">
   Install and configure the Terminal Gateway app or SDK on your devices.
-  
   <Check>
-  Confirm your terminal devices are connected and showing as "Ready" status.
+    Confirm your terminal devices are connected and showing as "Ready" status.
   </Check>
 </Step>
 
@@ -141,16 +148,22 @@ Get started with the Terminal API in three simple steps:
   Use the API to create a payment session:
   
   ```javascript
-  const response = await fetch('https://terminal-dev.xendit.co/api/v1/sessions', {
+  const response = await fetch('https://terminal-dev.xendit.co/v1/terminal/sessions', {
     method: 'POST',
     headers: {
       'Authorization': 'Basic ' + btoa('your_api_key:'),
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Idempotency-key': 'unique-key-' + Date.now()
     },
     body: JSON.stringify({
-      amount: 10000,
+      session_type: 'PAY',
+      mode: 'TERMINAL',
       currency: 'IDR',
-      external_id: 'session_' + Date.now()
+      amount: 10000,
+      country: 'ID',
+      channel_properties: {
+        terminal_id: 'TERM001'
+      }
     })
   });
   ```
@@ -170,19 +183,52 @@ Explore the complete Terminal API documentation:
   Create new payment sessions for terminal transactions.
 </Card>
 
-<Card title="Get Payment Session" icon="search" href="/api-reference/terminal-api/get-payment-session">
+<Card
+  title="Get Payment Session"
+  icon="search"
+  href="/api-reference/terminal-api/get-payment-session"
+>
   Retrieve payment session details and status information.
 </Card>
 
-<Card title="Void Payment" icon="x" href="/api-reference/terminal-api/void-payment">
+<Card
+  title="Get Payment Detail"
+  icon="receipt"
+  href="/api-reference/terminal-api/get-payment-detail"
+>
+  Retrieve payment transaction details and status.
+</Card>
+
+<Card
+  title="Get Public Payment Detail"
+  icon="globe"
+  href="/api-reference/terminal-api/get-public-payment-detail"
+>
+  Retrieve payment details using the public endpoint (no authentication
+  required).
+</Card>
+
+<Card
+  title="Void Payment"
+  icon="x"
+  href="/api-reference/terminal-api/void-payment"
+>
   Cancel or void payment transactions when needed.
 </Card>
 
-<Card title="Push Operation Command" icon="arrow-right" href="/api-reference/terminal-api/push-operation-command">
+<Card
+  title="Push Operation Command"
+  icon="arrow-right"
+  href="/api-reference/terminal-api/push-operation-command"
+>
   Send operational commands to terminal devices.
 </Card>
 
-<Card title="Payment Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
+<Card
+  title="Payment Callbacks"
+  icon="webhook"
+  href="/api-reference/terminal-api/callbacks"
+>
   Handle real-time payment notifications and status updates.
 </Card>
 
@@ -194,12 +240,28 @@ Explore the complete Terminal API documentation:
 ## OpenAPI Specification
 
 <Note>
-Download the complete OpenAPI 3.0 specification for integration with your development tools and API clients.
+  Download the complete OpenAPI 3.0 specification for integration with your
+  development tools and API clients. The specification is available in YAML
+  format and can be imported into tools like Postman, Insomnia, or any
+  OpenAPI-compatible client.
 </Note>
 
-<Card title="OpenAPI Specification" icon="file-code" href="/api-reference/terminal-api/openapi-spec.yaml">
-  Download the complete OpenAPI 3.0 specification for the Terminal API
+<CardGroup cols={2}>
+<Card title="Download YAML" icon="file-code" href="/api-reference/terminal-api/openapi-spec.yaml" download="xendit-terminal-api-spec.yaml">
+  Download the complete OpenAPI 3.0 specification in YAML format
 </Card>
+
+<Card title="View in Browser" icon="external-link" href="/api-reference/terminal-api/openapi-spec.yaml">
+  View the OpenAPI specification directly in your browser
+</Card>
+</CardGroup>
+
+<Tip>
+  **Integration Tips:** - Import the YAML file into Postman or Insomnia for easy
+  API testing - Use the specification to generate client SDKs in your preferred
+  language - The spec includes all endpoints, request/response schemas, and
+  authentication details
+</Tip>
 
 ## Changelog
 
@@ -209,6 +271,7 @@ Download the complete OpenAPI 3.0 specification for integration with your develo
 - Enhanced error handling and debugging capabilities
 
 ## Improvements
+
 - Updated API documentation with more detailed examples
 - Improved error messages for better developer experience
 </Update>
@@ -221,18 +284,18 @@ Download the complete OpenAPI 3.0 specification for integration with your develo
 - **Multi-device Support**: Manage multiple terminals from single integration
 
 ## API Endpoints
-- `POST /api/v1/sessions` - Create payment sessions
-- `GET /api/v1/sessions/{id}` - Get session details
-- `POST /api/v1/sessions/{id}/void` - Void payment transactions
-- `POST /api/v1/terminals/{id}/commands` - Push terminal commands
+
+- `POST /v1/terminal/sessions` - Create payment sessions
+- `GET /v1/terminal/sessions/{id}` - Get session details
+- `GET /v1/terminal/payments/{id}` - Get payment details (authenticated)
+- `GET /public/v1/terminal/payments/{id}` - Get payment details (public)
+- `POST /v1/terminal/payments/{id}/void` - Void payment transactions
+- `POST /v1/terminal/commands` - Push terminal commands
 </Update>
 
 ## Need Help?
 
-<Card
-  title="Contact Support"
-  icon="envelope"
-  href="mailto:help@xendit.co"
->
-  Get personalized assistance from our Terminal API support team for integration questions or technical issues.
+<Card title="Contact Support" icon="envelope" href="mailto:help@xendit.co">
+  Get personalized assistance from our Terminal API support team for integration
+  questions or technical issues.
 </Card>

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Xendit Terminal API
-  version: 1.0.1
+  version: 0.4.1
   description:
     API specification for Xendit Terminal (Electronic Data Capture) Payment
     Sessions and Commands
@@ -39,6 +39,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TerminalPaymentSessionResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/terminal/sessions/{id}:
     get:
       tags:
@@ -62,8 +74,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TerminalPaymentSessionResponse'
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: 'Terminal Payment Session not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/terminal/payments/{id}:
+    get:
+      tags:
+        - Payments Terminal Api
+      security:
+        - BasicAuth: []
+      operationId: getTerminalPayment
+      summary: 'Get Terminal Payment Detail'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: 'Terminal Payment ID'
+      responses:
+        '200':
+          description: 'Terminal Payment fetched successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 'Terminal Payment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/terminal/payments/{id}/void:
     post:
       tags:
@@ -87,6 +144,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VoidPaymentResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 'Terminal Payment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/terminal/commands:
     post:
       tags:
@@ -108,6 +183,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PushCommandResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 'Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /public/v1/terminal/payments/{id}:
     get:
       tags:
@@ -129,6 +216,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 'Payment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
@@ -171,6 +270,9 @@ components:
               - TH_BBL_QRCS
               - TH_MULTIIPP
               - TH_QRCODE
+              - MY_QR
+              - MY_CARD
+              - MY_EWALLET
           nullable: true
     CreateTerminalPaymentSession:
       type: object
@@ -284,6 +386,7 @@ components:
           enum:
             - ACTIVE
             - COMPLETED
+            - FAILED
             - CANCELED
         description:
           type: string
@@ -322,8 +425,7 @@ components:
             - VN_CARD
             - VN_QR
             - TH_ALIPAY_PLUS
-            - TH_WECHATPAY_CIL
-            - TH_WECHATPAY_OCGT
+            - TH_WECHATPAY
             - TH_TRUEMONEY
             - TH_LINEPAY
             - TH_SHOPEEPAY
@@ -333,6 +435,9 @@ components:
             - TH_BBL_QRCS
             - TH_MULTIIPP
             - TH_QRCODE
+            - MY_QR
+            - MY_CARD
+            - MY_EWALLET
     PaymentResponse:
       type: object
       required:
@@ -475,8 +580,7 @@ components:
             - VN_CARD
             - VN_QR
             - TH_ALIPAY_PLUS
-            - TH_WECHATPAY_CIL
-            - TH_WECHATPAY_OCGT
+            - TH_WECHATPAY
             - TH_TRUEMONEY
             - TH_LINEPAY
             - TH_SHOPEEPAY
@@ -486,6 +590,9 @@ components:
             - TH_BBL_QRCS
             - TH_MULTIIPP
             - TH_QRCODE
+            - MY_QR
+            - MY_CARD
+            - MY_EWALLET
     VoidPaymentResponse:
       type: object
       properties:
@@ -498,3 +605,22 @@ components:
         message:
           type: string
           example: 'Payment not found'
+    ErrorResponse:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - INVALID_REQUEST
+            - DUPLICATED_REQUEST
+            - UNAUTHORIZED
+            - CURRENCY_NOT_SUPPORTED
+            - TERMINAL_NOT_FOUND
+            - COMMAND_NOT_SUPPORTED
+          example: 'INVALID_REQUEST'
+        message:
+          type: string
+          example: 'Missing required parameter: terminal_id'

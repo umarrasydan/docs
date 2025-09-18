@@ -1,0 +1,254 @@
+---
+title: "Get Public Payment Detail"
+api: "GET /public/v1/terminal/payments/{id}"
+description: "Retrieve details of a specific payment transaction (public endpoint)"
+---
+
+# Get Public Payment Detail
+
+Retrieves the details of a specific payment transaction using its unique identifier. This is a public endpoint that doesn't require authentication.
+
+<Note>
+This endpoint is public and doesn't require authentication. It's typically used for retrieving payment details in scenarios where you don't have access to the authenticated API.
+</Note>
+
+## Headers
+
+<ParamField query="Content-Type" type="string" required>
+  `application/json`
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the payment to retrieve
+  
+  Must match the pattern: `^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$`
+</ParamField>
+
+## Response
+
+<ResponseField name="payment_id" type="string">
+  Xendit unique Payment ID
+</ResponseField>
+
+<ResponseField name="business_id" type="string">
+  Xendit business ID
+</ResponseField>
+
+<ResponseField name="reference_id" type="string">
+  Merchant's reference ID
+</ResponseField>
+
+<ResponseField name="customer_id" type="string">
+  Xendit-generated Customer ID
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  <Enum values={["PAY", "PRE_AUTH"]} />
+  
+  Payment type
+</ResponseField>
+
+<ResponseField name="country" type="string">
+  <Enum values={["ID", "VN", "TH"]} />
+  
+  Country code
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  <Enum values={["IDR", "VND", "THB"]} />
+  
+  Currency code
+</ResponseField>
+
+<ResponseField name="request_amount" type="number">
+  The intended payment amount to be collected from the end user
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  <Enum values={["SUCCEEDED", "VOIDED", "AUTHORIZED"]} />
+  
+  Payment status
+</ResponseField>
+
+<ResponseField name="payment_details" type="object">
+  Payment information provided by the payment method provider
+</ResponseField>
+
+<ResponseField name="payment_details.terminal_id" type="string">
+  Terminal ID
+</ResponseField>
+
+<ResponseField name="payment_details.payment_method" type="string">
+  <Enum values={["ID_INSERT_CARD", "ID_CONTACTLESS", "ID_BRIZZI", "ID_QRIS", "VN_CARD", "VN_QR", "TH_ALIPAY_PLUS", "TH_WECHATPAY", "TH_TRUEMONEY", "TH_LINEPAY", "TH_SHOPEEPAY", "TH_SABUYMONEY", "TH_MAXME", "TH_CARD", "TH_BBL_QRCS", "TH_MULTIIPP", "TH_QRCODE", "MY_QR", "MY_CARD", "MY_EWALLET"]} />
+  
+  Payment method used
+</ResponseField>
+
+<ResponseField name="failure_code" type="string">
+  Payment failure code (nullable)
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  Key-value entries for your custom data
+</ResponseField>
+
+<ResponseField name="created" type="string">
+  Payment's creation time (ISO 8601 format)
+</ResponseField>
+
+<ResponseField name="updated" type="string">
+  Payment's updated time (ISO 8601 format)
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://terminal-dev.xendit.co/public/v1/terminal/payments/pay_1234567890abcdef \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://terminal-dev.xendit.co/public/v1/terminal/payments/pay_1234567890abcdef', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://terminal-dev.xendit.co/public/v1/terminal/payments/pay_1234567890abcdef',
+    headers={
+        'Content-Type': 'application/json'
+    }
+)
+```
+</CodeGroup>
+
+## Example Response
+
+### Successful Payment
+
+```json
+{
+  "payment_id": "pay_1234567890abcdef",
+  "business_id": "biz_1234567890",
+  "reference_id": "ref-12345",
+  "customer_id": "cus-12345",
+  "type": "PAY",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 100000.00,
+  "status": "SUCCEEDED",
+  "payment_details": {
+    "terminal_id": "abcd-3254fsd-3242",
+    "payment_method": "ID_INSERT_CARD"
+  },
+  "failure_code": null,
+  "metadata": {
+    "store_id": "store_001"
+  },
+  "created": "2024-11-06T15:32:42Z",
+  "updated": "2024-11-06T15:32:42Z"
+}
+```
+
+### Voided Payment
+
+```json
+{
+  "payment_id": "pay_1234567890abcdef",
+  "business_id": "biz_1234567890",
+  "reference_id": "ref-12345",
+  "customer_id": "cus-12345",
+  "type": "PAY",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 100000.00,
+  "status": "VOIDED",
+  "payment_details": {
+    "terminal_id": "abcd-3254fsd-3242",
+    "payment_method": "ID_INSERT_CARD"
+  },
+  "failure_code": null,
+  "metadata": {
+    "store_id": "store_001"
+  },
+  "created": "2024-11-06T15:32:42Z",
+  "updated": "2024-11-06T15:35:00Z"
+}
+```
+
+### Authorized Payment (Pre-Auth)
+
+```json
+{
+  "payment_id": "pay_1234567890abcdef",
+  "business_id": "biz_1234567890",
+  "reference_id": "ref-12345",
+  "customer_id": "cus-12345",
+  "type": "PRE_AUTH",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 100000.00,
+  "status": "AUTHORIZED",
+  "payment_details": {
+    "terminal_id": "abcd-3254fsd-3242",
+    "payment_method": "ID_INSERT_CARD"
+  },
+  "failure_code": null,
+  "metadata": {
+    "store_id": "store_001"
+  },
+  "created": "2024-11-06T15:32:42Z",
+  "updated": "2024-11-06T15:32:42Z"
+}
+```
+
+## Payment Status Values
+
+<CardGroup cols={3}>
+  <Card title="SUCCEEDED" icon="check-circle" color="green">
+    Payment was successfully processed and completed
+  </Card>
+  <Card title="VOIDED" icon="x-circle" color="red">
+    Payment was voided before settlement
+  </Card>
+  <Card title="AUTHORIZED" icon="clock" color="blue">
+    Payment was authorized but not yet captured (Pre-Auth only)
+  </Card>
+</CardGroup>
+
+## Payment Types
+
+<CardGroup cols={2}>
+  <Card title="PAY" icon="credit-card">
+    One-time payment that is immediately captured
+  </Card>
+  <Card title="PRE_AUTH" icon="lock">
+    Pre-authorization that holds funds but doesn't capture them immediately
+  </Card>
+</CardGroup>
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Public Integration" icon="globe">
+    Retrieve payment details without requiring API authentication
+  </Card>
+  <Card title="Third-party Access" icon="users">
+    Allow third-party systems to access payment information
+  </Card>
+  <Card title="Customer Portal" icon="user">
+    Display payment status in customer-facing applications
+  </Card>
+  <Card title="Webhook Verification" icon="webhook">
+    Verify payment details received via webhooks
+  </Card>
+</CardGroup>
