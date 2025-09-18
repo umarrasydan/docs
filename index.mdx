@@ -1,14 +1,14 @@
 ---
-title: "Xendit Documentation"
-description: "Complete guide to integrating Xendit's payment solutions for online and in-person transactions"
+title: "Xendit Terminal Documentation"
+description: "Complete guide to integrating Xendit's Terminal API and Gateway for in-person payment processing using physical terminal devices"
 ---
 
-## Welcome to Xendit
+## Welcome to Xendit Terminal
 
-Xendit provides comprehensive payment solutions for businesses across Southeast Asia. Whether you need online payments, in-person transactions, or automated payment processing, our APIs and SDKs make integration simple and secure.
+Xendit Terminal provides comprehensive in-person payment solutions for businesses using physical terminal devices. Process secure payments through Terminal API and manage terminal devices using Terminal Gateway across Android, iOS, and desktop platforms.
 
 <Info>
-**New to Xendit?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first payment processed in under 10 minutes.
+**New to Xendit Terminal?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first terminal payment processed in under 10 minutes.
 </Info>
 
 ## Get Started Quickly
@@ -22,9 +22,9 @@ Xendit provides comprehensive payment solutions for businesses across Southeast 
   Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction.
 </Card>
 
-## Payment Solutions
+## Terminal Solutions
 
-Choose the right payment solution for your business needs:
+Xendit Terminal consists of two main components that work together:
 
 <CardGroup cols={2}>
   <Card
@@ -32,118 +32,168 @@ Choose the right payment solution for your business needs:
     icon="terminal"
     href="/api-reference/terminal-api/introduction"
   >
-    Process in-person payments using terminal devices. Perfect for retail stores, restaurants, and point-of-sale systems.
+    Create and manage payment sessions for in-person transactions. Handles payment processing, callbacks, and transaction management.
   </Card>
   <Card
     title="Terminal Gateway"
     icon="smartphone"
     href="/api-reference/terminal-gateway/introduction"
   >
-    Manage terminal devices with our gateway solution. Available for Android and iOS platforms.
+    Connect and manage physical terminal devices. Available as desktop app and mobile SDKs for Android and iOS.
   </Card>
   <Card
-    title="Payment Methods"
-    icon="credit-card"
-    href="/api-reference/terminal-api/introduction"
-  >
-    Accept various payment methods including cards, e-wallets, and bank transfers across Southeast Asia.
-  </Card>
-  <Card
-    title="Webhooks"
+    title="Payment Callbacks"
     icon="webhook"
     href="/api-reference/terminal-api/callbacks"
   >
-    Receive real-time payment notifications and status updates through our webhook system.
+    Receive real-time payment notifications and status updates through our webhook system for transaction monitoring.
+  </Card>
+  <Card
+    title="Device Management"
+    icon="settings"
+    href="/api-reference/terminal-gateway/app-configuration"
+  >
+    Configure and manage your terminal devices using the Terminal Gateway application with step-by-step setup guides.
   </Card>
 </CardGroup>
 
 ## Developer Resources
 
-Everything you need to build with Xendit:
+Everything you need to build with Xendit Terminal:
 
 <CardGroup cols={2}>
   <Card
-    title="Development Setup"
-    icon="code"
-    href="/guides/getting-started/development"
+    title="Getting Started Guide"
+    icon="rocket"
+    href="/guides/getting-started/index"
   >
-    Set up your development environment with our SDKs and testing tools.
+    Complete setup guide for Terminal API and Terminal Gateway with prerequisites and step-by-step instructions.
   </Card>
   <Card
-    title="Code Examples"
-    icon="terminal"
-    href="/guides/writing-content/code"
+    title="Migration Guide"
+    icon="arrow-right"
+    href="/guides/migration/xen-bri-to-terminal-gateway"
   >
-    Copy-paste ready code examples for all supported programming languages.
+    Migrate from Xen BRI SDK to Terminal Gateway SDK with detailed code examples and architectural changes.
   </Card>
   <Card
     title="API Reference"
     icon="book"
     href="/api-reference/terminal-api/introduction"
   >
-    Complete API documentation with interactive examples and response schemas.
+    Complete Terminal API documentation with endpoints, authentication, and response schemas.
   </Card>
   <Card
     title="Support & Help"
     icon="life-ring"
     href="mailto:help@xendit.co"
   >
-    Get personalized assistance from our developer support team.
+    Get personalized assistance from our Terminal API support team for integration questions.
   </Card>
 </CardGroup>
 
-## Popular Integration Paths
+## Integration Paths
 
 <Tabs>
-<Tab title="E-commerce Store">
-  <Steps>
-  <Step title="Choose payment methods">
-    Select from cards, e-wallets, and bank transfers that work in your target markets.
-  </Step>
-  <Step title="Integrate checkout">
-    Use our web SDK or mobile SDKs to add payment processing to your store.
-  </Step>
-  <Step title="Handle webhooks">
-    Set up webhook endpoints to receive payment notifications and update order status.
-  </Step>
-  </Steps>
-</Tab>
-
 <Tab title="Retail POS System">
   <Steps>
+  <Step title="Obtain Terminal API key">
+    Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.
+  </Step>
   <Step title="Set up Terminal Gateway">
-    Install our Terminal Gateway app or SDK on your Android/iOS devices.
+    Install Terminal Gateway app or integrate mobile SDK on your devices to manage physical terminals.
   </Step>
-  <Step title="Configure Terminal API">
-    Connect your terminals to our API for payment processing.
+  <Step title="Register terminal devices">
+    Configure your physical terminals with Terminal ID and IP address in the Gateway application.
   </Step>
-  <Step title="Test transactions">
-    Use our sandbox environment to test all payment scenarios before going live.
+  <Step title="Create payment sessions">
+    Use Terminal API to create payment sessions and process transactions on connected terminals.
+  </Step>
+  <Step title="Handle callbacks">
+    Set up webhook endpoints to receive real-time payment status updates and notifications.
   </Step>
   </Steps>
 </Tab>
 
-<Tab title="Mobile App">
+<Tab title="Mobile POS App">
   <Steps>
-  <Step title="Install mobile SDK">
-    Add our mobile SDK to your iOS or Android application.
+  <Step title="Install Terminal Gateway SDK">
+    Add Terminal Gateway SDK to your Android or iOS application for terminal device management.
   </Step>
-  <Step title="Implement payment flow">
-    Create payment screens using our pre-built UI components or custom implementations.
+  <Step title="Initialize SDK">
+    Configure the SDK with your client key and add terminal providers (BRI, GHL, etc.).
+  </Step>
+  <Step title="Register devices">
+    Register your physical terminal devices with Terminal ID and connection details.
   </Step>
   <Step title="Process payments">
-    Handle payment processing, receipts, and error scenarios in your app.
+    Use Terminal API to create payment sessions that automatically trigger on registered terminals.
+  </Step>
+  <Step title="Monitor transactions">
+    Observe connection states and handle payment results through SDK callbacks.
+  </Step>
+  </Steps>
+</Tab>
+
+<Tab title="Migration from Xen BRI">
+  <Steps>
+  <Step title="Update dependencies">
+    Replace Xen BRI SDK with Terminal Gateway SDK and update import statements.
+  </Step>
+  <Step title="Change initialization">
+    Switch from XenBriTerminal.initialize() to TerminalApp.initialize() and add providers.
+  </Step>
+  <Step title="Update payment flow">
+    Replace direct saleIntent calls with Terminal API payment session creation.
+  </Step>
+  <Step title="Handle new callbacks">
+    Update error handling and connection state observation to use new SDK methods.
   </Step>
   </Steps>
 </Tab>
 </Tabs>
 
+## Platform-Specific Guides
+
+Choose your development platform for detailed integration instructions:
+
+<CardGroup cols={2}>
+  <Card
+    title="Android SDK"
+    icon="android"
+    href="/api-reference/terminal-gateway/android-sdk"
+  >
+    Native Android development with Kotlin SDK for terminal device integration.
+  </Card>
+  <Card
+    title="iOS SDK"
+    icon="apple"
+    href="/api-reference/terminal-gateway/ios-sdk"
+  >
+    Native iOS development with Swift SDK for terminal device integration.
+  </Card>
+  <Card
+    title="Gateway App"
+    icon="desktop"
+    href="/api-reference/terminal-gateway/app-configuration"
+  >
+    Desktop application setup and configuration for managing terminal devices.
+  </Card>
+  <Card
+    title="Terminal API"
+    icon="code"
+    href="/api-reference/terminal-api/introduction"
+  >
+    REST API for creating payment sessions and managing terminal operations.
+  </Card>
+</CardGroup>
+
 ## Need Help?
 
 <Card
-  title="Contact Support"
+  title="Contact Terminal Support"
   icon="envelope"
   href="mailto:help@xendit.co"
 >
-  Reach out to our support team for assistance with your integration or any questions about our payment solutions.
+  Get personalized assistance from our Terminal API support team for integration questions, device setup, or technical issues.
 </Card>

@@ -1,325 +1,320 @@
 ---
 title: "Quickstart"
-description: "Get your Xendit payment integration running in under 10 minutes with our step-by-step guide"
+description: "Set up your development environment and process your first in-person payment in under 10 minutes"
 ---
 
 ## Prerequisites
 
-Before you begin, ensure you have:
+- Terminal API key from Xendit In-Person Payment team
+- Terminal Gateway set up (desktop app or Android/iOS SDK)
+- Connected terminal with `terminal_id`
+- Node.js or your preferred development environment
 
-- A Xendit account ([Sign up here](https://dashboard.xendit.co))
-- Node.js 16+ or your preferred programming language environment
-- A text editor or IDE for development
+<Warning>
+Use sandbox/test devices and small amounts while testing. Do not use production keys in development.
+</Warning>
 
-<Info>
-**New to payments?** This guide covers the basics of integrating Xendit's payment solutions. For advanced features, see our [API reference](/api-reference/terminal-api/introduction).
-</Info>
+## 1. Configure your environment
 
-## Get Started in 3 Steps
-
-Follow these steps to process your first payment with Xendit:
-
-<Steps>
-<Step title="Get your API credentials">
-  Sign up for a Xendit account and retrieve your API credentials from the [Xendit Dashboard](https://dashboard.xendit.co).
-  
-  You'll need:
-  - **Public Key**: For client-side operations
-  - **Secret Key**: For server-side API calls
-  
-  <Warning>
-  Keep your secret key secure and never expose it in client-side code or version control.
-  </Warning>
-  
-  <Check>
-  Verify you can access the dashboard and see your API keys in the settings section.
-  </Check>
-</Step>
-
-<Step title="Install the SDK">
-  Install the Xendit SDK for your preferred programming language:
-  
-  <Tabs>
-  <Tab title="Node.js">
-    ```bash
-    npm install xendit-node
-    ```
-  </Tab>
-  
-  <Tab title="Python">
-    ```bash
-    pip install xendit
-    ```
-  </Tab>
-  
-  <Tab title="PHP">
-    ```bash
-    composer require xendit/xendit-php
-    ```
-  </Tab>
-  
-  <Tab title="Java">
-    ```xml
-    <!-- Add to pom.xml -->
-    <dependency>
-      <groupId>com.xendit</groupId>
-      <artifactId>xendit-java</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-    ```
-  </Tab>
-  </Tabs>
-  
-  <Tip>
-  Check our [code examples](/guides/writing-content/code) for complete integration examples in your language.
-  </Tip>
-</Step>
-
-<Step title="Make your first API call">
-  Create a simple test to verify your integration works:
-  
-  ```javascript example.js
-  const xendit = require('xendit-node');
-  
-  const client = new xendit.XenditClient({
-    secretKey: process.env.XENDIT_SECRET_KEY,
-  });
-  
-  // Test API connection
-  async function testConnection() {
-    try {
-      const response = await client.VirtualAccount.getBanks();
-      console.log('✅ Connection successful!');
-      console.log('Available banks:', response.length);
-    } catch (error) {
-      console.error('❌ Connection failed:', error.message);
-    }
-  }
-  
-  testConnection();
-  ```
-  
-  <Check>
-  Run your test script and verify you see "Connection successful!" in the output.
-  </Check>
-</Step>
-</Steps>
-
-## Create Your First Payment
-
-Now let's create a simple payment to test the complete flow:
+Set up your local development environment with the necessary credentials and base URLs.
 
 <Steps>
-<Step title="Set up environment variables">
+<Step title="Create environment file">
   Create a `.env` file in your project root:
   
   ```bash .env
-  XENDIT_SECRET_KEY=your_secret_key_here
-  XENDIT_PUBLIC_KEY=your_public_key_here
+  TERMINAL_API_KEY=your_dev_terminal_api_key
+  TERMINAL_BASE_URL=https://terminal-dev.xendit.co
+  CALLBACK_URL=http://localhost:3000/terminal/callbacks
+  TERMINAL_ID=TERM001
   ```
   
   <Warning>
-  Never commit your `.env` file to version control. Add it to your `.gitignore` file.
+  Never commit secrets to version control. Add `.env` to your `.gitignore` file.
   </Warning>
 </Step>
 
-<Step title="Create a virtual account">
-  Use our API to create a virtual account for testing:
+<Step title="Install dependencies">
+  Install required packages for your development environment:
   
-  ```javascript create-va.js
-  const xendit = require('xendit-node');
-  require('dotenv').config();
-  
-  const client = new xendit.XenditClient({
-    secretKey: process.env.XENDIT_SECRET_KEY,
-  });
-  
-  async function createVirtualAccount() {
-    try {
-      const virtualAccount = await client.VirtualAccount.create({
-        externalId: 'va-test-' + Date.now(),
-        bankCode: 'BCA',
-        name: 'Test Customer',
-        virtualAccountNumber: '1234567890',
-        suggestedAmount: 10000,
-        isClosed: true,
-        expectedAmount: 10000,
-        expirationDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        isSingleUse: true,
-      });
-      
-      console.log('✅ Virtual Account created successfully!');
-      console.log('Account Number:', virtualAccount.accountNumber);
-      console.log('Bank Code:', virtualAccount.bankCode);
-      
-      return virtualAccount;
-    } catch (error) {
-      console.error('❌ Failed to create virtual account:', error.message);
-    }
-  }
-  
-  createVirtualAccount();
+  <CodeGroup>
+  ```bash Node.js
+  npm install node-fetch express dotenv
   ```
   
-  <Check>
-  Run the script and verify you receive a virtual account number and bank code.
-  </Check>
+  ```bash Python
+  pip install requests flask python-dotenv
+  ```
+  </CodeGroup>
 </Step>
 
-<Step title="Test webhook handling">
-  Set up a simple webhook endpoint to receive payment notifications:
+<Step title="Set up webhook server">
+  Create a local Express server to receive callbacks:
   
-  ```javascript webhook-server.js
-  const express = require('express');
+  ```javascript webhook.js
+  import express from 'express';
+  import dotenv from 'dotenv';
+  
+  dotenv.config();
   const app = express();
-  
   app.use(express.json());
   
-  // Webhook endpoint
-  app.post('/webhook', (req, res) => {
-    console.log('📨 Webhook received:', req.body);
-    
-    // Verify webhook signature (recommended)
-    // const signature = req.headers['x-xendit-signature'];
-    
-    // Process the payment notification
-    const { status, external_id, amount } = req.body;
-    
-    if (status === 'PAID') {
-      console.log('✅ Payment completed!');
-      console.log(`External ID: ${external_id}`);
-      console.log(`Amount: ${amount}`);
-    }
-    
-    res.status(200).send('OK');
+  app.post('/terminal/callbacks', (req, res) => {
+    console.log('Event:', req.body?.type, req.body?.data?.status);
+    console.log('Full payload:', JSON.stringify(req.body, null, 2));
+    res.sendStatus(200);
   });
   
   app.listen(3000, () => {
-    console.log('🚀 Webhook server running on port 3000');
+    console.log('Webhook server running on http://localhost:3000');
+    console.log('Use ngrok to expose this server for testing');
   });
   ```
   
   <Tip>
-  Use tools like [ngrok](https://ngrok.com) to expose your local server for webhook testing.
+  Use ngrok (`npm install -g ngrok && ngrok http 3000`) to expose your local server publicly for webhook testing.
   </Tip>
 </Step>
 </Steps>
 
-## Test Your Integration
+## 2. Test API connectivity
 
-Before going live, thoroughly test your integration:
+Make a test request to validate your API key and environment setup.
+
+```javascript test-connection.js
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const apiKey = process.env.TERMINAL_API_KEY;
+const baseUrl = process.env.TERMINAL_BASE_URL;
+const terminalId = process.env.TERMINAL_ID;
+
+async function testConnection() {
+  const auth = 'Basic ' + Buffer.from(`${apiKey}:`).toString('base64');
+  
+  try {
+    const res = await fetch(`${baseUrl}/v1/terminal/sessions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json',
+        'Idempotency-key': `test-${Date.now()}`,
+      },
+      body: JSON.stringify({
+        session_type: 'PAY',
+        mode: 'TERMINAL',
+        currency: 'IDR',
+        amount: 1000, // Small test amount
+        country: 'ID',
+        channel_properties: { terminal_id: terminalId },
+      }),
+    });
+    
+    const data = await res.json();
+    console.log('✅ API connection successful');
+    console.log('Session ID:', data.id);
+    console.log('Status:', data.status);
+  } catch (error) {
+    console.error('❌ Connection failed:', error.message);
+  }
+}
+
+testConnection();
+```
+
+<Check>
+You receive a 200 response with a session ID. The terminal prompts for payment.
+</Check>
+
+## 3. Create your first payment session
+
+Now create a payment session and process it on the terminal device.
+
+<CodeGroup>
+```bash cURL
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+  -u 'YOUR_TERMINAL_API_KEY:' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-key: payment-'"$(date +%s)" \
+  -d '{
+    "session_type": "PAY",
+    "mode": "TERMINAL",
+    "currency": "IDR",
+    "amount": 10000,
+    "country": "ID",
+    "channel_properties": { "terminal_id": "TERM001" }
+  }'
+```
+
+```javascript create-payment.js
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+async function createPayment() {
+  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+  
+  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': auth,
+      'Content-Type': 'application/json',
+      'Idempotency-key': `payment-${Date.now()}`,
+    },
+    body: JSON.stringify({
+      session_type: 'PAY',
+      mode: 'TERMINAL',
+      currency: 'IDR',
+      amount: 10000,
+      country: 'ID',
+      channel_properties: { terminal_id: process.env.TERMINAL_ID },
+    }),
+  });
+  
+  const data = await res.json();
+  console.log('Payment session created:', data.id);
+  return data;
+}
+
+createPayment();
+```
+</CodeGroup>
+
+<Check>
+The terminal device prompts for payment. Ask the customer to tap/insert/swipe their card.
+</Check>
+
+<Tip>
+If the device doesn't prompt, verify the terminal is connected in Gateway and the `terminal_id` matches your device configuration.
+</Tip>
+
+## 4. Monitor callbacks
+
+Your webhook server (started in step 1) will receive real-time payment updates. Monitor the console output to see callback events.
+
+<Info>
+Callback events include `PAYMENT_CREATED`, `PAYMENT_SUCCEEDED`, `PAYMENT_FAILED`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
+</Info>
+
+## 5. Verify payment details
+
+Query payment details after receiving a success callback.
+
+<CodeGroup>
+```bash cURL
+curl -X GET 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID' \
+  -u 'YOUR_TERMINAL_API_KEY:'
+```
+
+```bash cURL (public)
+curl -X GET 'https://terminal-dev.xendit.co/public/v1/terminal/payments/PAYMENT_ID'
+```
+</CodeGroup>
+
+<Check>
+Confirm status is `SUCCEEDED` and amounts match your session.
+</Check>
+
+## 6. Optional: Void a payment
+
+If needed, you can void a payment transaction:
+
+<CodeGroup>
+```bash cURL
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID/void' \
+  -u 'YOUR_TERMINAL_API_KEY:' \
+  -H 'Idempotency-key: void-'"$(date +%s)"
+```
+
+```javascript void-payment.js
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+async function voidPayment(paymentId) {
+  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+  
+  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/payments/${paymentId}/void`, {
+    method: 'POST',
+    headers: {
+      'Authorization': auth,
+      'Idempotency-key': `void-${Date.now()}`,
+    },
+  });
+  
+  const data = await res.json();
+  console.log('Payment voided:', data.status);
+}
+
+// voidPayment('your-payment-id');
+```
+</CodeGroup>
+
+## Troubleshooting
 
 <AccordionGroup>
-<Accordion title="Sandbox Testing">
-  Use Xendit's sandbox environment for safe testing:
-  
-  - Use sandbox API keys for all development
-  - Test with small amounts (e.g., 1000 IDR)
-  - Verify webhook notifications work correctly
-  - Test error scenarios and edge cases
-  
-  <Check>
-  Confirm you can create payments, receive webhooks, and handle errors properly in sandbox.
-  </Check>
+<Accordion title="401 Unauthorized">
+- Ensure you include a trailing colon in the Basic Auth username encoding
+- Verify the key is a Terminal API key (not Dashboard API key)
+- Check that you're using the development base URL for testing
 </Accordion>
 
-<Accordion title="Production Checklist">
-  Before going live, ensure you have:
-  
-  - [ ] Switched to live API keys
-  - [ ] Updated webhook URLs to production endpoints
-  - [ ] Implemented proper error handling
-  - [ ] Added logging and monitoring
-  - [ ] Tested with real payment methods
-  - [ ] Reviewed security best practices
-  
-  <Warning>
-  Start with small transaction amounts in production to verify everything works correctly.
-  </Warning>
+<Accordion title="Terminal not prompting">
+- Confirm Terminal Gateway shows device as Connected/Ready
+- Verify `terminal_id` matches your device configuration exactly
+- Check network connectivity on the device
+- Ensure device has correct time settings
+</Accordion>
+
+<Accordion title="Webhook not receiving callbacks">
+- Use ngrok to expose your local server publicly
+- Ensure your webhook endpoint returns HTTP 200
+- Check server logs and firewall settings
+- Verify the webhook URL is configured correctly
+</Accordion>
+
+<Accordion title="Environment variables not loading">
+- Verify `.env` file is in the correct location
+- Check that you're calling `dotenv.config()` before using environment variables
+- Ensure `.env` file is not committed to version control
 </Accordion>
 </AccordionGroup>
 
-## Next Steps
+## Next steps
 
-Now that you have your basic integration working, explore these advanced features:
+Now that you have a working integration, explore these advanced features:
 
 <CardGroup cols={2}>
-<Card title="Terminal API" icon="terminal" href="/api-reference/terminal-api/introduction">
-  Learn about Xendit's Terminal API for in-person payments and POS systems.
-</Card>
-
-<Card title="Terminal Gateway" icon="smartphone" href="/api-reference/terminal-gateway/introduction">
-  Manage terminal devices with our gateway solution for Android and iOS.
-</Card>
-
-<Card title="Webhooks & Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
-  Set up real-time payment notifications and status updates.
-</Card>
-
-<Card title="Code Examples" icon="code" href="/guides/writing-content/code">
-  Find complete code examples and integration patterns for your language.
-</Card>
-
-<Card title="Development Setup" icon="wrench" href="/guides/getting-started/development">
-  Configure your development environment with testing tools and best practices.
-</Card>
-
-<Card title="API Reference" icon="book" href="/api-reference/terminal-api/introduction">
-  Explore the complete API documentation with interactive examples.
-</Card>
+  <Card title="Terminal API Introduction" icon="book" href="/api-reference/terminal-api/introduction">
+    Complete Terminal API documentation and reference
+  </Card>
+  
+  <Card title="Terminal Gateway" icon="smartphone" href="/api-reference/terminal-gateway/introduction">
+    Learn about Terminal Gateway SDKs for Android and iOS
+  </Card>
+  
+  <Card title="Payment Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
+    Handle real-time payment notifications and status updates
+  </Card>
+  
+  <Card title="Gateway App Configuration" icon="settings" href="/api-reference/terminal-gateway/app-configuration">
+    Configure Terminal Gateway app for your devices
+  </Card>
 </CardGroup>
 
-## Common Issues
+## Production deployment
 
-<AccordionGroup>
-<Accordion title="API Key Issues">
-  **Problem**: Getting "Invalid API key" errors
-  
-  **Solutions**:
-  - Verify you're using the correct environment (sandbox vs live)
-  - Check that your secret key is properly set in environment variables
-  - Ensure there are no extra spaces or characters in your API key
-  
-  <Check>
-  Test your API key by making a simple API call to verify authentication.
-  </Check>
-</Accordion>
+When ready for production:
 
-<Accordion title="Webhook Not Receiving Events">
-  **Problem**: Webhooks not being delivered to your endpoint
-  
-  **Solutions**:
-  - Ensure your webhook URL is publicly accessible (use ngrok for local testing)
-  - Check that your server responds with HTTP 200 status
-  - Verify the webhook URL in your Xendit dashboard
-  - Check server logs for any errors or timeouts
-  
-  <Tip>
-  Use webhook testing tools like [webhook.site](https://webhook.site) to verify your endpoint works.
-  </Tip>
-</Accordion>
+1. **Switch to live API keys** - Use production Terminal API key and base URL `https://terminal.xendit.co`
+2. **Update webhook URLs** - Configure production webhook endpoints that are publicly accessible
+3. **Test thoroughly** - Start with small amounts and verify all payment flows work correctly
+4. **Monitor and log** - Set up proper logging and monitoring for payment events
 
-<Accordion title="Payment Creation Fails">
-  **Problem**: Unable to create payments or virtual accounts
-  
-  **Solutions**:
-  - Verify all required parameters are provided
-  - Check that bank codes and payment methods are valid
-  - Ensure amounts are within acceptable ranges
-  - Review error messages for specific validation issues
-  
-  <Warning>
-  Always test with sandbox environment first before attempting live payments.
-  </Warning>
-</Accordion>
-</AccordionGroup>
-
-## Need Help?
-
-<Card
-  title="Contact Support"
-  icon="envelope"
-  href="mailto:help@xendit.co"
->
-  Get personalized assistance from our developer support team for any integration questions or issues.
-</Card>
+<Warning>
+Always test thoroughly with small amounts in production before processing real customer payments.
+</Warning>

@@ -1,149 +1,118 @@
 ---
-title: "Xendit Documentation"
-description: "Complete guide to integrating Xendit's payment solutions for online and in-person transactions"
+title: "Getting Started"
+description: "Set up Terminal API and Terminal Gateway to process in-person payments quickly and reliably"
 ---
 
-## Welcome to Xendit
+## Overview
 
-Xendit provides comprehensive payment solutions for businesses across Southeast Asia. Whether you need online payments, in-person transactions, or automated payment processing, our APIs and SDKs make integration simple and secure.
+Use Xendit's Terminal API with Terminal Gateway to process in-person payments on physical terminals. You create and manage payment sessions via the Terminal API and connect to devices using Terminal Gateway (desktop app or mobile SDKs).
 
 <Info>
-**New to Xendit?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first payment processed in under 10 minutes.
+You need a Terminal API key (different from standard Dashboard keys) and at least one configured terminal device connected via Terminal Gateway.
 </Info>
 
-## Get Started Quickly
+## Prerequisites
 
-<Card
-  title="Quick Start Guide"
-  icon="rocket"
-  href="/guides/getting-started/quickstart"
-  horizontal
->
-  Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction.
-</Card>
+Before you begin, ensure you have:
 
-## Payment Solutions
+- Terminal API access and API key from the Xendit In-Person Payment team
+- Terminal Gateway set up (desktop app or Android/iOS SDK)
+- A terminal with Terminal ID and network connectivity
+- Your environment base URL:
+  - Development: `https://terminal-dev.xendit.co`
+  - Production: `https://terminal.xendit.co`
 
-Choose the right payment solution for your business needs:
+<Warning>
+Terminal API uses HTTP Basic Auth with your Terminal API key as the username and an empty password. Always include a trailing colon when constructing the header.
+</Warning>
+
+## How it works
+
+- **Create a session** with Terminal API for an amount, currency, and terminal.
+- **Execute on device** through Terminal Gateway; the customer taps/inserts/swipes.
+- **Receive callbacks** for real-time status updates.
+- **Query details** for reconciliation or show receipts.
+
+## Start here
+
+<Steps>
+<Step title="Obtain Terminal API key">
+  Contact the Xendit In-Person Payment team to request your Terminal API key.
+  
+  <Check>
+  You can successfully authenticate to the development base URL with your key.
+  </Check>
+</Step>
+
+<Step title="Set up Terminal Gateway">
+  Install and connect the Terminal Gateway desktop app or integrate the mobile SDK on your device. Pair your terminal and confirm it shows a connected/ready status.
+  
+  <CardGroup cols={2}>
+    <Card title="Gateway App Configuration" icon="settings" href="/api-reference/terminal-gateway/app-configuration" />
+    <Card title="Android SDK" icon="android" href="/api-reference/terminal-gateway/android-sdk" />
+    <Card title="iOS SDK" icon="apple" href="/api-reference/terminal-gateway/ios-sdk" />
+  </CardGroup>
+  
+  <Check>
+  The device appears connected and ready in your Gateway.
+  </Check>
+</Step>
+
+<Step title="Create your first payment session">
+  Use the Terminal API to create a `PAY` session for your terminal.
+  
+  <RequestExample>
+  ```bash cURL
+  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+    -u 'YOUR_TERMINAL_API_KEY:' \
+    -H 'Content-Type: application/json' \
+    -H 'Idempotency-key: unique-key-123' \
+    -d '{
+      "session_type": "PAY",
+      "mode": "TERMINAL",
+      "currency": "IDR",
+      "amount": 10000,
+      "country": "ID",
+      "channel_properties": { "terminal_id": "TERM001" }
+    }'
+  ```
+  </RequestExample>
+
+  <Check>
+  You receive a session ID and the terminal prompts for payment.
+  </Check>
+</Step>
+
+<Step title="Handle callbacks and confirm">
+  Configure your webhook endpoint to receive payment status updates, then fetch payment details to confirm final status.
+  
+  <CardGroup cols={2}>
+    <Card title="Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks" />
+    <Card title="Get Payment Detail" icon="receipt" href="/api-reference/terminal-api/get-payment-detail" />
+  </CardGroup>
+  
+  <Tip>
+  Use unique `Idempotency-key` values per create request to safely retry.
+  </Tip>
+</Step>
+</Steps>
+
+## Key references
 
 <CardGroup cols={2}>
-  <Card
-    title="Terminal API"
-    icon="terminal"
-    href="/api-reference/terminal-api/introduction"
-  >
-    Process in-person payments using terminal devices. Perfect for retail stores, restaurants, and point-of-sale systems.
-  </Card>
-  <Card
-    title="Terminal Gateway"
-    icon="smartphone"
-    href="/api-reference/terminal-gateway/introduction"
-  >
-    Manage terminal devices with our gateway solution. Available for Android and iOS platforms.
-  </Card>
-  <Card
-    title="Payment Methods"
-    icon="credit-card"
-    href="/api-reference/terminal-api/introduction"
-  >
-    Accept various payment methods including cards, e-wallets, and bank transfers across Southeast Asia.
-  </Card>
-  <Card
-    title="Webhooks"
-    icon="webhook"
-    href="/api-reference/terminal-api/callbacks"
-  >
-    Receive real-time payment notifications and status updates through our webhook system.
-  </Card>
+  <Card title="Terminal API Intro" icon="book" href="/api-reference/terminal-api/introduction" />
+  <Card title="Create Payment Session" icon="plus" href="/api-reference/terminal-api/create-payment-session" />
+  <Card title="Get Payment Session" icon="search" href="/api-reference/terminal-api/get-payment-session" />
+  <Card title="Void Payment" icon="x" href="/api-reference/terminal-api/void-payment" />
+  <Card title="Terminal Gateway Intro" icon="smartphone" href="/api-reference/terminal-gateway/introduction" />
+  <Card title="Gateway App Configuration" icon="settings" href="/api-reference/terminal-gateway/app-configuration" />
 </CardGroup>
 
-## Developer Resources
+## Next steps
 
-Everything you need to build with Xendit:
+- Go to the quickstart to run end-to-end in under 10 minutes
+- Set up local development and testing environment
 
 <CardGroup cols={2}>
-  <Card
-    title="Development Setup"
-    icon="code"
-    href="/guides/getting-started/development"
-  >
-    Set up your development environment with our SDKs and testing tools.
-  </Card>
-  <Card
-    title="Code Examples"
-    icon="terminal"
-    href="/guides/writing-content/code"
-  >
-    Copy-paste ready code examples for all supported programming languages.
-  </Card>
-  <Card
-    title="API Reference"
-    icon="book"
-    href="/api-reference/terminal-api/introduction"
-  >
-    Complete API documentation with interactive examples and response schemas.
-  </Card>
-  <Card
-    title="Support & Help"
-    icon="life-ring"
-    href="mailto:help@xendit.co"
-  >
-    Get personalized assistance from our developer support team.
-  </Card>
+  <Card title="Quickstart Guide" icon="rocket" href="/guides/getting-started/quickstart" />
 </CardGroup>
-
-## Popular Integration Paths
-
-<Tabs>
-<Tab title="E-commerce Store">
-  <Steps>
-  <Step title="Choose payment methods">
-    Select from cards, e-wallets, and bank transfers that work in your target markets.
-  </Step>
-  <Step title="Integrate checkout">
-    Use our web SDK or mobile SDKs to add payment processing to your store.
-  </Step>
-  <Step title="Handle webhooks">
-    Set up webhook endpoints to receive payment notifications and update order status.
-  </Step>
-  </Steps>
-</Tab>
-
-<Tab title="Retail POS System">
-  <Steps>
-  <Step title="Set up Terminal Gateway">
-    Install our Terminal Gateway app or SDK on your Android/iOS devices.
-  </Step>
-  <Step title="Configure Terminal API">
-    Connect your terminals to our API for payment processing.
-  </Step>
-  <Step title="Test transactions">
-    Use our sandbox environment to test all payment scenarios before going live.
-  </Step>
-  </Steps>
-</Tab>
-
-<Tab title="Mobile App">
-  <Steps>
-  <Step title="Install mobile SDK">
-    Add our mobile SDK to your iOS or Android application.
-  </Step>
-  <Step title="Implement payment flow">
-    Create payment screens using our pre-built UI components or custom implementations.
-  </Step>
-  <Step title="Process payments">
-    Handle payment processing, receipts, and error scenarios in your app.
-  </Step>
-  </Steps>
-</Tab>
-</Tabs>
-
-## Need Help?
-
-<Card
-  title="Contact Support"
-  icon="envelope"
-  href="mailto:help@xendit.co"
->
-  Reach out to our support team for assistance with your integration or any questions about our payment solutions.
-</Card>

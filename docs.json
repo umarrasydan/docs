@@ -18,15 +18,12 @@
             "group": "Getting started",
             "pages": [
               "guides/getting-started/index",
-              "guides/getting-started/quickstart",
-              "guides/getting-started/development"
+              "guides/getting-started/quickstart"
             ]
           },
           {
             "group": "Migration",
-            "pages": [
-              "guides/migration/xen-bri-to-terminal-gateway"
-            ]
+            "pages": ["guides/migration/xen-bri-to-terminal-gateway"]
           }
         ]
       },
@@ -93,15 +90,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
