@@ -74,7 +74,6 @@ The Terminal Gateway app supports two connection modes for different integration
 <Tab title="Host-to-Host (Default)">
   **Recommended for most use cases** - The app runs a host-to-host service that manages your terminal fleet centrally.
 
-{' '}
 <Steps>
   <Step title="Default Configuration">
     The app automatically runs in host-to-host mode when first launched.
@@ -103,16 +102,14 @@ The Terminal Gateway app supports two connection modes for different integration
     Click the 'Settings' button in the app.
   </Step>
 
-{' '}
-<Step title="Select Connection Type">
-  Select the 'Connection Type' menu item.
-</Step>
+  <Step title="Select Connection Type">
+    Select the 'Connection Type' menu item.
+  </Step>
 
-{' '}
-<Step title="Enable Client-to-Client">
-  Enable the 'Client to Client' toggle on the top-right side, and then **go
-  back** to the home screen.
-</Step>
+  <Step title="Enable Client-to-Client">
+    Enable the 'Client to Client' toggle on the top-right side, and then **go
+    back** to the home screen.
+  </Step>
 
   <Step title="Verify Connection">
     The **client-to-client** server is running, and now the POS can send commands directly to the Terminal device.
@@ -138,7 +135,6 @@ Configure the app for different environments based on your development and produ
 <Tab title="Test Mode (Default)">
   **For development and testing** - Use test client keys and sandbox environment.
 
-{' '}
 <Steps>
   <Step title="Initial Setup">
     When the app opens for the first time, enter your testing CLIENT_KEY in the
@@ -159,7 +155,6 @@ Configure the app for different environments based on your development and produ
 <Tab title="Production Mode">
   **For live environments** - Use production client keys and live payment processing.
 
-{' '}
 <Steps>
   <Step title="Switch to Production">
     Untoggle the "Test mode" toggle in the app settings.
@@ -241,7 +236,7 @@ Each device in the terminal list displays a status indicator that changes color 
 - Ensure the terminal is powered on and properly configured
 - Verify firewall settings aren't blocking the connection
 
-  <Warning>
+    <Warning>
   Red status terminals cannot process transactions and require immediate attention.
   </Warning>
 </Accordion>
@@ -256,7 +251,7 @@ Each device in the terminal list displays a status indicator that changes color 
 - Restart the terminal connection if needed
 - Contact support if the issue persists
 
-  <Note>
+    <Note>
   Disabled terminals are intentionally unavailable and won't process transactions.
   </Note>
 </Accordion>
@@ -271,7 +266,7 @@ Each device in the terminal list displays a status indicator that changes color 
 - Ensure the terminal is ready to accept new transactions
 - Monitor for any error messages in the app logs
 
-  <Tip>
+    <Tip>
   Yellow status is normal when the terminal is ready and waiting for transactions.
   </Tip>
 </Accordion>
