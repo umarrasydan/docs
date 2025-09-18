@@ -8,7 +8,7 @@
     "light": "#03CF99",
     "dark": "#1662EE"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/xendit-favicon.ico",
   "navigation": {
     "tabs": [
       {
