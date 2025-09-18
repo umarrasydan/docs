@@ -37,7 +37,7 @@ To set up your development environment for Xendit integration:
 ## Getting Help
 
 ### Support
-- **Email**: [help@xendit.co](mailto:help@xendit.co)
+- **Email**: [inpersonpayments@xendit.co](mailto:inpersonpayments@xendit.co)
 - **Community**: [Xendit Community](https://xendit.co/community)
 - **Documentation**: [docs.xendit.co](https://docs.xendit.co)
 
