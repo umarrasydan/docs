@@ -44,12 +44,24 @@ Install the Terminal Gateway SDK by adding it as a framework in Xcode:
 
 <Step title="Extract framework">
   Extract the TerminalGateway.xcframework zip file in your project directory.
+  
+  <Frame>
+  <img src="/images/ios/extract-zip.png" alt="Extracting TerminalGateway.xcframework zip file in Finder" />
+  </Frame>
 </Step>
 
 <Step title="Add framework to project">
   In Xcode, select your target and navigate to the "General" tab.
   
   Find "Frameworks, Libraries, and Embedded Content" and click the "+" button.
+  
+  <Frame>
+  <img src="/images/ios/select-target.png" alt="Selecting target and navigating to General tab in Xcode" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/find-frameworks.png" alt="Finding Frameworks, Libraries, and Embedded Content section in Xcode" />
+  </Frame>
 </Step>
 
 <Step title="Import framework">
@@ -63,6 +75,10 @@ Install the Terminal Gateway SDK by adding it as a framework in Xcode:
   
   - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
   - Search for "Other Linker Flags" and add "-lsqlite3"
+  
+  <Frame>
+  <img src="/images/ios/add-lsqlite3.png" alt="Adding -lsqlite3 to Other Linker Flags in Xcode Build Settings" />
+  </Frame>
 </Step>
 </Steps>
 

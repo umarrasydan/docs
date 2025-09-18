@@ -75,6 +75,7 @@
             "group": "Terminal Gateway",
             "pages": [
               "api-reference/terminal-gateway/introduction",
+              "api-reference/terminal-gateway/app-configuration",
               "api-reference/terminal-gateway/android-sdk/index",
               "api-reference/terminal-gateway/ios-sdk/index"
             ]

@@ -1,0 +1,283 @@
+---
+title: 'App'
+description: 'Configure Terminal Gateway app settings, connection types, and device management for Xendit terminal integration'
+---
+
+# Terminal Gateway App Configuration
+
+The Terminal Gateway app helps developers integrate their application with Xendit supported terminal devices. Configure connection types, manage devices, and monitor terminal status through an intuitive interface.
+
+<Info>
+  This app works alongside the Terminal API to provide complete in-person
+  payment functionality. You'll use the Terminal API to create payment sessions
+  and this app to manage terminal device connections.
+</Info>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="v1.3.0 — 11-Sep-2025">
+    Update UI/UX for improved user experience and interface design.
+  </Accordion>
+
+  <Accordion title="v1.2.1 — 27-Aug-2025">
+    Remove timezone pinning for the BRI terminal. Fix an issue where the app
+    executes the same command after a transaction completes.
+  </Accordion>
+
+  <Accordion title="v1.2.0 — 7-June-2025">
+    Terminal Gateway is the companion SDK to In-Person Payments Terminal API.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  The app follows semantic versioning. Breaking changes will bump the major
+  version number.
+</Note>
+
+## Getting Started
+
+Before starting, you'll need a terminal CLIENT_KEY from the Xendit In-Person Payments team and add a device.
+
+<Warning>
+  Keep your client key secure and never share it with unauthorized parties. Use
+  test keys for development and production keys only for live environments.
+</Warning>
+
+<Steps>
+<Step title="Enter API Key">
+When the app opens for the first time, a modal will appear. Enter your testing CLIENT_KEY in the "Test API Key" field and click "Save".
+</Step>
+
+<Step title="Add Your First Device">
+  Click "+ Add Your First Device" to link a terminal device.
+</Step>
+
+<Step title="Configure Device">
+  Fill in Terminal ID and IP Address, and click "Add Device" button.
+</Step>
+
+<Step title="Test Connection">
+The app will test the connection with the added device and run the service. The app is now accepting commands.
+
+<Check>
+Your Terminal Gateway app is now ready to accept commands from your POS system.
+</Check>
+</Step>
+</Steps>
+
+## Connection Types
+
+The Terminal Gateway app supports two connection modes for different integration scenarios:
+
+<Tabs>
+<Tab title="Host-to-Host (Default)">
+  **Recommended for most use cases** - The app runs a host-to-host service that manages your terminal fleet centrally.
+
+{' '}
+<Steps>
+  <Step title="Default Configuration">
+    The app automatically runs in host-to-host mode when first launched.
+  </Step>
+
+  <Step title="Manage Terminals">
+    Add and manage multiple terminal devices through the app interface.
+  </Step>
+
+  <Step title="Centralized Control">
+    All terminal communications are handled through the app's centralized
+    service.
+  </Step>
+</Steps>
+
+  <Tip>
+  Host-to-host mode is ideal for managing multiple terminals and provides easier fleet management.
+  </Tip>
+</Tab>
+
+<Tab title="Client-to-Client">
+  **For localized integration** - Direct communication between your POS system and terminal devices.
+
+  <Steps>
+  <Step title="Open Settings">
+    Click the 'Settings' button in the app.
+  </Step>
+
+{' '}
+<Step title="Select Connection Type">
+  Select the 'Connection Type' menu item.
+</Step>
+
+{' '}
+<Step title="Enable Client-to-Client">
+  Enable the 'Client to Client' toggle on the top-right side, and then **go
+  back** to the home screen.
+</Step>
+
+  <Step title="Verify Connection">
+    The **client-to-client** server is running, and now the POS can send commands directly to the Terminal device.
+
+    <Check>
+    Your app is now running in client-to-client mode for direct terminal communication.
+    </Check>
+
+  </Step>
+  </Steps>
+
+  <Info>
+  Client-to-client connection provides more localized integration but requires direct network access to your terminal devices.
+  </Info>
+</Tab>
+</Tabs>
+
+## Environment Configuration
+
+Configure the app for different environments based on your development and production needs:
+
+<Tabs>
+<Tab title="Test Mode (Default)">
+  **For development and testing** - Use test client keys and sandbox environment.
+
+{' '}
+<Steps>
+  <Step title="Initial Setup">
+    When the app opens for the first time, enter your testing CLIENT_KEY in the
+    "Test API Key" field.
+  </Step>
+
+  <Step title="Test Transactions">
+    All transactions are processed in test mode and won't affect real payment
+    data.
+  </Step>
+</Steps>
+
+  <Note>
+  Test mode is enabled by default and uses the test environment for all transactions.
+  </Note>
+</Tab>
+
+<Tab title="Production Mode">
+  **For live environments** - Use production client keys and live payment processing.
+
+{' '}
+<Steps>
+  <Step title="Switch to Production">
+    Untoggle the "Test mode" toggle in the app settings.
+  </Step>
+
+  <Step title="Enter Production Key">
+    A modal will appear to input your **production** In-Person Payment
+    CLIENT_KEY.
+  </Step>
+
+  <Step title="Verify Configuration">
+    Confirm all settings are correct before processing live transactions.
+  </Step>
+</Steps>
+
+  <Warning>
+  Make sure you have the correct production CLIENT_KEY before switching to production mode. Test thoroughly in test mode first.
+  </Warning>
+</Tab>
+</Tabs>
+
+## Device Status Monitoring
+
+Each device in the terminal list displays a status indicator that changes color based on its current state. Monitor these indicators to ensure your terminal fleet is operating correctly.
+
+### Status Indicators
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Status</TableHeader>
+      <TableHeader>Color</TableHeader>
+      <TableHeader>Description</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Unreachable</TableCell>
+      <TableCell>Red</TableCell>
+      <TableCell>
+        EDC terminal is unreachable due to incorrect IP address or missing EDC
+        configuration
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Idle</TableCell>
+      <TableCell>Yellow</TableCell>
+      <TableCell>
+        EDC terminal is in an idle state and ready for transactions
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Processing</TableCell>
+      <TableCell>Green</TableCell>
+      <TableCell>
+        A transaction is currently in progress on the EDC terminal
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Disabled</TableCell>
+      <TableCell>Grey</TableCell>
+      <TableCell>
+        EDC terminal is disabled and not available for transactions
+      </TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+### Troubleshooting Status Issues
+
+<AccordionGroup>
+<Accordion title="Red Status - Terminal Unreachable">
+  **Problem**: Terminal shows red status indicating it cannot be reached.
+
+**Solutions**:
+
+- Verify the terminal IP address is correct and accessible
+- Check network connectivity between the app and terminal
+- Ensure the terminal is powered on and properly configured
+- Verify firewall settings aren't blocking the connection
+
+  <Warning>
+  Red status terminals cannot process transactions and require immediate attention.
+  </Warning>
+</Accordion>
+
+<Accordion title="Grey Status - Terminal Disabled">
+  **Problem**: Terminal shows grey status indicating it's disabled.
+
+**Solutions**:
+
+- Check if the terminal has been manually disabled in the app
+- Verify terminal configuration and settings
+- Restart the terminal connection if needed
+- Contact support if the issue persists
+
+  <Note>
+  Disabled terminals are intentionally unavailable and won't process transactions.
+  </Note>
+</Accordion>
+
+<Accordion title="Yellow Status - Terminal Idle">
+  **Problem**: Terminal shows yellow status but transactions aren't processing.
+
+**Solutions**:
+
+- Verify the terminal is properly connected to the network
+- Check if there are any pending transactions or errors
+- Ensure the terminal is ready to accept new transactions
+- Monitor for any error messages in the app logs
+
+  <Tip>
+  Yellow status is normal when the terminal is ready and waiting for transactions.
+  </Tip>
+</Accordion>
+</AccordionGroup>
+
+<Tip>
+  Monitor device status indicators regularly to ensure your terminal fleet is
+  operating correctly. Red or grey statuses may require immediate attention.
+</Tip>
