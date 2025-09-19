@@ -1,6 +1,6 @@
 ---
 title: 'Introduction'
-description: 'Complete API reference for in-person payment processing using Xendit terminal devices'
+description: 'Complete API reference for in-person payment processing using Xendit Payment Terminal devices'
 ---
 
 ## Overview
@@ -8,7 +8,7 @@ description: 'Complete API reference for in-person payment processing using Xend
 The Terminal API enables you to process in-person payments using Xendit's terminal devices. This API provides comprehensive functionality for creating payment sessions, managing terminal operations, and handling real-time payment callbacks.
 
 <Info>
-  **New to Terminal API?** Start with our [quickstart guide](/quickstart) to get
+  **New to Terminal API?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get
   your first terminal payment processed in under 10 minutes.
 </Info>
 
@@ -24,12 +24,20 @@ The Terminal API provides these core capabilities:
 
 ## Prerequisites
 
-Before using the Terminal API, ensure you have:
-
+### Essential Requirements
 - **Xendit Account**: Active account with Terminal API access
 - **API Credentials**: In-Person Payment API key from Xendit team
+
+### For Physical Terminal Integration
 - **Terminal Gateway**: App or SDK installed on your terminal devices
 - **Network Access**: Terminal devices must have internet connectivity
+
+### For Simulation Testing (No Terminal Required)
+- **Nothing else needed!** Start integrating immediately using simulation mode
+
+<Info>
+**Don't have a physical terminal yet?** Perfect! You can begin integration right away using our simulation capabilities. Test payment flows, error handling, and webhook integrations without waiting for terminal delivery. All you need is your API key.
+</Info>
 
 <Warning>
   **Important**: The Terminal API requires a separate API key from your standard
@@ -126,53 +134,120 @@ The Terminal Gateway is required to manage your terminal devices:
 
 ## Quick Start
 
-Get started with the Terminal API in three simple steps:
+Choose your integration path based on your current setup:
 
-<Steps>
-<Step title="Get your API credentials">
-  Contact the Xendit In-Person Payment team to obtain your Terminal API key.
+<Tabs>
+<Tab title="Simulation Mode (Recommended for getting started)">
+  **Perfect for merchants waiting on terminal delivery**
   
-  <Check>
-  Verify you have received your API key and can access the Terminal API endpoints.
-  </Check>
-</Step>
+  Start integrating immediately without physical hardware:
+  
+  <Steps>
+  <Step title="Get your API credentials">
+    Contact the Xendit In-Person Payment team to obtain your Terminal API key.
+    
+    <Check>
+    Verify you have received your API key and can access the Terminal API endpoints.
+    </Check>
+  </Step>
+  
+  <Step title="Create your first simulation payment">
+    Use any `terminal_id` and test different scenarios with special amounts:
+    
+    ```javascript
+    const response = await fetch('https://terminal-dev.xendit.co/v1/terminal/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa('your_api_key:'),
+        'Content-Type': 'application/json',
+        'Idempotency-key': 'sim-test-' + Date.now()
+      },
+      body: JSON.stringify({
+        session_type: 'PAY',
+        mode: 'TERMINAL',
+        currency: 'IDR',
+        amount: 10000, // Normal amount = success, 400508 = decline
+        country: 'ID',
+        channel_properties: {
+          terminal_id: 'SIM001' // Any value works for simulation
+        }
+      })
+    });
+    ```
+    
+    <Check>
+    You receive a successful response and can test different scenarios using special amounts.
+    </Check>
+  </Step>
+  
+  <Step title="Test comprehensive scenarios">
+    Try these special amounts to simulate different outcomes:
+    - `10000`: Success flow
+    - `400508`: Payment declined
+    - `400509`: Channel unavailable  
+    - `400711`: User cancellation
+    
+    <Check>
+    Your error handling and webhook integration work correctly for all scenarios.
+    </Check>
+  </Step>
+  </Steps>
+  
+  <Note>
+  **Ready for physical terminals?** Your existing integration code will work seamlessly when you transition to physical hardware - just update the `terminal_id` values!
+  </Note>
+</Tab>
 
-<Step title="Set up Terminal Gateway">
-  Install and configure the Terminal Gateway app or SDK on your devices.
-  <Check>
-    Confirm your terminal devices are connected and showing as "Ready" status.
-  </Check>
-</Step>
-
-<Step title="Create your first payment session">
-  Use the API to create a payment session:
+<Tab title="Physical Terminal Integration">
+  **For merchants with terminal devices ready**
   
-  ```javascript
-  const response = await fetch('https://terminal-dev.xendit.co/v1/terminal/sessions', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Basic ' + btoa('your_api_key:'),
-      'Content-Type': 'application/json',
-      'Idempotency-key': 'unique-key-' + Date.now()
-    },
-    body: JSON.stringify({
-      session_type: 'PAY',
-      mode: 'TERMINAL',
-      currency: 'IDR',
-      amount: 10000,
-      country: 'ID',
-      channel_properties: {
-        terminal_id: 'TERM001'
-      }
-    })
-  });
-  ```
+  <Steps>
+  <Step title="Get your API credentials">
+    Contact the Xendit In-Person Payment team to obtain your Terminal API key.
+    
+    <Check>
+    Verify you have received your API key and can access the Terminal API endpoints.
+    </Check>
+  </Step>
   
-  <Check>
-  Verify you receive a successful response with a session ID.
-  </Check>
-</Step>
-</Steps>
+  <Step title="Set up Terminal Gateway">
+    Install and configure the Terminal Gateway app or SDK on your devices.
+    <Check>
+      Confirm your terminal devices are connected and showing as "Ready" status.
+    </Check>
+  </Step>
+  
+  <Step title="Create your first payment session">
+    Use the API to create a payment session:
+    
+    ```javascript
+    const response = await fetch('https://terminal-dev.xendit.co/v1/terminal/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa('your_api_key:'),
+        'Content-Type': 'application/json',
+        'Idempotency-key': 'unique-key-' + Date.now()
+      },
+      body: JSON.stringify({
+        session_type: 'PAY',
+        mode: 'TERMINAL',
+        currency: 'IDR',
+        amount: 10000,
+        country: 'ID',
+        channel_properties: {
+          terminal_id: 'TERM001' // Your actual terminal ID
+        }
+      })
+    });
+    ```
+    
+    <Check>
+    Verify you receive a successful response and the physical terminal prompts for payment.
+    </Check>
+  </Step>
+  </Steps>
+</Tab>
+</Tabs>
 
 ## API Reference
 
@@ -185,7 +260,7 @@ Explore the complete Terminal API documentation:
 
 <Card
   title="Get Payment Session"
-  icon="search"
+  icon="magnifying-glass"
   href="/api-reference/terminal-api/get-payment-session"
 >
   Retrieve payment session details and status information.
@@ -232,7 +307,7 @@ Explore the complete Terminal API documentation:
   Handle real-time payment notifications and status updates.
 </Card>
 
-<Card title="Error Handling" icon="exclamation-triangle" href="/api-reference/terminal-api/errors">
+<Card title="Error Handling" icon="triangle-exclamation" href="/api-reference/terminal-api/errors">
   Understand error codes and troubleshooting common issues.
 </Card>
 </CardGroup>

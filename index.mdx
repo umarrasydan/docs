@@ -1,17 +1,17 @@
 ---
-title: "Xendit Terminal Documentation"
-description: "Complete guide to integrating Xendit's Terminal API and Gateway for in-person payment processing using physical terminal devices"
+title: "Payment Terminal"
+description: "Complete guide to integrating Xendit's Terminal API and Gateway for in-person payment processing using physical terminal devices. Also known as EDC terminal"
 ---
 
-## Welcome to Xendit Terminal
+## Welcome to Xendit's In-Person Payment Terminal
 
-Xendit Terminal provides comprehensive in-person payment solutions for businesses using physical terminal devices. Process secure payments through Terminal API and manage terminal devices using Terminal Gateway across Android, iOS, and desktop platforms.
+Xendit Payment Terminal provides comprehensive in-person payment solutions for businesses using physical terminal devices. Process secure payments through Terminal API and manage terminal devices using Terminal Gateway across Android, iOS, and desktop platforms.
 
 <Info>
-**New to Xendit Terminal?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first terminal payment processed in under 10 minutes.
+**New to Xendit's Payment Terminal?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first terminal payment processed in under 10 minutes.
 </Info>
 
-## Prerequisites
+## Pre-requisites
 
 Before you begin, ensure you have:
 
@@ -37,9 +37,9 @@ Terminal API uses HTTP Basic Auth with your Terminal API key as the username and
   Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction in under 10 minutes.
 </Card>
 
-## Terminal Solutions
+## Payment Terminal Solutions
 
-Xendit Terminal consists of two main components that work together:
+Xendit's Payment Terminal consists of two main components that work together:
 
 <CardGroup cols={2}>
   <Card
@@ -60,7 +60,7 @@ Xendit Terminal consists of two main components that work together:
 
 ## Key Features
 
-Explore the essential capabilities of Xendit Terminal:
+Explore the essential capabilities of Xendit's Payment Terminal:
 
 <CardGroup cols={2}>
   <Card
@@ -81,7 +81,7 @@ Explore the essential capabilities of Xendit Terminal:
 
 ## Developer Resources
 
-Everything you need to build with Xendit Terminal:
+Everything you need to build with Xendit's Payment Terminal:
 
 <CardGroup cols={2}>
   <Card
@@ -123,8 +123,92 @@ Everything you need to build with Xendit Terminal:
 
 ## Integration Paths
 
+<Info>
+**Don't have a physical terminal yet?** No problem! You can start integration immediately using our simulation capabilities. Use special test amounts and any terminal ID to test payment flows, error handling, and webhook integrations - all without waiting for hardware delivery.
+</Info>
+
 <Tabs>
+<Tab title="Simulation Testing">
+  **Perfect for merchants waiting on terminal delivery**
+  
+  <Steps>
+  <Step title="Obtain Terminal API key">
+    Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.
+    
+    <Check>
+    You can successfully authenticate to the development base URL with your key.
+    </Check>
+  </Step>
+  <Step title="Start testing immediately">
+    Use any `terminal_id` and special test amounts to simulate different payment scenarios:
+    - Normal amounts (e.g., `10000`): Success flow
+    - `400508`: Payment declined
+    - `400509`: Channel unavailable
+    - `400711`: User cancellation
+    
+    <Check>
+    You receive different responses based on test amounts, simulating real payment scenarios.
+    </Check>
+  </Step>
+  <Step title="Test webhook integration">
+    Set up webhook endpoints to receive real-time payment status updates and notifications - works exactly the same as physical terminals.
+    
+    <Check>
+    Your webhook server receives callbacks for all simulated payment events.
+    </Check>
+  </Step>
+  <Step title="Prepare for production">
+    When your physical terminals arrive, simply update the `terminal_id` values - all your existing code will work seamlessly!
+    
+    <Tip>
+    Use unique `Idempotency-key` values per create request to safely retry.
+    </Tip>
+  </Step>
+  </Steps>
+</Tab>
+
+<Tab title="Physical Terminal Testing">
+  **For merchants with actual terminal devices**
+  
+  <Steps>
+  <Step title="Register terminals for test mode">
+    Contact Xendit support to register your physical terminals for test mode. This ensures test transactions are properly routed to your hardware.
+    
+    **Required Information:**
+    - Terminal ID (from device or Terminal Gateway)
+    - Xendit Business ID
+    - Confirmation that you want test mode registration
+    
+    <Check>
+    Your terminals are registered and ready for test transactions.
+    </Check>
+  </Step>
+  
+  <Step title="Set up Terminal Gateway">
+    Install and configure the Terminal Gateway app/SDK to manage your terminal connections in test mode.
+    
+    <Check>
+    Terminal Gateway shows your devices as "Connected" and test mode is enabled.
+    </Check>
+  </Step>
+  
+  <Step title="Test real payment flows">
+    Use your registered terminals to test complete payment flows with actual card interactions and hardware validation.
+    
+    <Check>
+    Physical terminals respond to API calls and process test card payments successfully.
+    </Check>
+  </Step>
+  </Steps>
+  
+  <Note>
+  **Hardware Testing Benefits**: Validate complete payment flows, test network connectivity, verify card reader functionality, and ensure webhook delivery with real hardware interactions.
+  </Note>
+</Tab>
+
 <Tab title="Retail POS System">
+  **For merchants with physical terminals ready**
+  
   <Steps>
   <Step title="Obtain Terminal API key">
     Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.

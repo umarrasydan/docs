@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
-  title: Xendit Terminal API
+  title: Xendit's Payment Terminal API
   version: 0.4.1
   description:
-    API specification for Xendit Terminal (Electronic Data Capture) Payment
+    API specification for Xendit's Payment Terminal (Electronic Data Capture) Payment
     Sessions and Commands
 servers:
   - url: https://terminal-dev.xendit.co

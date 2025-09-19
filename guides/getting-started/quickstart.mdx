@@ -6,9 +6,22 @@ description: "Set up your development environment and process your first in-pers
 ## Prerequisites
 
 - Terminal API key from Xendit In-Person Payment team
-- Terminal Gateway set up (desktop app or Android/iOS SDK)
-- Connected terminal with `terminal_id`
 - Node.js or your preferred development environment
+
+### For Physical Terminal Testing
+- Terminal Gateway set up (desktop app or Android/iOS SDK)
+- Physical terminal device connected and showing "Ready" status
+- Terminal registered with Xendit for test mode (contact support if needed)
+- Valid `terminal_id` from your registered device
+
+### For Simulation Testing (No Terminal Required)
+- Any `terminal_id` value (e.g., `SIM001`) - no registration needed
+- Special test amounts to trigger different payment scenarios
+- Use `4040404` as terminal_id to test invalid terminal error handling
+
+<Info>
+**Don't have a physical terminal yet?** No problem! You can start integration immediately using our simulation capabilities. Use special test amounts and terminal IDs to simulate different payment scenarios without needing physical hardware.
+</Info>
 
 <Warning>
 Use sandbox/test devices and small amounts while testing. Do not use production keys in development.
@@ -77,84 +90,274 @@ Set up your local development environment with the necessary credentials and bas
 </Step>
 </Steps>
 
-## 2. Test API connectivity
+## 2. Choose your testing approach
 
-Make a test request to validate your API key and environment setup.
-
-```javascript test-connection.js
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const apiKey = process.env.TERMINAL_API_KEY;
-const baseUrl = process.env.TERMINAL_BASE_URL;
-const terminalId = process.env.TERMINAL_ID;
-
-async function testConnection() {
-  const auth = 'Basic ' + Buffer.from(`${apiKey}:`).toString('base64');
+<Tabs>
+<Tab title="Simulation Testing (Recommended for getting started)">
+  **Perfect for merchants waiting on terminal delivery or initial integration**
   
-  try {
-    const res = await fetch(`${baseUrl}/v1/terminal/sessions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json',
-        'Idempotency-key': `test-${Date.now()}`,
-      },
-      body: JSON.stringify({
-        session_type: 'PAY',
-        mode: 'TERMINAL',
-        currency: 'IDR',
-        amount: 1000, // Small test amount
-        country: 'ID',
-        channel_properties: { terminal_id: terminalId },
-      }),
-    });
+  Test payment flows without physical hardware using special test amounts and scenarios.
+  
+  <Steps>
+  <Step title="Use any terminal ID">
+    For simulation testing, you can use any `terminal_id` value. The system will automatically simulate payment responses.
     
-    const data = await res.json();
-    console.log('✅ API connection successful');
-    console.log('Session ID:', data.id);
-    console.log('Status:', data.status);
-  } catch (error) {
-    console.error('❌ Connection failed:', error.message);
-  }
-}
+    ```bash .env
+    TERMINAL_ID=SIM001  # Any value works for simulation
+    ```
+  </Step>
+  
+  <Step title="Test different scenarios">
+    Use these special amounts to simulate various payment outcomes:
+    
+    | Amount | Scenario | Expected Result |
+    |--------|----------|-----------------|
+    | `400508` | Payment declined | Session created, transaction fails |
+    | `400509` | Channel unavailable | Session creation fails |
+    | `400711` | User cancellation | Session created, then canceled |
+    | `4040404` (as terminal_id) | Invalid terminal | Session creation fails |
+    | Any other amount | Success flow | Payment completes successfully |
+    
+    <Tip>
+    Start with a normal amount like `10000` to test the success flow, then try the special amounts to test error handling.
+    </Tip>
+  </Step>
+  
+  <Step title="Run simulation test">
+    ```javascript test-simulation.js
+    import fetch from 'node-fetch';
+    import dotenv from 'dotenv';
 
-testConnection();
-```
+    dotenv.config();
 
-<Check>
-You receive a 200 response with a session ID. The terminal prompts for payment.
-</Check>
+    async function testSimulation() {
+      const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+      
+      // Test successful payment simulation
+      const successTest = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json',
+          'Idempotency-key': `sim-success-${Date.now()}`,
+        },
+        body: JSON.stringify({
+          session_type: 'PAY',
+          mode: 'TERMINAL',
+          currency: 'IDR',
+          amount: 10000, // Normal amount = success
+          country: 'ID',
+          channel_properties: { terminal_id: 'SIM001' },
+        }),
+      });
+      
+      const successData = await successTest.json();
+      console.log('✅ Success simulation:', successData.status);
+      
+      // Test payment decline simulation
+      const declineTest = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json',
+          'Idempotency-key': `sim-decline-${Date.now()}`,
+        },
+        body: JSON.stringify({
+          session_type: 'PAY',
+          mode: 'TERMINAL',
+          currency: 'IDR',
+          amount: 400508, // Special amount = decline
+          country: 'ID',
+          channel_properties: { terminal_id: 'SIM001' },
+        }),
+      });
+      
+      const declineData = await declineTest.json();
+      console.log('⚠️ Decline simulation:', declineData.status);
+    }
+
+    testSimulation();
+    ```
+    
+    <Check>
+    You receive different responses based on the test amounts, simulating real payment scenarios without physical hardware.
+    </Check>
+  </Step>
+  </Steps>
+  
+  <Note>
+  **Simulation Benefits**: Start integration immediately, test error handling, validate webhook flows, and prepare for production - all without waiting for terminal delivery.
+  </Note>
+</Tab>
+
+<Tab title="Physical Terminal Testing">
+  **For merchants with connected terminal devices**
+  
+  Test with actual hardware for the most realistic payment experience.
+  
+  <Steps>
+  <Step title="Verify terminal registration">
+    Ensure your terminal is registered for test mode:
+    - Check that your Terminal Gateway shows "Connected" or "Ready" status
+    - Confirm terminal is registered with Xendit (contact support if unsure)
+    - Verify you're using test mode in Terminal Gateway settings
+    
+    <Warning>
+    Unregistered terminals will automatically fall back to simulation mode, even if physically connected.
+    </Warning>
+  </Step>
+  
+  <Step title="Test API connectivity">
+    Make a test request to validate your API key and terminal setup:
+    
+    ```javascript test-terminal.js
+    import fetch from 'node-fetch';
+    import dotenv from 'dotenv';
+
+    dotenv.config();
+
+    async function testTerminal() {
+      const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+      
+      const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json',
+          'Idempotency-key': `test-${Date.now()}`,
+        },
+        body: JSON.stringify({
+          session_type: 'PAY',
+          mode: 'TERMINAL',
+          currency: 'IDR',
+          amount: 1000, // Small test amount
+          country: 'ID',
+          channel_properties: { terminal_id: process.env.TERMINAL_ID },
+        }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        console.log('✅ Terminal connection successful');
+        console.log('Session ID:', data.payment_session_id);
+        console.log('Status:', data.status);
+      } else {
+        console.log('❌ Error:', data.error_code, data.message);
+      }
+    }
+
+    testTerminal();
+    ```
+    
+    <Check>
+    You receive a 200 response with a session ID and the physical terminal prompts for payment.
+    </Check>
+    
+    <Tip>
+    If you get a `TERMINAL_NOT_FOUND` error, your terminal may not be registered. Contact Xendit support to register it for test mode.
+    </Tip>
+  </Step>
+  
+  <Step title="Validate physical interaction">
+    Confirm the terminal responds to the API call:
+    - Terminal display shows payment amount
+    - Card reader is active and ready
+    - Payment can be completed with test card
+    - Webhook callbacks are received
+    
+    <Check>
+    Physical terminal displays payment prompt and accepts card interactions.
+    </Check>
+  </Step>
+  </Steps>
+</Tab>
+</Tabs>
 
 ## 3. Create your first payment session
 
-Now create a payment session and process it on the terminal device.
+Now create a payment session and process it. Choose the approach that matches your setup:
+
+<Tabs>
+<Tab title="Simulation Payment">
+  **Perfect for testing without physical terminals**
+  
+  <CodeGroup>
+  ```bash cURL (Success Simulation)
+  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+    -u 'YOUR_TERMINAL_API_KEY:' \
+    -H 'Content-Type: application/json' \
+    -H 'Idempotency-key: sim-success-'"$(date +%s)" \
+    -d '{
+      "session_type": "PAY",
+      "mode": "TERMINAL",
+      "currency": "IDR",
+      "amount": 10000,
+      "country": "ID",
+      "channel_properties": { "terminal_id": "SIM001" }
+    }'
+  ```
+  
+  ```bash cURL (Decline Simulation)
+  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+    -u 'YOUR_TERMINAL_API_KEY:' \
+    -H 'Content-Type: application/json' \
+    -H 'Idempotency-key: sim-decline-'"$(date +%s)" \
+    -d '{
+      "session_type": "PAY",
+      "mode": "TERMINAL",
+      "currency": "IDR",
+      "amount": 400508,
+      "country": "ID",
+      "channel_properties": { "terminal_id": "SIM001" }
+    }'
+  ```
+  </CodeGroup>
+  
+  <Check>
+  **Success**: Session created with `ACTIVE` status, then automatically transitions to `COMPLETED`  
+  **Decline**: Session created with `ACTIVE` status, then transitions to `FAILED`
+  </Check>
+</Tab>
+
+<Tab title="Physical Terminal Payment">
+  **For merchants with connected terminals**
+  
+  <CodeGroup>
+  ```bash cURL
+  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+    -u 'YOUR_TERMINAL_API_KEY:' \
+    -H 'Content-Type: application/json' \
+    -H 'Idempotency-key: payment-'"$(date +%s)" \
+    -d '{
+      "session_type": "PAY",
+      "mode": "TERMINAL",
+      "currency": "IDR",
+      "amount": 10000,
+      "country": "ID",
+      "channel_properties": { "terminal_id": "TERM001" }
+    }'
+  ```
+  </CodeGroup>
+  
+  <Check>
+  The terminal device prompts for payment. Ask the customer to tap/insert/swipe their card.
+  </Check>
+  
+  <Tip>
+  If the device doesn't prompt, verify the terminal is connected in Gateway and the `terminal_id` matches your device configuration.
+  </Tip>
+</Tab>
+</Tabs>
 
 <CodeGroup>
-```bash cURL
-curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
-  -u 'YOUR_TERMINAL_API_KEY:' \
-  -H 'Content-Type: application/json' \
-  -H 'Idempotency-key: payment-'"$(date +%s)" \
-  -d '{
-    "session_type": "PAY",
-    "mode": "TERMINAL",
-    "currency": "IDR",
-    "amount": 10000,
-    "country": "ID",
-    "channel_properties": { "terminal_id": "TERM001" }
-  }'
-```
-
-```javascript create-payment.js
+```javascript JavaScript (Simulation)
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-async function createPayment() {
+async function createSimulationPayment(amount = 10000) {
   const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
   
   const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
@@ -162,34 +365,28 @@ async function createPayment() {
     headers: {
       'Authorization': auth,
       'Content-Type': 'application/json',
-      'Idempotency-key': `payment-${Date.now()}`,
+      'Idempotency-key': `sim-payment-${Date.now()}`,
     },
     body: JSON.stringify({
       session_type: 'PAY',
       mode: 'TERMINAL',
       currency: 'IDR',
-      amount: 10000,
+      amount: amount, // Use special amounts for different scenarios
       country: 'ID',
-      channel_properties: { terminal_id: process.env.TERMINAL_ID },
+      channel_properties: { terminal_id: 'SIM001' },
     }),
   });
   
   const data = await res.json();
-  console.log('Payment session created:', data.id);
+  console.log('Simulation payment session created:', data.payment_session_id);
   return data;
 }
 
-createPayment();
-```
-</CodeGroup>
-
-<Check>
-The terminal device prompts for payment. Ask the customer to tap/insert/swipe their card.
-</Check>
-
-<Tip>
-If the device doesn't prompt, verify the terminal is connected in Gateway and the `terminal_id` matches your device configuration.
-</Tip>
+// Test different scenarios
+createSimulationPayment(10000);  // Success
+createSimulationPayment(400508); // Decline
+createSimulationPayment(400509); // Channel unavailable
+```</CodeGroup>
 
 ## 4. Monitor callbacks
 
@@ -263,11 +460,19 @@ async function voidPayment(paymentId) {
 - Check that you're using the development base URL for testing
 </Accordion>
 
-<Accordion title="Terminal not prompting">
+<Accordion title="Simulation not working as expected">
+- Verify you're using the correct special amounts: `400508` (decline), `400509` (channel unavailable), `400711` (cancellation)
+- Check that you're in test mode (using development base URL)
+- Any `terminal_id` works for simulation - you don't need a real terminal registered
+- Normal amounts (not special test amounts) will always succeed in simulation mode
+</Accordion>
+
+<Accordion title="Terminal not prompting (Physical terminals only)">
 - Confirm Terminal Gateway shows device as Connected/Ready
 - Verify `terminal_id` matches your device configuration exactly
 - Check network connectivity on the device
 - Ensure device has correct time settings
+- **For simulation testing**: You don't need a physical terminal - any terminal_id will work
 </Accordion>
 
 <Accordion title="Webhook not receiving callbacks">
@@ -275,12 +480,21 @@ async function voidPayment(paymentId) {
 - Ensure your webhook endpoint returns HTTP 200
 - Check server logs and firewall settings
 - Verify the webhook URL is configured correctly
+- **For simulation**: Callbacks work the same way as physical terminals
 </Accordion>
 
 <Accordion title="Environment variables not loading">
 - Verify `.env` file is in the correct location
 - Check that you're calling `dotenv.config()` before using environment variables
 - Ensure `.env` file is not committed to version control
+</Accordion>
+
+<Accordion title="Ready to transition from simulation to physical terminal">
+- Install and configure Terminal Gateway app or SDK
+- Register your physical terminal devices with actual Terminal IDs and IP addresses
+- Update your environment variables to use real terminal IDs
+- Test with small amounts on the physical device
+- All your existing integration code will work without changes!
 </Accordion>
 </AccordionGroup>
 
