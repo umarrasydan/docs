@@ -8,11 +8,6 @@ description: "Send operational commands to terminal devices"
 
 Sends operational commands to terminal devices for settlement and receipt printing operations.
 
-<Note>
-This API capability is dependent on the different provider for each market; please ask the Xendit tech team for availability.
-
-Currently only Indonesia will support the SETTLE and PRINT_RECEIPT commands. Other markets will require you to perform these actions directly on the terminal device itself.
-</Note>
 
 ## Headers
 
@@ -188,39 +183,70 @@ response = requests.post(
 ## Command Status Values
 
 <CardGroup cols={2}>
-  <Card title="ACTIVE" icon="clock" color="blue">
+  <Card title="ACTIVE" icon="clock">
     Command has been sent to the terminal and is being processed
   </Card>
-  <Card title="COMPLETED" icon="check-circle" color="green">
+  <Card title="COMPLETED" icon="circle-check">
     Command has been successfully executed by the terminal
   </Card>
 </CardGroup>
 
 ## Market Availability
 
-<Table>
-  <TableHead>
-    <TableRow>
-      <TableHeader>Market</TableHeader>
-      <TableHeader>SETTLE</TableHeader>
-      <TableHeader>PRINT_RECEIPT</TableHeader>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    <TableRow>
-      <TableCell>Indonesia (ID)</TableCell>
-      <TableCell>✅ Supported</TableCell>
-      <TableCell>✅ Supported</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Thailand (TH)</TableCell>
-      <TableCell>❌ Manual only</TableCell>
-      <TableCell>❌ Manual only</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Vietnam (VN)</TableCell>
-      <TableCell>❌ Manual only</TableCell>
-      <TableCell>❌ Manual only</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
+<Tabs>
+<Tab title="Indonesia (ID)">
+  **Full API Support Available**
+
+  | Command Type | Status | Description |
+  |-------------|--------|-------------|
+  | SETTLE | ✅ **Supported** | Automated settlement via API |
+  | PRINT_RECEIPT | ✅ **Supported** | Remote receipt printing via API |
+
+  <Check>
+  Both SETTLE and PRINT_RECEIPT commands are fully supported through the API in Indonesia.
+  </Check>
+</Tab>
+
+<Tab title="Thailand (TH)">
+  **Manual Operation Required**
+
+  | Command Type | Status | Description |
+  |-------------|--------|-------------|
+  | SETTLE | ❌ **Manual only** | Must be performed directly on terminal |
+  | PRINT_RECEIPT | ❌ **Manual only** | Must be performed directly on terminal |
+
+  <Warning>
+  API commands are not supported. Settlement and receipt printing must be done manually on the terminal device.
+  </Warning>
+</Tab>
+
+<Tab title="Vietnam (VN)">
+  **Manual Operation Required**
+
+  | Command Type | Status | Description |
+  |-------------|--------|-------------|
+  | SETTLE | ❌ **Manual only** | Must be performed directly on terminal |
+  | PRINT_RECEIPT | ❌ **Manual only** | Must be performed directly on terminal |
+
+  <Warning>
+  API commands are not supported. Settlement and receipt printing must be done manually on the terminal device.
+  </Warning>
+</Tab>
+
+<Tab title="Malaysia (MY)">
+  **Manual Operation Required**
+
+  | Command Type | Status | Description |
+  |-------------|--------|-------------|
+  | SETTLE | ❌ **Manual only** | Must be performed directly on terminal |
+  | PRINT_RECEIPT | ❌ **Manual only** | Must be performed directly on terminal |
+
+  <Warning>
+  API commands are not supported. Settlement and receipt printing must be done manually on the terminal device.
+  </Warning>
+</Tab>
+</Tabs>
+
+<Info>
+API capability varies by market and depends on different payment providers. Contact the Xendit technical team for the latest availability information and market-specific implementation details.
+</Info>
