@@ -37,7 +37,6 @@
               "GET /v1/terminal/payments/{id}",
               "POST /v1/terminal/payments/{id}/void",
               "POST /v1/terminal/commands",
-              "GET /public/v1/terminal/payments/{id}",
               "api-reference/terminal-api/callbacks",
               "api-reference/terminal-api/errors"
             ]
