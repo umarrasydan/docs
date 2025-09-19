@@ -2,7 +2,6 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Xendit Documentation",
-  "openapi": "api-reference/terminal-api/openapi-spec.yaml",
   "colors": {
     "primary": "#1662EE",
     "light": "#03CF99",
@@ -16,10 +15,7 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "index",
-              "guides/getting-started/quickstart"
-            ]
+            "pages": ["index", "guides/getting-started/quickstart"]
           },
           {
             "group": "Migration",
@@ -28,18 +24,20 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
             "group": "Terminal API",
+            "openapi": "openapi-spec.yaml",
             "pages": [
               "api-reference/terminal-api/introduction",
               "api-reference/terminal-api/concepts",
-              "api-reference/terminal-api/create-payment-session",
-              "api-reference/terminal-api/get-payment-session",
-              "api-reference/terminal-api/void-payment",
-              "api-reference/terminal-api/get-payment-detail",
-              "api-reference/terminal-api/push-operation-command",
+              "POST /v1/terminal/sessions",
+              "GET /v1/terminal/sessions/{id}",
+              "GET /v1/terminal/payments/{id}",
+              "POST /v1/terminal/payments/{id}/void",
+              "POST /v1/terminal/commands",
+              "GET /public/v1/terminal/payments/{id}",
               "api-reference/terminal-api/callbacks",
               "api-reference/terminal-api/errors"
             ]
@@ -81,6 +79,15 @@
       "type": "button",
       "label": "Dashboard",
       "href": "https://dashboard.xendit.co"
+    }
+  },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": ["curl", "dotnet", "java", "go", "python", "javascript"],
+      "defaults": "all"
     }
   },
   "contextual": {

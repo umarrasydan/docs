@@ -198,7 +198,7 @@ paths:
   /public/v1/terminal/payments/{id}:
     get:
       tags:
-        - payments
+        - Payments
       operationId: getPayment
       summary: 'Get a payment by ID'
       parameters:
