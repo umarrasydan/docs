@@ -212,25 +212,25 @@ Each device in the terminal list displays a status indicator that changes color 
   </TableHead>
   <TableBody>
     <TableRow>
-      <TableCell>Unreachable</TableCell>
+      <TableCell>Unreachable/Offline</TableCell>
       <TableCell>Red</TableCell>
       <TableCell>
-        EDC terminal is unreachable due to incorrect IP address or missing EDC
-        configuration
-      </TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Idle</TableCell>
-      <TableCell>Yellow</TableCell>
-      <TableCell>
-        EDC terminal is in an idle state and ready for transactions
+        EDC terminal is unreachable or offline due to incorrect IP address,
+        network issues, or missing EDC configuration
       </TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Processing</TableCell>
-      <TableCell>Green</TableCell>
+      <TableCell>Yellow</TableCell>
       <TableCell>
         A transaction is currently in progress on the EDC terminal
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Online</TableCell>
+      <TableCell>Green</TableCell>
+      <TableCell>
+        EDC terminal is online, connected, and ready for transactions
       </TableCell>
     </TableRow>
     <TableRow>
@@ -246,8 +246,8 @@ Each device in the terminal list displays a status indicator that changes color 
 ### Troubleshooting Status Issues
 
 <AccordionGroup>
-<Accordion title="Red Status - Terminal Unreachable">
-  **Problem**: Terminal shows red status indicating it cannot be reached.
+<Accordion title="Red Status - Terminal Unreachable/Offline">
+  **Problem**: Terminal shows red status indicating it cannot be reached or is offline.
 
 **Solutions**:
 
@@ -276,19 +276,39 @@ Each device in the terminal list displays a status indicator that changes color 
   </Note>
 </Accordion>
 
-<Accordion title="Yellow Status - Terminal Idle">
-  **Problem**: Terminal shows yellow status but transactions aren't processing.
+<Accordion title="Yellow Status - Terminal Processing">
+  **Problem**: Terminal shows yellow status indicating a transaction is in progress or appears stuck.
 
 **Solutions**:
 
-- Verify the terminal is properly connected to the network
-- Check if there are any pending transactions or errors
-- Ensure the terminal is ready to accept new transactions
-- Monitor for any error messages in the app logs
+- Verify the terminal and POS are properly connected to the network
+- Check if the current transaction is still awaiting card input or PIN
+- Confirm whether the POS has already received a callback/response
+- Review app logs for timeouts or error messages during processing
 
     <Tip>
-  Yellow status is normal when the terminal is ready and waiting for transactions.
+  Yellow status is normal while a transaction is actively processing.
   </Tip>
+</Accordion>
+
+<Accordion title="Green Status - Terminal Online">
+  **Context**: Terminal shows green status indicating it is online and ready.
+
+**What this means**:
+
+- The device is connected and reachable by the app
+- No transaction is currently in progress
+- The terminal can accept new commands
+
+**If you still encounter issues**:
+
+- Confirm the POS is sending commands to the correct terminal
+- Verify API credentials and environment (test vs production)
+- Check recent logs for command errors or rejected requests
+
+  <Check>
+  Green status indicates the terminal is healthy and ready to use.
+  </Check>
 </Accordion>
 </AccordionGroup>
 
