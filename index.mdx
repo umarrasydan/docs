@@ -11,6 +11,21 @@ Xendit Terminal provides comprehensive in-person payment solutions for businesse
 **New to Xendit Terminal?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first terminal payment processed in under 10 minutes.
 </Info>
 
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Terminal API access and API key from the Xendit In-Person Payment team
+- Terminal Gateway set up (desktop app or Android/iOS SDK)
+- A terminal with Terminal ID and network connectivity
+- Your environment base URL:
+  - Development: `https://terminal-dev.xendit.co`
+  - Production: `https://terminal.xendit.co`
+
+<Warning>
+Terminal API uses HTTP Basic Auth with your Terminal API key as the username and an empty password. Always include a trailing colon when constructing the header.
+</Warning>
+
 ## Get Started Quickly
 
 <Card
@@ -19,7 +34,7 @@ Xendit Terminal provides comprehensive in-person payment solutions for businesse
   href="/guides/getting-started/quickstart"
   horizontal
 >
-  Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction.
+  Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction in under 10 minutes.
 </Card>
 
 ## Terminal Solutions
@@ -41,6 +56,13 @@ Xendit Terminal consists of two main components that work together:
   >
     Connect and manage physical terminal devices. Available as desktop app and mobile SDKs for Android and iOS.
   </Card>
+</CardGroup>
+
+## Key Features
+
+Explore the essential capabilities of Xendit Terminal:
+
+<CardGroup cols={2}>
   <Card
     title="Payment Callbacks"
     icon="webhook"
@@ -63,13 +85,6 @@ Everything you need to build with Xendit Terminal:
 
 <CardGroup cols={2}>
   <Card
-    title="Getting Started Guide"
-    icon="rocket"
-    href="/guides/getting-started/index"
-  >
-    Complete setup guide for Terminal API and Terminal Gateway with prerequisites and step-by-step instructions.
-  </Card>
-  <Card
     title="Migration Guide"
     icon="arrow-right"
     href="/guides/migration/xen-bri-to-terminal-gateway"
@@ -84,6 +99,13 @@ Everything you need to build with Xendit Terminal:
     Complete Terminal API documentation with endpoints, authentication, and response schemas.
   </Card>
   <Card
+    title="Finding Terminal Information"
+    icon="magnifying-glass"
+    href="/snippets/finding-terminal-information"
+  >
+    Learn how to locate your terminal ID and IP address for different terminal providers.
+  </Card>
+  <Card
     title="Support & Help"
     icon="life-ring"
     href="mailto:inpersonpayments@xendit.co"
@@ -92,6 +114,13 @@ Everything you need to build with Xendit Terminal:
   </Card>
 </CardGroup>
 
+## How it works
+
+1. **Create a session** with Terminal API for an amount, currency, and terminal.
+2. **Execute on device** through Terminal Gateway; the customer taps/inserts/swipes.
+3. **Receive callbacks** for real-time status updates.
+4. **Query details** for reconciliation or show receipts.
+
 ## Integration Paths
 
 <Tabs>
@@ -99,18 +128,34 @@ Everything you need to build with Xendit Terminal:
   <Steps>
   <Step title="Obtain Terminal API key">
     Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.
+    
+    <Check>
+    You can successfully authenticate to the development base URL with your key.
+    </Check>
   </Step>
   <Step title="Set up Terminal Gateway">
     Install Terminal Gateway app or integrate mobile SDK on your devices to manage physical terminals.
+    
+    <Check>
+    The device appears connected and ready in your Gateway.
+    </Check>
   </Step>
   <Step title="Register terminal devices">
     Configure your physical terminals with Terminal ID and IP address in the Gateway application.
   </Step>
   <Step title="Create payment sessions">
     Use Terminal API to create payment sessions and process transactions on connected terminals.
+    
+    <Check>
+    You receive a session ID and the terminal prompts for payment.
+    </Check>
   </Step>
   <Step title="Handle callbacks">
     Set up webhook endpoints to receive real-time payment status updates and notifications.
+    
+    <Tip>
+    Use unique `Idempotency-key` values per create request to safely retry.
+    </Tip>
   </Step>
   </Steps>
 </Tab>
@@ -140,7 +185,7 @@ Everything you need to build with Xendit Terminal:
 
 Choose your development platform for detailed integration instructions:
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card
     title="Android SDK"
     icon="android"
@@ -161,13 +206,6 @@ Choose your development platform for detailed integration instructions:
     href="/api-reference/terminal-gateway/app-configuration"
   >
     Desktop application setup and configuration for managing terminal devices.
-  </Card>
-  <Card
-    title="Terminal API"
-    icon="code"
-    href="/api-reference/terminal-api/introduction"
-  >
-    REST API for creating payment sessions and managing terminal operations.
   </Card>
 </CardGroup>
 
