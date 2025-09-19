@@ -195,39 +195,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /public/v1/terminal/payments/{id}:
-    get:
-      tags:
-        - Payments
-      operationId: getPayment
-      summary: 'Get a payment by ID'
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-          description: 'Payment ID'
-      responses:
-        '200':
-          description: 'Payment fetched successfully'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentResponse'
-        '400':
-          description: 'Bad Request'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: 'Payment not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
