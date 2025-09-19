@@ -61,12 +61,7 @@
         {
           "anchor": "Documentation",
           "href": "https://docs.xendit.co",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://xendit.co/blog",
-          "icon": "newspaper"
+          "icon": "/xendit-favicon.ico"
         }
       ]
     }
