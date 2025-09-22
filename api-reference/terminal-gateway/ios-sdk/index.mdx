@@ -130,7 +130,7 @@ The SDK supports two modes:
 Register multiple devices by calling the `registerDevices` method:
 
 ```swift
-let result = TerminalGateway.shared.registerDevices(devices: [ 
+TerminalGateway.shared.registerDevices(devices: [ 
   TerminalDevice(id: Terminal_ID_1, ipAddress: Terminal_IP_1),    
   TerminalDevice(id: Terminal_ID_2, ipAddress: Terminal_IP_2), 
   TerminalDevice(id: Terminal_ID_3, ipAddress: Terminal_IP_3) 
@@ -162,7 +162,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts all connections
-  TerminalGateway.shared.restart(tid: nil)
+  TerminalGateway.shared.restart(terminalID: nil)
   ```
 </Tab>
 
@@ -171,7 +171,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts the connection to a specific Terminal
-  TerminalGateway.shared.restart(tid: TERMINAL_ID)
+  TerminalGateway.shared.restart(terminalID: TERMINAL_ID)
   ```
 </Tab>
 </Tabs>
@@ -182,7 +182,7 @@ Monitor Terminal connection status using the `observeEDCConnection` method:
 
 ```swift
 TerminalGateway.shared
-  .observeEDCConnection(terminalID: TERMINAL_ID) { state in     
+  .observeConnection(device: terminalDevice) { state in     
    // Handle connection state changes
 }
 ```
