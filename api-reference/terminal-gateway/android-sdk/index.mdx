@@ -37,26 +37,64 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
 </Step>
 
 <Step title="Configure Gradle settings">
-  Add the repository to your Gradle settings file:
+  Add the repository to your Gradle configuration. Choose one of the following approaches:
   
-  ```kotlin settings.gradle(.kts)
-  dependencyResolutionManagement {
-    repositories {
-      // ... other repositories
-      maven("./repository")
+  <Tabs>
+  <Tab title="Modern Approach (Recommended)">
+    Add the repository to your Gradle settings file:
+    
+    <CodeGroup>
+    ```kotlin settings.gradle(.kts)
+    dependencyResolutionManagement {
+      repositories {
+        // ... other repositories
+        maven("./repository")
+      }
     }
-  }
-  ```
+    ```
+    
+    ```groovy settings.gradle
+    dependencyResolutionManagement {
+      repositories {
+        // ... other repositories
+        maven { url './repository' }
+      }
+    }
+    ```
+    </CodeGroup>
+  </Tab>
   
-  <Note>
-  If your `repository` folder is located one level up from your project, use `maven("../repository")` instead.
-  </Note>
+  <Tab title="Old Android Project">
+    Add the repository to your root build.gradle file:
+    
+    <CodeGroup>
+    ```kotlin build.gradle.kts (root)
+    allprojects {
+      repositories {
+        // ... other repositories
+        maven("../repository")
+      }
+    }
+    ```
+    
+    ```groovy build.gradle (root)
+    allprojects {
+      repositories {
+        // ... other repositories
+        maven { url '../repository' }
+      }
+    }
+    ```
+    </CodeGroup>
+  </Tab>
+  </Tabs>
 </Step>
 
 <Step title="Add dependencies">
   Add the required dependencies to your app module's `build.gradle` file:
   
-  ```kotlin build.gradle
+  <CodeGroup>
+  ```kotlin build.gradle.kts
   dependencies {
     implementation("co.xendit.terminal:core:0.4.0")
     implementation("co.xendit.terminal:gateway:0.4.0")
@@ -66,6 +104,18 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
     // implementation("co.xendit.terminal:th-ghl:0.4.0")
   }
   ```
+  
+  ```groovy build.gradle
+  dependencies {
+    implementation 'co.xendit.terminal:core:0.4.0'
+    implementation 'co.xendit.terminal:gateway:0.4.0'
+    implementation 'co.xendit.terminal:id-bri:0.4.0'
+
+    // GHL (Thailand) - uncomment if needed
+    // implementation 'co.xendit.terminal:th-ghl:0.4.0'
+  }
+  ```
+  </CodeGroup>
   
   <Warning>
   Only add the terminal provider dependencies you actually need. Each provider adds to your app's size.
@@ -116,27 +166,15 @@ Use `TerminalMode.INTEGRATION` for development and testing. Switch to `TerminalM
 Register your terminal devices with the SDK:
 
 ```kotlin
-val error = TerminalGateway.registerDevice(
+TerminalGateway.registerDevice(
   listOf(
     TerminalDevice(TERMINAL_ID_1, TERMINAL_IP_1),
     TerminalDevice(TERMINAL_ID_2, TERMINAL_IP_2)
   )
 )
 
-when (error?.code) {
-  ErrorCode.AUTHENTICATION_FAILED -> {
-    // Handle unknown/unauthorized terminal device
-    Log.e("TerminalGateway", "Authentication failed: ${error.message}")
-  }
-  null -> {
-    // Success - devices registered
-    Log.i("TerminalGateway", "Devices registered successfully")
-  }
-  else -> {
-    // Handle other errors
-    Log.e("TerminalGateway", "Registration failed: ${error.message}")
-  }
-}
+// Registration completed - devices are now available for use
+Log.i("TerminalGateway", "Devices registered successfully")
 ```
 
 <Check>
@@ -161,55 +199,88 @@ TerminalGateway.setOperationTimeout(minutes = 10)
 The default timeout is 5 minutes. Increase this value if you expect longer processing times for complex transactions.
 </Note>
 
-### Restart Terminal Connections
+<Warning>
+This timeout configuration is only available for the BRI provider. Other terminal providers use their own internal timeout settings.
+</Warning>
 
-Restart terminal connections when needed:
+### Restart Terminal Connection
 
-```kotlin
-// Restart all terminal connections
-TerminalGateway.restart()
+Manage and restart terminal service connections:
 
-// Restart a specific terminal connection
-TerminalGateway.restart(tid = TERMINAL_ID)
-```
+<Tabs>
+<Tab title="Restart All Connections">
+  Call the method without parameters to restart all connections and tasks:
+  
+  ```kotlin
+  // This restarts all connections
+  TerminalGateway.restart()
+  ```
+</Tab>
 
-<Tip>
-Use restart functionality when terminals become unresponsive or after network connectivity issues.
-</Tip>
+<Tab title="Restart Single Connection">
+  Provide the terminal ID to restart a specific terminal connection:
+  
+  ```kotlin
+  // This restarts the connection to a specific Terminal
+  TerminalGateway.restart(terminalID = TERMINAL_ID)
+  ```
+</Tab>
+</Tabs>
 
 ### Monitor Connection State
 
 Observe terminal connection states in real-time:
 
-```kotlin
-// Using coroutine scope
-TerminalGateway.observeConnection(
-  CoroutineScope(Dispatchers.IO),
-  terminalDevice
-) { state ->
-  when (state) {
-    ConnectionState.CONNECTED -> {
-      // Terminal is ready for transactions
-      Log.i("Terminal", "Connected to ${terminalDevice.tid}")
+<Tabs>
+<Tab title="Using Coroutine Scope">
+  Use the `observeConnection` method with a coroutine scope:
+  
+  ```kotlin
+  TerminalGateway.observeConnection(
+    CoroutineScope(Dispatchers.IO),
+    terminalDevice
+  ) { state ->
+    when (state) {
+      ConnectionState.CONNECTED -> {
+        // Terminal is ready for transactions
+        Log.i("Terminal", "Connected to ${terminalDevice.id}")
+      }
+      ConnectionState.DISCONNECTED -> {
+        // Terminal is offline
+        Log.w("Terminal", "Disconnected from ${terminalDevice.id}")
+      }
+      ConnectionState.CONNECTING_FAILED -> {
+        // Connection attempt failed
+        Log.e("Terminal", "Failed to connect to ${terminalDevice.id}")
+      }
+      // ... handle other states
     }
-    ConnectionState.DISCONNECTED -> {
-      // Terminal is offline
-      Log.w("Terminal", "Disconnected from ${terminalDevice.tid}")
-    }
-    ConnectionState.CONNECTING_FAILED -> {
-      // Connection attempt failed
-      Log.e("Terminal", "Failed to connect to ${terminalDevice.tid}")
-    }
-    // ... handle other states
   }
-}
+  ```
+</Tab>
 
-// Using Flow
-val connectionStateFlow = terminalDevice.connectionState
-connectionStateFlow.collect { state ->
-  // Handle connection state changes
-}
-```
+<Tab title="Using Flow">
+  Use the connection state Flow directly:
+  
+  ```kotlin
+  val connectionStateFlow = terminalDevice.connectionState
+  connectionStateFlow.collect { state ->
+    // Handle connection state changes
+    when (state) {
+      ConnectionState.CONNECTED -> {
+        // Terminal is ready for transactions
+        Log.i("Terminal", "Connected to ${terminalDevice.id}")
+      }
+      ConnectionState.DISCONNECTED -> {
+        // Terminal is offline
+        Log.w("Terminal", "Disconnected from ${terminalDevice.id}")
+      }
+      // ... handle other states
+    }
+  }
+  ```
+</Tab>
+</Tabs>
 
 ### Connection States
 
@@ -239,7 +310,7 @@ Observe and handle errors across all terminal devices:
 TerminalGateway.observeError(
   CoroutineScope(Dispatchers.IO)
 ) { device, error ->
-  Log.e("TerminalGateway", "Error on ${device.tid}: ${error.message}")
+  Log.e("TerminalGateway", "Error on ${device.id}: ${error.message}")
   
   when (error.code) {
     ErrorCode.TERMINAL_BUSY -> {
