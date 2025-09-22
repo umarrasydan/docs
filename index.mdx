@@ -15,12 +15,17 @@ Xendit Payment Terminal provides comprehensive in-person payment solutions for b
 
 Before you begin, ensure you have:
 
-- Terminal API access and API key from the Xendit In-Person Payment team
+- **Terminal API key** from the Xendit In-Person Payment team (for API authentication)
+- **Terminal Gateway client key** from the Xendit In-Person Payment team (for SDK/app initialization)
 - Terminal Gateway set up (desktop app or Android/iOS SDK)
 - A terminal with Terminal ID and network connectivity
 - Your environment base URL:
   - Development: `https://terminal-dev.xendit.co`
   - Production: `https://terminal.xendit.co`
+
+<Info>
+**Two different keys**: The Terminal API uses an `API_KEY` for authentication, while the Terminal Gateway SDK/app uses a `CLIENT_KEY` for initialization. Contact the Xendit In-Person Payment team to obtain both keys.
+</Info>
 
 <Warning>
 Terminal API uses HTTP Basic Auth with your Terminal API key as the username and an empty password. Always include a trailing colon when constructing the header.
@@ -121,149 +126,19 @@ Everything you need to build with Xendit's Payment Terminal:
 3. **Receive callbacks** for real-time status updates.
 4. **Query details** for reconciliation or show receipts.
 
-## Integration Paths
+## Integration Options
 
 <Info>
-**Don't have a physical terminal yet?** No problem! You can start integration immediately using our simulation capabilities. Use special test amounts and any terminal ID to test payment flows, error handling, and webhook integrations - all without waiting for hardware delivery.
+**Don't have a physical terminal yet?** Start with our comprehensive [quickstart guide](/guides/getting-started/quickstart) which includes detailed simulation testing options that let you build and test your integration immediately without hardware.
 </Info>
 
-<Tabs>
-<Tab title="Simulation Testing">
-  **Perfect for merchants waiting on terminal delivery**
-  
-  <Steps>
-  <Step title="Obtain Terminal API key">
-    Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.
-    
-    <Check>
-    You can successfully authenticate to the development base URL with your key.
-    </Check>
-  </Step>
-  <Step title="Start testing immediately">
-    Use any `terminal_id` and special test amounts to simulate different payment scenarios:
-    - Normal amounts (e.g., `10000`): Success flow
-    - `400508`: Payment declined
-    - `400509`: Channel unavailable
-    - `400711`: User cancellation
-    
-    <Check>
-    You receive different responses based on test amounts, simulating real payment scenarios.
-    </Check>
-  </Step>
-  <Step title="Test webhook integration">
-    Set up webhook endpoints to receive real-time payment status updates and notifications - works exactly the same as physical terminals.
-    
-    <Check>
-    Your webhook server receives callbacks for all simulated payment events.
-    </Check>
-  </Step>
-  <Step title="Prepare for production">
-    When your physical terminals arrive, simply update the `terminal_id` values - all your existing code will work seamlessly!
-    
-    <Tip>
-    Use unique `Idempotency-key` values per create request to safely retry.
-    </Tip>
-  </Step>
-  </Steps>
-</Tab>
-
-<Tab title="Physical Terminal Testing">
-  **For merchants with actual terminal devices**
-  
-  <Steps>
-  <Step title="Register terminals for test mode">
-    Contact Xendit support to register your physical terminals for test mode. This ensures test transactions are properly routed to your hardware.
-    
-    **Required Information:**
-    - Terminal ID (from device or Terminal Gateway)
-    - Xendit Business ID
-    - Confirmation that you want test mode registration
-    
-    <Check>
-    Your terminals are registered and ready for test transactions.
-    </Check>
-  </Step>
-  
-  <Step title="Set up Terminal Gateway">
-    Install and configure the Terminal Gateway app/SDK to manage your terminal connections in test mode.
-    
-    <Check>
-    Terminal Gateway shows your devices as "Connected" and test mode is enabled.
-    </Check>
-  </Step>
-  
-  <Step title="Test real payment flows">
-    Use your registered terminals to test complete payment flows with actual card interactions and hardware validation.
-    
-    <Check>
-    Physical terminals respond to API calls and process test card payments successfully.
-    </Check>
-  </Step>
-  </Steps>
-  
-  <Note>
-  **Hardware Testing Benefits**: Validate complete payment flows, test network connectivity, verify card reader functionality, and ensure webhook delivery with real hardware interactions.
-  </Note>
-</Tab>
-
-<Tab title="Retail POS System">
-  **For merchants with physical terminals ready**
-  
-  <Steps>
-  <Step title="Obtain Terminal API key">
-    Contact the Xendit In-Person Payment team to request your Terminal API key for authentication.
-    
-    <Check>
-    You can successfully authenticate to the development base URL with your key.
-    </Check>
-  </Step>
-  <Step title="Set up Terminal Gateway">
-    Install Terminal Gateway app or integrate mobile SDK on your devices to manage physical terminals.
-    
-    <Check>
-    The device appears connected and ready in your Gateway.
-    </Check>
-  </Step>
-  <Step title="Register terminal devices">
-    Configure your physical terminals with Terminal ID and IP address in the Gateway application.
-  </Step>
-  <Step title="Create payment sessions">
-    Use Terminal API to create payment sessions and process transactions on connected terminals.
-    
-    <Check>
-    You receive a session ID and the terminal prompts for payment.
-    </Check>
-  </Step>
-  <Step title="Handle callbacks">
-    Set up webhook endpoints to receive real-time payment status updates and notifications.
-    
-    <Tip>
-    Use unique `Idempotency-key` values per create request to safely retry.
-    </Tip>
-  </Step>
-  </Steps>
-</Tab>
-
-<Tab title="Mobile POS App">
-  <Steps>
-  <Step title="Install Terminal Gateway SDK">
-    Add Terminal Gateway SDK to your Android or iOS application for terminal device management.
-  </Step>
-  <Step title="Initialize SDK">
-    Configure the SDK with your client key and add terminal providers (BRI, GHL, etc.).
-  </Step>
-  <Step title="Register devices">
-    Register your physical terminal devices with Terminal ID and connection details.
-  </Step>
-  <Step title="Process payments">
-    Use Terminal API to create payment sessions that automatically trigger on registered terminals.
-  </Step>
-  <Step title="Monitor transactions">
-    Observe connection states and handle payment results through SDK callbacks.
-  </Step>
-  </Steps>
-</Tab>
-</Tabs>
+<Card
+  title="Quick Start Guide"
+  icon="rocket"
+  href="/guides/getting-started/quickstart"
+>
+  Complete step-by-step guide with simulation testing for immediate development, plus physical terminal integration when you're ready.
+</Card>
 
 ## Platform-Specific Guides
 
@@ -285,7 +160,7 @@ Choose your development platform for detailed integration instructions:
     Native iOS development with Swift SDK for terminal device integration.
   </Card>
   <Card
-    title="Gateway App"
+    title="Terminal Gateway App"
     icon="desktop"
     href="/api-reference/terminal-gateway/app-configuration"
   >

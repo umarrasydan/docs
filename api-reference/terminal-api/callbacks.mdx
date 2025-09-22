@@ -40,13 +40,13 @@ POST <Webhook URL provided by Partner via Xendit dashboard>
 ### Events
 
 <CardGroup cols={2}>
-  <Card title="terminal_session.completed" icon="check-circle" color="green">
+  <Card title="terminal_session.completed" icon="circle-check">
     Payment session has been completed successfully
   </Card>
-  <Card title="terminal_session.voided" icon="x-circle" color="red">
+  <Card title="terminal_session.voided" icon="circle-x">
     Payment session has been voided
   </Card>
-  <Card title="terminal_session.canceled" icon="ban" color="orange">
+  <Card title="terminal_session.canceled" icon="ban">
     Payment session has been canceled
   </Card>
 </CardGroup>
@@ -277,12 +277,12 @@ POST <Webhook URL provided by Partner via Xendit dashboard>
 Your webhook endpoint should respond with appropriate HTTP status codes:
 
 <CardGroup cols={2}>
-  <Card title="Success" icon="check-circle" color="green">
+  <Card title="Success" icon="circle-check">
     HTTP status code = 200
     
     Indicates successful processing of the webhook
   </Card>
-  <Card title="Error" icon="x-circle" color="red">
+  <Card title="Error" icon="circle-x">
     HTTP status code != 200
     
     Indicates an error in processing the webhook
@@ -316,13 +316,13 @@ If you need to return an error, include the following fields in your response:
   <Card title="Idempotency" icon="repeat">
     Implement idempotency to handle duplicate webhook deliveries
   </Card>
-  <Card title="Retry Logic" icon="refresh">
+  <Card title="Retry Logic" icon="rotate">
     Xendit will retry failed webhooks, so ensure your endpoint can handle retries
   </Card>
   <Card title="Security" icon="shield">
     Always verify the webhook signature using the x-callback-token
   </Card>
-  <Card title="Logging" icon="file-text">
+  <Card title="Logging" icon="file-lines">
     Log all webhook events for debugging and audit purposes
   </Card>
 </CardGroup>

@@ -85,7 +85,7 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["curl", "dotnet", "java", "go", "python", "javascript"],
+      "languages": ["curl", "php", "java", "go", "python", "javascript", "ruby"],
       "defaults": "all"
     }
   },
