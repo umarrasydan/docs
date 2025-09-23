@@ -3,9 +3,17 @@ title: 'Introduction'
 description: 'Overview of the Terminal Gateway Client-to-client HTTP API and required app configuration.'
 ---
 
+<Warning>
+**Client-to-client mode is an involved form of integration** that requires careful network setup and management. It is designed for very specific use cases and is **not recommended for most integrations**.
+</Warning>
+
 <Info>
 Client-to-client lets your POS or backend call the Terminal Gateway app over the local network to initiate payments and terminal actions.
 </Info>
+
+<Tip>
+**Most integrations should use the standard Terminal API** instead of client-to-client mode. The Terminal API provides centralized terminal management, better scalability, and simplified network requirements.
+</Tip>
 
 <Steps>
 <Step title="Configure the Terminal Gateway app">
@@ -50,15 +58,18 @@ Requests must include the correct provider header (e.g., `BRI`, `GHL`) and `X-AP
 </Accordion>
 
 <Accordion title="Use Client-to-Client when">
-  Choose Client-to-Client for localized integrations that require:
+  Consider Client-to-Client **only** for these very specific use cases:
 
-  - Direct LAN access from POS to the terminal device
-  - Low-latency, on-premise communication without cloud routing
-  - Operation in restricted networks without outbound connectivity
-  - Temporary fallback if the central service is unreachable
+  - **Locally managed POS systems**: Your cashier/POS system runs entirely locally without a central server backend
+  - **Bundled distribution**: You want to bundle your POS system with terminal devices for distribution to retail stores without any central backend system to manage distribution
+  - **Offline-capable terminals**: You need terminals that can operate with intermittent connectivity, though internet access is still required for payment processing
 
   <Warning>
-    Client-to-Client requires that your POS can reach the terminal IP/port on the same network and that you manage local network/firewall rules securely.
+    Client-to-Client **still requires internet connectivity** to process payments and communicate with terminal device providers. It only removes the need for your POS to connect to a central server - the terminals and gateway app or SDK themselves must still have internet access.
+  </Warning>
+
+  <Warning>
+    This integration requires managing local network configuration, firewall rules, and direct IP/port access between your POS and terminal devices. You are responsible for ensuring secure network communication.
   </Warning>
 </Accordion>
 </AccordionGroup>
@@ -73,7 +84,7 @@ Requests must include the correct provider header (e.g., `BRI`, `GHL`) and `X-AP
   </Note>
 
 <CardGroup cols={2}>
-<Card title="Download YAML" icon="file-code" href="/openapi-spec(client-to-client).yaml" download="xendit-terminal-gateway-client-to-client.yaml">
+<Card title="Download YAML" icon="file-code" href="/openapi-spec-c2c.yaml" download="xendit-terminal-gateway-client-to-client.yaml">
   Download the Client-to-Client OpenAPI 3.0 spec (YAML)
 </Card>
 

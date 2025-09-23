@@ -49,8 +49,8 @@
               "api-reference/terminal-gateway/android-sdk/index",
               "api-reference/terminal-gateway/ios-sdk/index",
               {
-                "group": "Client-to-client",
-                "openapi": "openapi-spec(client-to-client).yaml",
+                "group": "Client-to-Client",
+                "openapi": "openapi-spec-c2c.yaml",
                 "pages": [
                   "api-reference/terminal-gateway/client-to-client",
                   "POST /commands/pay",
