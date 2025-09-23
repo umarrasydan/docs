@@ -1,0 +1,846 @@
+openapi: 3.1.0
+info:
+  title: Terminal Gateway - Client to Client HTTP API
+  description: This documentation provides details on the API to facilitate in-person
+    payment sessions using terminal devices. It covers how to create payment
+    sessions, retrieve session details, void payment requests, push operation
+    commands to terminals, and handle terminal callbacks.
+  version: 1.3.0
+  contact:
+    name: API Support
+    email: support@example.com
+    url: https://example.com/support
+  license:
+    name: Proprietary
+    url: https://example.com/license
+servers:
+- url: http://{IP_ADDRESS}:{PORT}
+  description: Client-to-Client Endpoint
+  variables:
+    IP_ADDRESS:
+      default: 172.0.0.1
+      description: The IP address displayed on the Terminal Gateway main screen.
+    PORT:
+      default: '8189'
+      description: The port number configured in the Terminal Gateway App.
+- url: https://{IP_ADDRESS}:{PORT}
+  description: Secure Client-to-Client Endpoint
+  variables:
+    IP_ADDRESS:
+      default: 172.0.0.1
+      description: The IP address displayed on the Terminal Gateway main screen.
+    PORT:
+      default: '8189'
+      description: The port number configured in the Terminal Gateway App.
+tags:
+- name: Client-to-client Terminal API
+  description: Payment operations and transactions
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+      description: API key for authentication
+  schemas:
+    PaymentMethod:
+      type: string
+      enum:
+      - CARD
+      - EWALLET
+      - QRIS
+      description: Available payment methods
+      example: QRIS
+    TransactionStatus:
+      type: string
+      enum:
+      - SUCCESS
+      - FAILED
+      description: Transaction status values
+      example: SUCCESS
+    ErrorCode:
+      type: string
+      enum:
+      - INVALCREDENTIAL
+      - INVALREQUEST
+      - INTERNAL_SERVER_ERROR
+      - UNKNOWN_ERROR
+      - KEY_INVALID
+      - SEND_FAILED
+      - NOT_CONNECTED
+      - FAILED_TO_CONNECT
+      - UNSUPPORTED
+      - TERMINAL_BUSY
+      - ENCRYPTION_FAILED
+      - DECLINED_BY_READER
+      - PAYMENT_UNPAID
+      - DUPLICATED
+      - CANCELLED
+      - TIMEOUT
+      - NO_DATA_FOUND
+      - VOFAILED
+      - REFUNDED
+      - NEED_DO_SETTLEMENT
+      - CHIP_CARD_DETECTED
+      - TRANSACTION_FAILED
+      - TNOT_SET
+      - TNOT_MATCH
+      - TNOT_FOUND
+      - AUTHENTICATION_FAILED
+      - WRONG_PIN
+      description: Error codes returned by the API
+      example: INVALREQUEST
+    BaseRequest:
+      type: object
+      required:
+      - terminal_id
+      - payment_method
+      properties:
+        terminal_id:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Terminal's ID.
+          example: '10362517'
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        terminal_reference:
+          type: string
+          description: Reference for Void & Receipt.
+          example: 1750407594445|1750407594
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+        amount:
+          type: number
+          format: double
+          minimum: 0
+          description: The transaction amount.
+          example: 100
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: The transaction currency (ISO 4217).
+          example: IDR
+        transaction_date:
+          type: string
+          format: date-time
+          description: The date and time of the transaction.
+          example: 2025-06-20T15:19:54+07:00
+    PaymentRequest:
+      allOf:
+      - type: object
+        required:
+        - terminal_id
+        - order_id
+        - request_amount
+        - payment_method
+        properties:
+          terminal_id:
+            type: string
+            minLength: 1
+            maxLength: 50
+            description: Terminal's ID.
+            example: '10362517'
+          order_id:
+            type: string
+            minLength: 1
+            maxLength: 100
+            description: Merchant's order ID.
+            example: test1223323
+          request_amount:
+            type: number
+            format: double
+            minimum: 1
+            description: Intended amount to be collected from end user.
+            example: 100
+          payment_method:
+            type: string
+            enum:
+            - INSERT_CARD
+            - CONTACTLESS
+            - BRIZZI
+            - QRIS
+            - CARD
+            - QR
+            - ALIPAY_PLUS
+            - WECHATPAY_CIL
+            - WECHATPAY_OCGT
+            - TRUEMONEY
+            - LINEPAY
+            - SHOPEEPAY
+            - SABUYMONEY
+            - MAXME
+            - BBL_QRCS
+            description: Available payment methods
+            example: QRIS
+    CancelRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseRequest'
+      - type: object
+        required:
+        - terminal_reference
+        properties:
+          terminal_reference:
+            type: string
+            minLength: 1
+            maxLength: 100
+            description: terminal_reference from /pay response.
+            example: 1750407594445|1750407594
+    ReceiptRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseRequest'
+      - type: object
+        required:
+        - terminal_reference
+        properties:
+          terminal_reference:
+            type: string
+            minLength: 1
+            maxLength: 100
+            description: terminal_reference from /pay response.
+            example: 1750407594445|1750407594
+    SettlementRequest:
+      type: object
+      required:
+      - terminal_id
+      properties:
+        terminal_id:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Terminal's ID to perform settlement on.
+          example: '10362517'
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+    HistoriesRequest:
+      allOf:
+      - type: object
+        properties:
+          commands:
+            type:
+            - array
+            - 'null'
+            items:
+              type: string
+              enum:
+                - PAY
+            description: List of command types to filter by.
+            example:
+            - PAY
+          statuses:
+            type: array
+            items:
+              $ref: '#/components/schemas/TransactionStatus'
+            description: List of statuses to filter by.
+            example:
+            - SUCCESS
+          from:
+            type:
+            - string
+            - 'null'
+            format: date-time
+            description: Start date-time for the filter (ISO 8601 format).
+            example: 2025-06-17T15:00:00Z
+          to:
+            type:
+            - string
+            - 'null'
+            format: date-time
+            description: End date-time for the filter (ISO 8601 format).
+            example: 2025-06-20T15:00:00Z
+    PaymentResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        required:
+        - order_id
+        - status
+        properties:
+          order_id:
+            type: string
+            description: Merchant's order ID.
+            example: test1223323
+    CancelResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        required:
+        - status
+    ReceiptResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        required:
+        - order_id
+        - status
+        properties:
+          order_id:
+            type: string
+            description: Merchant's order ID.
+            example: test1223323
+    SettlementResponse:
+      type: object
+      required:
+      - status
+      - terminal_id
+      - payment_method
+      - transaction_date
+      properties:
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+        terminal_id:
+          type: string
+          description: Terminal ID where settlement was performed.
+          example: '10362517'
+        transaction_date:
+          type: string
+          format: date-time
+          description: Settlement date and time.
+          example: 2025-06-20T23:59:59+07:00
+    HistoriesResponse:
+      allOf:
+      - type: object
+        required:
+        - histories
+        properties:
+          histories:
+            type: array
+            description: A list of past transactions.
+            items:
+              $ref: '#/components/schemas/PaymentResponse'
+    Error:
+      type: object
+      required:
+      - error_code
+      - message
+      properties:
+        error_code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          description: Error message.
+          example: Transaction Failed
+security:
+- ApiKeyAuth: []
+paths:
+  /commands/pay:
+    post:
+      tags:
+      - Client-to-client Terminal API
+      summary: Create Payment Request
+      description: Creates a new payment request on the specified terminal.
+      operationId: createPayment
+      parameters:
+      - name: provider
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - BRI
+          - GHL
+        description: Provider name.
+      - name: simulation
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Simulation/mock response flag.
+        example: false
+      - name: pretty-print
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Json Pretty Formatter flag.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+            example:
+              order_id: test1223323
+              terminal_id: '10362517'
+              request_amount: 100
+              payment_method: QRIS
+      responses:
+        '200':
+          description: Successful payment response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+              example:
+                order_id: test1223323
+                terminal_id: '10362517'
+                terminal_reference: 1750407594445|1750407594
+                payment_method: QRIS
+                amount: 100
+                currency: IDR
+                transaction_date: 2025-06-20T15:19:54+07:00
+                status: SUCCESS
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALREQUEST
+                message: Invalid payment amount
+        '401':
+          description: Unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALCREDENTIAL
+                message: Invalid API key
+        '404':
+          description: Terminal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: TNOT_FOUND
+                message: Terminal not found
+        '409':
+          description: Terminal busy or transaction in progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: TERMINAL_BUSY
+                message: Terminal is busy
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INTERNAL_SERVER_ERROR
+                message: Internal server error
+        default:
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: UNKNOWN_ERROR
+                message: An unexpected error occurred
+  /commands/cancel:
+    post:
+      tags:
+      - Client-to-client Terminal API
+      summary: Cancel Payment
+      description: Cancels an ongoing payment transaction.
+      operationId: cancelPayment
+      parameters:
+      - name: provider
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - BRI
+          - GHL
+        description: Provider name.
+      - name: simulation
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Simulation/mock response flag.
+        example: false
+      - name: pretty-print
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Json Pretty Formatter flag.
+        example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelRequest'
+            example:
+              terminal_id: '10362517'
+              payment_method: QRIS
+              terminal_reference: 1750407594445|1750407594
+      responses:
+        '200':
+          description: Successful cancellation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResponse'
+              example:
+                terminal_id: '10362517'
+                terminal_reference: 1750407594445|1750407725
+                payment_method: QRIS
+                amount: 1000
+                currency: IDR
+                transaction_date: 2025-06-20T15:22:05+07:00
+                status: SUCCESS
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALREQUEST
+                message: Invalid terminal reference
+        '401':
+          description: Unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALCREDENTIAL
+                message: Invalid API key
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: NO_DATA_FOUND
+                message: Transaction not found
+        '409':
+          description: Transaction cannot be cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: CANCELLED
+                message: Transaction already cancelled
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INTERNAL_SERVER_ERROR
+                message: Internal server error
+        default:
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/receipt:
+    post:
+      tags:
+      - Client-to-client Terminal API
+      summary: Print Receipt
+      description: Triggers the printing of a transaction receipt on the terminal.
+      operationId: printReceipt
+      parameters:
+      - name: provider
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - BRI
+          - GHL
+        description: Provider name.
+      - name: simulation
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Simulation/mock response flag.
+        example: false
+      - name: pretty-print
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Json Pretty Formatter flag.
+        example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptRequest'
+            example:
+              terminal_id: '10362517'
+              payment_method: QRIS
+              terminal_reference: 1750407594445|1750407594
+      responses:
+        '200':
+          description: Successful receipt print response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptResponse'
+              example:
+                terminal_id: '10362517'
+                terminal_reference: N/A|1750407594
+                payment_method: QRIS
+                amount: 1000
+                currency: IDR
+                transaction_date: 2025-06-20T15:26:19+07:00
+                status: SUCCESS
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALREQUEST
+                message: Invalid terminal ID
+        '401':
+          description: Unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALCREDENTIAL
+                message: Invalid API key
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: NO_DATA_FOUND
+                message: Transaction not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INTERNAL_SERVER_ERROR
+                message: Internal server error
+        default:
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/settlement:
+    post:
+      tags:
+      - Client-to-client Terminal API
+      summary: Settlement
+      description: Initiates the settlement process on the terminal.
+      operationId: performSettlement
+      parameters:
+      - name: provider
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - BRI
+          - GHL
+        description: Provider name.
+      - name: simulation
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Simulation/mock response flag.
+        example: false
+      - name: pretty-print
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Json Pretty Formatter flag.
+        example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementRequest'
+            example:
+              terminal_id: '10362517'
+              payment_method: QRIS
+      responses:
+        '200':
+          description: Successful settlement response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementResponse'
+              example:
+                status: SUCCESS
+                terminal_id: '10362517'
+                payment_method: QRIS
+                transaction_date: 2025-06-20T23:59:59+07:00
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALREQUEST
+                message: Invalid terminal ID
+        '401':
+          description: Unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALCREDENTIAL
+                message: Invalid API key
+        '404':
+          description: Terminal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: TNOT_FOUND
+                message: Terminal not found
+        '409':
+          description: Settlement not needed or already performed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: NEED_DO_SETTLEMENT
+                message: No settlement needed
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INTERNAL_SERVER_ERROR
+                message: Internal server error
+        default:
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /histories:
+    post:
+      tags:
+      - Client-to-client Terminal API
+      summary: Transaction List
+      description: The application stores a running 24-hour history of past transactions.
+      operationId: getTransactionHistory
+      parameters:
+      - name: provider
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - BRI
+          - GHL
+        description: Provider name.
+      - name: simulation
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Simulation/mock response flag.
+        example: false
+      - name: pretty-print
+        in: header
+        required: false
+        schema:
+          type: boolean
+        description: Json Pretty Formatter flag.
+        example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistoriesRequest'
+            example:
+              commands:
+              - PAY
+              statuses:
+              - SUCCESS
+              from: 2025-06-17T15:00:00Z
+              to: 2025-06-20T15:00:00Z
+      responses:
+        '200':
+          description: A list of transaction histories.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoriesResponse'
+              example:
+                histories:
+                - order_id: test1223323
+                  terminal_id: '10362517'
+                  terminal_reference: 1750407594445|1750407594
+                  payment_method: QRIS
+                  amount: 100
+                  currency: IDR
+                  transaction_date: 2025-06-20T15:19:54+07:00
+                  status: SUCCESS
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALREQUEST
+                message: Invalid date range
+        '401':
+          description: Unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INVALCREDENTIAL
+                message: Invalid API key
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: INTERNAL_SERVER_ERROR
+                message: Internal server error
+        default:
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

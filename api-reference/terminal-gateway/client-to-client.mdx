@@ -1,0 +1,102 @@
+---
+title: 'Introduction'
+description: 'Overview of the Terminal Gateway Client-to-client HTTP API and required app configuration.'
+---
+
+<Warning>
+**Client-to-client mode is an involved form of integration** that requires careful network setup and management. It is designed for very specific use cases and is **not recommended for most integrations**.
+</Warning>
+
+<Info>
+Client-to-client lets your POS or backend call the Terminal Gateway app over the local network to initiate payments and terminal actions.
+</Info>
+
+<Tip>
+**Most integrations should use the standard Terminal API** instead of client-to-client mode. The Terminal API provides centralized terminal management, better scalability, and simplified network requirements.
+</Tip>
+
+<Steps>
+<Step title="Configure the Terminal Gateway app">
+  Follow the setup in <a href="/api-reference/terminal-gateway/app-configuration#client-to-client">App configuration</a> to:
+  - Enable Client-to-client mode
+  - Note the device IP and port (default 8189)
+  - Set the API key
+
+  <Check>
+  You should see the device IP on the app home screen and be able to reach `http://{IP}:{PORT}` from your network.
+  </Check>
+</Step>
+
+<Step title="Use the Client-to-client API">
+  After configuration, use the API documented under Terminal Gateway to:
+  - Create payments (`POST /commands/pay`)
+  - Cancel payments (`POST /commands/cancel`)
+  - Print receipts (`POST /commands/receipt`)
+  - Run settlement (`POST /commands/settlement`)
+  - Query histories (`POST /histories`)
+</Step>
+</Steps>
+
+<Tip>
+Requests must include the correct provider header (e.g., `BRI`, `GHL`) and `X-API-KEY` set in the app.
+</Tip>
+
+## Choosing a connection mode
+
+<AccordionGroup>
+<Accordion title="Recommended: Host-to-Host (Default)">
+  Host-to-Host is recommended for most integrations because it:
+
+  - Centralizes terminal management and monitoring
+  - Scales to many devices and locations
+  - Simplifies network/security by avoiding direct device access
+  - Reduces POS coupling to terminal networks
+
+  <Tip>
+    Use Host-to-Host unless you have a specific need for direct local access.
+  </Tip>
+</Accordion>
+
+<Accordion title="Use Client-to-Client when">
+  Consider Client-to-Client **only** for these very specific use cases:
+
+  - **Locally managed POS systems**: Your cashier/POS system runs entirely locally without a central server backend
+  - **Bundled distribution**: You want to bundle your POS system with terminal devices for distribution to retail stores without any central backend system to manage distribution
+  - **Offline-capable terminals**: You need terminals that can operate with intermittent connectivity, though internet access is still required for payment processing
+
+  <Warning>
+    Client-to-Client **still requires internet connectivity** to process payments and communicate with terminal device providers. It only removes the need for your POS to connect to a central server - the terminals and gateway app or SDK themselves must still have internet access.
+  </Warning>
+
+  <Warning>
+    This integration requires managing local network configuration, firewall rules, and direct IP/port access between your POS and terminal devices. You are responsible for ensuring secure network communication.
+  </Warning>
+</Accordion>
+</AccordionGroup>
+
+
+## OpenAPI Specification
+
+<Note>
+  Download the complete OpenAPI 3.1.0 specification for the Client-to-Client API
+  to integrate with your development tools. Import it into Postman, Insomnia,
+  or any OpenAPI-compatible client.
+  </Note>
+
+<CardGroup cols={2}>
+<Card title="Download YAML" icon="file-code" href="/openapi-spec(client-to-client).yaml" download="xendit-terminal-gateway-client-to-client.yaml">
+  Download the Client-to-Client OpenAPI 3.1.0 spec (YAML)
+</Card>
+
+<Card title="View in Browser" icon="terminal" href="/api-reference/client-to-client-terminal-api/create-payment-request">
+  View the API directly in your browser
+</Card>
+</CardGroup>
+
+<Tip>
+  - Import the YAML into your API client for quick testing
+  - Use it to generate client SDKs and ensure schema accuracy
+  - The spec documents endpoints, headers, and request/response bodies
+</Tip>
+
+
