@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: Xendit's Payment Terminal API
   version: 0.4.1
@@ -215,7 +215,9 @@ components:
           example: 'order-12345'
           maxLength: 255
         payment_methods:
-          type: array
+          type:
+            - array
+            - 'null'
           items:
             type: string
             enum:
@@ -240,7 +242,7 @@ components:
               - MY_QR
               - MY_CARD
               - MY_EWALLET
-          nullable: true
+          
     CreateTerminalPaymentSession:
       type: object
       required:
@@ -285,8 +287,9 @@ components:
           enum:
             - TERMINAL
         description:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
           example: 'Payment for order #123'
         metadata:
           type: object
@@ -356,16 +359,18 @@ components:
             - FAILED
             - CANCELED
         description:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
           example: 'Payment for order #123'
         metadata:
           type: object
           additionalProperties: true
         canceled_at:
-          type: string
+          type:
+            - string
+            - 'null'
           format: date-time
-          nullable: true
         channel_properties:
           $ref: '#/components/schemas/ChannelProperties'
         created:
@@ -463,8 +468,9 @@ components:
         payment_details:
           $ref: '#/components/schemas/PaymentDetails'
         failure_code:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
           example: 'VOID_FAILED'
         metadata:
           type: object

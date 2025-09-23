@@ -1,0 +1,91 @@
+---
+title: 'Introduction'
+description: 'Overview of the Terminal Gateway Client-to-client HTTP API and required app configuration.'
+---
+
+<Info>
+Client-to-client lets your POS or backend call the Terminal Gateway app over the local network to initiate payments and terminal actions.
+</Info>
+
+<Steps>
+<Step title="Configure the Terminal Gateway app">
+  Follow the setup in <a href="/api-reference/terminal-gateway/app-configuration">App configuration</a> to:
+  - Enable Client-to-client mode
+  - Note the device IP and port (default 8189)
+  - Set the API key
+
+  <Check>
+  You should see the device IP on the app home screen and be able to reach `http://{IP}:{PORT}` from your network.
+  </Check>
+</Step>
+
+<Step title="Use the Client-to-client API">
+  After configuration, use the API documented under Terminal Gateway to:
+  - Create payments (`POST /commands/pay`)
+  - Cancel payments (`POST /commands/cancel`)
+  - Print receipts (`POST /commands/receipt`)
+  - Run settlement (`POST /commands/settlement`)
+  - Query histories (`POST /histories`)
+</Step>
+</Steps>
+
+<Tip>
+Requests must include the correct provider header (e.g., `BRI`, `GHL`) and `X-API-KEY` set in the app.
+</Tip>
+
+## Choosing a connection mode
+
+<AccordionGroup>
+<Accordion title="Recommended: Host-to-Host (Default)">
+  Host-to-Host is recommended for most integrations because it:
+
+  - Centralizes terminal management and monitoring
+  - Scales to many devices and locations
+  - Simplifies network/security by avoiding direct device access
+  - Reduces POS coupling to terminal networks
+
+  <Tip>
+    Use Host-to-Host unless you have a specific need for direct local access.
+  </Tip>
+</Accordion>
+
+<Accordion title="Use Client-to-Client when">
+  Choose Client-to-Client for localized integrations that require:
+
+  - Direct LAN access from POS to the terminal device
+  - Low-latency, on-premise communication without cloud routing
+  - Operation in restricted networks without outbound connectivity
+  - Temporary fallback if the central service is unreachable
+
+  <Warning>
+    Client-to-Client requires that your POS can reach the terminal IP/port on the same network and that you manage local network/firewall rules securely.
+  </Warning>
+</Accordion>
+</AccordionGroup>
+
+
+## OpenAPI Specification
+
+<Note>
+  Download the complete OpenAPI 3.0 specification for the Client-to-Client API
+  to integrate with your development tools. Import it into Postman, Insomnia,
+  or any OpenAPI-compatible client.
+  </Note>
+
+<CardGroup cols={2}>
+<Card title="Download YAML" icon="file-code" href="/openapi-spec(client-to-client).yaml" download="xendit-terminal-gateway-client-to-client.yaml">
+  Download the Client-to-Client OpenAPI 3.0 spec (YAML)
+</Card>
+
+<Card title="View in Browser" icon="terminal" href="/api-reference/client-to-client-terminal-api/create-payment-request">
+  View the API directly in your browser
+</Card>
+</CardGroup>
+
+<Tip>
+  - Import the YAML into your API client for quick testing
+  - Use it to generate client SDKs and ensure schema accuracy
+  - The spec documents endpoints, headers, and request/response bodies
+</Tip>
+
+
