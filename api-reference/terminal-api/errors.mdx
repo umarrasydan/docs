@@ -21,40 +21,175 @@ An error occurs when the HTTP status is not 200.
 
 ## Error Codes
 
-<Table>
-  <TableHead>
-    <TableRow>
-      <TableHeader>Code</TableHeader>
-      <TableHeader>Description</TableHeader>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    <TableRow>
-      <TableCell><Code>INVALID_REQUEST</Code></TableCell>
-      <TableCell>Missing or invalid parameters</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell><Code>DUPLICATED_REQUEST</Code></TableCell>
-      <TableCell>Duplicated reference id</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell><Code>UNAUTHORIZED</Code></TableCell>
-      <TableCell>Unauthorized, invalid API Key</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell><Code>CURRENCY_NOT_SUPPORTED</Code></TableCell>
-      <TableCell>Currency is not supported for your account</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell><Code>TERMINAL_NOT_FOUND</Code></TableCell>
-      <TableCell>The terminal id is not configured for your account</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell><Code>COMMAND_NOT_SUPPORTED</Code></TableCell>
-      <TableCell>The command currently not supported for this terminal</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
+### Validation Errors
+
+<Card title="INVALID_REQUEST">
+  **Missing or invalid parameters**
+
+  <Info>
+  Occurs when required fields are missing or contain invalid data types or formats.
+  </Info>
+
+  ```json
+  {
+    "error_code": "INVALID_REQUEST",
+    "message": "Missing required parameter: terminal_id"
+  }
+  ```
+
+  <Steps>
+    <Step title="Check Parameters">
+      Verify all required parameters are present and correctly formatted
+    </Step>
+    <Step title="Validate Data Types">
+      Ensure data types match the API specification
+    </Step>
+    <Step title="Retry with Corrected Data">
+      Fix the request and retry
+    </Step>
+  </Steps>
+</Card>
+
+<Card title="DUPLICATED_REQUEST">
+  **Duplicated reference id**
+
+  <Info>
+  Occurs when the same idempotency key is used for multiple requests.
+  </Info>
+
+  ```json
+  {
+    "error_code": "DUPLICATED_REQUEST",
+    "message": "Request with same idempotency key already exists"
+  }
+  ```
+
+  <Steps>
+    <Step title="Check Idempotency Key">
+      Ensure the idempotency key is unique across all environments
+    </Step>
+    <Step title="Generate New Key">
+      Create a new unique idempotency key
+    </Step>
+    <Step title="Retry Request">
+      Retry with the new idempotency key
+    </Step>
+  </Steps>
+</Card>
+
+### Authentication Errors
+
+<Card title="UNAUTHORIZED">
+  **Unauthorized, invalid API Key**
+
+  <Info>
+  Occurs when the API key is missing, invalid, or lacks necessary permissions.
+  </Info>
+
+  ```json
+  {
+    "error_code": "UNAUTHORIZED",
+    "message": "Invalid API key or insufficient permissions"
+  }
+  ```
+
+  <Steps>
+    <Step title="Verify API Key">
+      Check that the API key is correct and active
+    </Step>
+    <Step title="Check Encoding">
+      Ensure the API key is properly base64 encoded with the colon
+    </Step>
+    <Step title="Contact Support">
+      If the issue persists, contact Xendit support
+    </Step>
+  </Steps>
+</Card>
+
+### Terminal & Configuration Errors
+
+<Card title="TERMINAL_NOT_FOUND">
+    **The terminal id is not configured for your account**
+
+    <Info>
+    Occurs when the specified terminal ID is not registered or configured for your account.
+    </Info>
+
+    ```json
+    {
+      "error_code": "TERMINAL_NOT_FOUND",
+      "message": "Terminal with ID 'TERM123' not found or not configured"
+    }
+    ```
+
+    <Steps>
+      <Step title="Verify Terminal ID">
+        Double-check the terminal ID matches exactly
+      </Step>
+      <Step title="Check Registration Status">
+        Contact support to verify registration is complete
+      </Step>
+      <Step title="Confirm Environment">
+        Ensure using test API key with test terminal registration
+      </Step>
+    </Steps>
+  </Card>
+
+  <Card title="COMMAND_NOT_SUPPORTED">
+    **The command currently not supported for this terminal**
+
+    <Info>
+    Occurs when attempting to use a feature or command not available on the specified terminal.
+    </Info>
+
+    ```json
+    {
+      "error_code": "COMMAND_NOT_SUPPORTED",
+      "message": "QR code payments not supported on this terminal model"
+    }
+    ```
+
+    <Steps>
+      <Step title="Check Terminal Capabilities">
+        Verify the terminal supports the requested command
+      </Step>
+      <Step title="Use Alternative Terminal">
+        Try a different terminal that supports the feature
+      </Step>
+      <Step title="Contact Support">
+        Ask about terminal upgrade options if needed
+      </Step>
+    </Steps>
+  </Card>
+
+### Business Logic Errors
+
+<Card title="CURRENCY_NOT_SUPPORTED">
+    **Currency is not supported for your account**
+
+    <Info>
+    Occurs when attempting to process a payment in a currency not enabled for your account.
+    </Info>
+
+    ```json
+    {
+      "error_code": "CURRENCY_NOT_SUPPORTED",
+      "message": "Currency 'JPY' is not supported for your account"
+    }
+    ```
+
+    <Steps>
+      <Step title="Check Supported Currencies">
+        Verify which currencies are enabled for your account
+      </Step>
+      <Step title="Contact Support">
+        Request currency activation from Xendit support
+      </Step>
+      <Step title="Use Supported Currency">
+        Retry with a supported currency
+      </Step>
+    </Steps>
+  </Card>
 
 ## Error Handling Best Practices
 
@@ -100,47 +235,12 @@ These simulations only work in test mode. In production mode, all transactions w
 
 ### Payment Session Simulations
 
-<Table>
-  <TableHead>
-    <TableRow>
-      <TableHeader>Case</TableHeader>
-      <TableHeader>Amount (6 digits)</TableHeader>
-      <TableHeader>Terminal ID</TableHeader>
-      <TableHeader>Description</TableHeader>
-      <TableHeader>Expected Behavior</TableHeader>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    <TableRow>
-      <TableCell>Failed to Pay</TableCell>
-      <TableCell><Code>400508</Code></TableCell>
-      <TableCell>All</TableCell>
-      <TableCell>Emulates: Payment declined by terminal</TableCell>
-      <TableCell>Session created, transaction failed</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Channel Unavailable</TableCell>
-      <TableCell><Code>400509</Code></TableCell>
-      <TableCell>All</TableCell>
-      <TableCell>Emulates: Channel is not available by any reason</TableCell>
-      <TableCell>Session failed to create</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Canceled</TableCell>
-      <TableCell><Code>400711</Code></TableCell>
-      <TableCell>All</TableCell>
-      <TableCell>Emulates: User canceled on terminal</TableCell>
-      <TableCell>Session created, then canceled</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Invalid TID</TableCell>
-      <TableCell>Any</TableCell>
-      <TableCell><Code>4040404</Code></TableCell>
-      <TableCell>Invalid terminal ID</TableCell>
-      <TableCell>Session creation fails</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
+| Case | Amount (6 digits) | Terminal ID | Description | Expected Behavior |
+|------|-------------------|-------------|-------------|-------------------|
+| Failed to Pay | `400508` | All | Emulates: Payment declined by terminal | Session created, transaction failed |
+| Channel Unavailable | `400509` | All | Emulates: Channel is not available by any reason | Session failed to create |
+| Canceled | `400711` | All | Emulates: User canceled on terminal | Session created, then canceled |
+| Invalid TID | Any | `4040404` | Invalid terminal ID | Session creation fails |
 
 ### Testing with Real Terminals in Test Mode
 
@@ -238,62 +338,3 @@ For detailed instructions on registering and testing with real terminals in test
 
 For comprehensive testing instructions, including both simulation and physical terminal testing, see our [quickstart guide](/guides/getting-started/quickstart#for-physical-terminal-testing).
 
-## Error Recovery Strategies
-
-<AccordionGroup>
-  <Accordion title="INVALID_REQUEST">
-    <Steps>
-      <Step title="Check Parameters">
-        Verify all required parameters are present and correctly formatted
-      </Step>
-      <Step title="Validate Data Types">
-        Ensure data types match the API specification
-      </Step>
-      <Step title="Retry with Corrected Data">
-        Fix the request and retry
-      </Step>
-    </Steps>
-  </Accordion>
-  
-  <Accordion title="DUPLICATED_REQUEST">
-    <Steps>
-      <Step title="Check Idempotency Key">
-        Ensure the idempotency key is unique across all environments
-      </Step>
-      <Step title="Generate New Key">
-        Create a new unique idempotency key
-      </Step>
-      <Step title="Retry Request">
-        Retry with the new idempotency key
-      </Step>
-    </Steps>
-  </Accordion>
-  
-  <Accordion title="UNAUTHORIZED">
-    <Steps>
-      <Step title="Verify API Key">
-        Check that the API key is correct and active
-      </Step>
-      <Step title="Check Encoding">
-        Ensure the API key is properly base64 encoded with the colon
-      </Step>
-      <Step title="Contact Support">
-        If the issue persists, contact Xendit support
-      </Step>
-    </Steps>
-  </Accordion>
-  
-  <Accordion title="TERMINAL_NOT_FOUND">
-    <Steps>
-      <Step title="Verify Terminal ID">
-        Check that the terminal ID is correct
-      </Step>
-      <Step title="Check Registration">
-        Ensure the terminal is registered for your account
-      </Step>
-      <Step title="Contact Support">
-        If needed, contact support to register the terminal
-      </Step>
-    </Steps>
-  </Accordion>
-</AccordionGroup>

@@ -3,101 +3,270 @@ title: "Concepts"
 description: "Understanding payment sessions and payment objects in the Terminal API"
 ---
 
-In the architecture of a payment API, the payment session and payment are distinct but related concepts that manage the lifecycle of a transaction, especially when interacting with hardware like a terminal device. The response containing both a `payment_session_id` and a `payment_id` provides a structured way to manage the initial user interaction and the subsequent financial transaction separately.
+## Overview
+
+In the architecture of a payment API, the payment session and payment object are distinct but related concepts that manage the complete lifecycle of a transaction. This separation is particularly important when interacting with hardware terminal devices, where timing and state management are critical.
+
+The system provides both a `payment_session_id` and a `payment_id` in responses, creating a structured approach that manages:
+- The initial user interaction and preparation phase
+- The subsequent financial transaction execution
+- State transitions and error handling
+- Terminal device coordination
+
+This two-tier approach ensures reliable transaction processing while maintaining clear separation between preparation and execution phases.
 
 ## The Payment Session
 
-A payment session is a temporary and secure context that holds all the necessary information about a potential transaction. Think of it as a container or a digital folder for a specific payment interaction.
+### What is a Payment Session?
 
-### Purpose and Functionality
+A payment session is a **temporary and secure context** that holds all the necessary information about a potential transaction. Think of it as a digital workspace or preparation area for a specific payment interaction.
+
+The payment session acts as an intermediary layer between your application and the terminal hardware, managing the complex coordination required for secure payment processing.
+
+### Key Characteristics
+
+<Info>
+Payment sessions have a **limited lifetime** and are designed to handle the preparation phase before actual financial transactions occur.
+</Info>
 
 <CardGroup cols={2}>
   <Card title="Data Aggregation" icon="database">
-    Gathers and stores preliminary transaction details, such as the amount, currency, and items being purchased. This information is assembled before the actual payment is attempted.
+    **Purpose**: Gathers and validates all preliminary transaction details before processing begins.
+
+    **Details Collected**:
+    - Transaction amount and currency
+    - Items being purchased (line items)
+    - Terminal device identification
+    - Customer reference information
+    - Payment method preferences
+
+    This validation happens **before** any interaction with payment networks or terminal hardware.
   </Card>
+
   <Card title="State Management" icon="gear">
-    The session maintains the state of the payment process.
+    **Purpose**: Tracks the complete lifecycle of the payment preparation process.
+
+    **States Include**:
+    - `ACTIVE` - Ready for payment processing
+    - `COMPLETED` - Payment successfully processed
+    - `FAILED` - Error during payment attempt
+    - `CANCELED` - Session terminated before completion
+
+    Each state transition is carefully managed to ensure data consistency.
   </Card>
+
   <Card title="Security" icon="shield">
-    By using a session, sensitive data can be handled in a controlled environment. The payment_session_id acts as a secure reference to this information, reducing the need to pass sensitive details back and forth.
+    **Purpose**: Provides a secure boundary for handling sensitive transaction data.
+
+    **Security Features**:
+    - Isolated data environment
+    - Secure session identifier reference
+    - Controlled data access patterns
+    - Reduced sensitive data transmission
+
+    The `payment_session_id` serves as a secure token for all session operations.
   </Card>
+
   <Card title="Terminal Abstraction" icon="terminal">
-    The creation of the payment session can initiate a command to the terminal devices, preparing them for a transaction.
+    **Purpose**: Manages terminal device preparation and coordination.
+
+    **Terminal Operations**:
+    - Device initialization and configuration
+    - Payment method setup
+    - Transaction parameter loading
+    - Hardware status monitoring
+
+    Abstracts the complexity of different terminal types and protocols.
   </Card>
 </CardGroup>
 
-The `payment_session_id` is the unique identifier for this entire preparatory phase. It allows you to retrieve or update the session details as needed before a payment is committed.
+### Session Identifier
+
+The `payment_session_id` is the **unique identifier** for this entire preparatory phase. This identifier serves several critical functions:
+
+- **Reference**: Retrieve or update session details as needed
+- **Tracking**: Monitor session progress and state changes
+- **Security**: Acts as an authentication token for session operations
+- **Audit**: Provides traceability for transaction preparation
+
+<Note>
+You can use the `payment_session_id` to query session status, update transaction details, or cancel the session before payment completion.
+</Note>
 
 ## The Payment Object
 
-A payment object represents the successful completion of a financial transaction. It is the official record created after the system confirms that funds have been successfully moved using the details from the payment session.
+### What is a Payment Object?
 
-### Purpose and Functionality
+A payment object represents the **successful completion of a financial transaction**. It is the authoritative, immutable record created after the payment system confirms that funds have been successfully captured or transferred.
+
+Unlike the payment session which handles preparation, the payment object is created **only after** a transaction has been successfully processed through the payment network.
+
+### Key Characteristics
+
+<Info>
+Payment objects are **permanent records** of completed financial transactions and serve as the legal and audit trail for money movement.
+</Info>
 
 <CardGroup cols={2}>
   <Card title="Transaction Record" icon="receipt">
-    A payment object is created only after the payment gateway confirms a transaction has been successfully processed. It is not the trigger for the transaction but rather the result of a successful one (e.g., after a card has been tapped and the bank has approved the charge).
+    **Purpose**: Creates an immutable record of successful financial transactions.
+
+    **Creation Process**:
+    - Triggered by successful payment processing
+    - Generated after payment gateway confirmation
+    - Contains complete transaction details
+    - Serves as official receipt and audit trail
+
+    **Transaction Flow**:
+    1. Customer initiates payment (card tap, QR scan, etc.)
+    2. Payment gateway processes the transaction
+    3. Upon approval, payment object is created
+    4. Funds are captured or authorized
+
+    <Note>
+    The payment object is **not** the trigger for the transaction—it's the result of a successful one.
+    </Note>
   </Card>
-  <Card title="Voiding and Refunds" icon="rotate-left">
-    The payment_id is the specific identifier for a single, unique, and successful transaction. Because this ID is tied to the actual movement of money, it is the correct and necessary identifier to use for voiding that specific transaction before it settles or issuing refunds after it has settled.
+
+  <Card title="Financial Operations" icon="rotate-left">
+    **Purpose**: Enables post-transaction financial operations on completed payments.
+
+    **Available Operations**:
+    - **Voiding**: Cancel transactions before settlement
+    - **Refunds**: Return funds after settlement
+    - **Partial Refunds**: Return portion of payment amount
+    - **Captures**: Complete authorized transactions
+
+    **Settlement Timeline**:
+    - **Pre-settlement**: Transactions can be voided
+    - **Post-settlement**: Transactions can be refunded
+    - **Settlement Window**: Typically 24-48 hours after processing
+
+    <Warning>
+    The `payment_id` is tied to actual money movement, so use it carefully for financial operations.
+    </Warning>
+  </Card>
+</CardGroup>
+
+### Payment States
+
+Payment objects have specific states that reflect their current status in the payment lifecycle:
+
+<CardGroup cols={2}>
+  <Card title="SUCCEEDED" icon="check">
+    The transaction has been successfully processed and funds have been captured or authorized. This is the most common end state for successful payments.
+  </Card>
+
+  <Card title="VOIDED" icon="x">
+    The transaction has been canceled before settlement. Funds are returned to the customer, and no settlement will occur. This can only happen within the void window (typically before end-of-day processing).
   </Card>
 </CardGroup>
 
 ## Key Differences
 
-<Table>
-  <TableHead>
-    <TableRow>
-      <TableHeader>Aspect</TableHeader>
-      <TableHeader>Payment Session</TableHeader>
-      <TableHeader>Payment Object</TableHeader>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    <TableRow>
-      <TableCell>Purpose</TableCell>
-      <TableCell>Preparation and setup</TableCell>
-      <TableCell>Completed transaction record</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>When Created</TableCell>
-      <TableCell>Before payment attempt</TableCell>
-      <TableCell>After successful payment</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>State</TableCell>
-      <TableCell>ACTIVE, COMPLETED, FAILED, CANCELED</TableCell>
-      <TableCell>SUCCEEDED, VOIDED</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Financial Impact</TableCell>
-      <TableCell>No money movement</TableCell>
-      <TableCell>Actual money movement</TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Use Cases</TableCell>
-      <TableCell>Session management, terminal preparation</TableCell>
-      <TableCell>Voiding, refunds, transaction history</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
+Understanding the fundamental differences between payment sessions and payment objects is crucial for proper API usage and transaction management.
 
-## Workflow Example
+<CardGroup cols={2}>
+  <Card title="Payment Session Characteristics" icon="folder">
+    **Lifecycle Stage**: Preparation and setup phase
 
-<Steps>
-  <Step title="Create Payment Session">
-    A payment session is created with transaction details (amount, currency, terminal_id, etc.)
-  </Step>
-  <Step title="Terminal Preparation">
-    The terminal device is prepared and ready to accept payment
-  </Step>
-  <Step title="Payment Processing">
-    Customer interacts with terminal (card tap, QR scan, etc.)
-  </Step>
-  <Step title="Payment Object Creation">
-    Upon successful payment, a payment object is created with the transaction record
-  </Step>
-  <Step title="Session Completion">
-    The payment session status is updated to COMPLETED
-  </Step>
-</Steps>
+    **Creation Timing**: Created **before** any payment attempt begins
+
+    **Primary States**:
+    - `ACTIVE` - Ready for payment processing
+    - `COMPLETED` - Successfully transitioned to payment
+    - `FAILED` - Error during preparation
+    - `CANCELED` - Terminated before completion
+
+    **Financial Impact**: **No money movement** - purely preparatory
+
+    **Primary Use Cases**:
+    - Transaction data collection and validation
+    - Terminal device preparation and setup
+    - Session state monitoring and management
+    - Error handling during preparation phase
+
+    <Tip>
+    Use payment sessions for setup, validation, and terminal coordination before actual payment processing.
+    </Tip>
+  </Card>
+
+  <Card title="Payment Object Characteristics" icon="receipt">
+    **Lifecycle Stage**: Transaction completion and post-processing
+
+    **Creation Timing**: Created **after** successful payment completion
+
+    **Primary States**:
+    - `SUCCEEDED` - Transaction successfully processed
+    - `VOIDED` - Transaction canceled before settlement
+    - `FAILED` - Transaction processing error
+
+    **Financial Impact**: **Direct money movement** - represents actual financial transactions
+
+    **Primary Use Cases**:
+    - Voiding transactions before settlement
+    - Processing refunds after settlement
+    - Transaction history and audit trails
+    - Financial reconciliation and reporting
+
+    <Warning>
+    Use payment objects for financial operations only. These represent actual money movement.
+    </Warning>
+  </Card>
+</CardGroup>
+
+### Decision Framework
+
+<AccordionGroup>
+<Accordion title="When to Use Payment Session ID">
+  Choose `payment_session_id` when you need to:
+  - Check preparation status before payment
+  - Update transaction details before processing
+  - Cancel a session before payment begins
+  - Monitor terminal readiness
+  - Handle errors during setup phase
+</Accordion>
+
+<Accordion title="When to Use Payment ID">
+  Choose `payment_id` when you need to:
+  - Void a transaction before settlement
+  - Process refunds after settlement
+  - Retrieve transaction history
+  - Perform financial reconciliation
+  - Generate receipts or invoices
+</Accordion>
+</AccordionGroup>
+
+### Error Handling Scenarios
+
+<AccordionGroup>
+<Accordion title="Session Creation Fails">
+  **Common Causes**:
+  - Invalid terminal ID
+  - Insufficient permissions
+  - Network connectivity issues
+  - Invalid transaction parameters
+
+  **Recovery**: Retry with corrected parameters or contact support for terminal issues.
+</Accordion>
+
+<Accordion title="Terminal Unavailable">
+  **Common Causes**:
+  - Device offline or powered off
+  - Network connectivity problems
+  - Terminal maintenance or updates
+  - Hardware malfunction
+
+  **Recovery**: Check terminal status, restart device, or use alternative terminal.
+</Accordion>
+
+<Accordion title="Payment Processing Fails">
+  **Common Causes**:
+  - Card declined by issuer
+  - Insufficient funds
+  - Expired card
+  - Network timeout
+
+  **Recovery**: Session remains active for retry attempts or cancellation.
+</Accordion>
+</AccordionGroup>
