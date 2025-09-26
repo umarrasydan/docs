@@ -750,7 +750,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /histories:
+  /commands/histories:
     post:
       tags:
       - Client-to-client Terminal API
