@@ -57,7 +57,7 @@
                   "POST /commands/cancel",
                   "POST /commands/receipt",
                   "POST /commands/settlement",
-                  "POST /histories"
+                  "POST /commands/histories"
                 ]
               }
             ]
