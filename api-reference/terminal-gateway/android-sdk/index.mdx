@@ -14,6 +14,12 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v0.4.1 — 7-Oct-2025">
+    Bug fixes and improvements:
+    - Fix data mapping for terminal responses
+    - [BRI] Enhanced status verification after transaction timeout for improved reliability
+  </Accordion>
+
   <Accordion title="v0.4.0 — 13-May-2025">
     XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
   </Accordion>
@@ -28,11 +34,11 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 Download the Terminal Gateway Android SDK:
 
 <CardGroup cols={1}>
-<Card title="Android SDK (v0.4.0)" icon="android" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+Android-0.4.0.zip">
+<Card title="Android SDK (v0.4.1)" icon="android" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+Android-0.4.1.zip">
   Download the complete Android SDK package including all dependencies and documentation
 
   ```
-  SHA256: 89dec2e85133314c37c8989a1f4a80fd7c087ef6cd66460aaa3d92a863826dc1
+  SHA256: 2a996eacf4912990e81e8b46fcf25ca570d7bda4239df68dfa851afab1f342e5
   ```
 </Card>
 </CardGroup>
@@ -110,23 +116,23 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
   <CodeGroup>
   ```kotlin build.gradle.kts
   dependencies {
-    implementation("co.xendit.terminal:core:0.4.0")
-    implementation("co.xendit.terminal:gateway:0.4.0")
-    implementation("co.xendit.terminal:id-bri:0.4.0")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:gateway-android:<latest_version>")
+    implementation("co.xendit.terminal:id-bri-android:<latest_version>")
 
     // GHL (Thailand) - uncomment if needed
-    // implementation("co.xendit.terminal:th-ghl:0.4.0")
+    // implementation("co.xendit.terminal:th-ghl-android:<latest_version>")
   }
   ```
   
   ```groovy build.gradle
   dependencies {
-    implementation 'co.xendit.terminal:core:0.4.0'
-    implementation 'co.xendit.terminal:gateway:0.4.0'
-    implementation 'co.xendit.terminal:id-bri:0.4.0'
+    implementation 'co.xendit.terminal:core-android:<latest_version>'
+    implementation 'co.xendit.terminal:gateway-android:<latest_version>'
+    implementation 'co.xendit.terminal:id-bri-android:<latest_version>'
 
     // GHL (Thailand) - uncomment if needed
-    // implementation 'co.xendit.terminal:th-ghl:0.4.0'
+    // implementation 'co.xendit.terminal:th-ghl-android:<latest_version>'
   }
   ```
   </CodeGroup>
