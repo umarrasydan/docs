@@ -312,6 +312,43 @@ Now create a payment session and process it. Choose the approach that matches yo
       "channel_properties": { "terminal_id": "SIM001" }
     }'
   ```
+  
+  ```javascript JavaScript (Simulation)
+  import fetch from 'node-fetch';
+  import dotenv from 'dotenv';
+  
+  dotenv.config();
+  
+  async function createSimulationPayment(amount = 10000) {
+    const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+    
+    const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json',
+        'Idempotency-key': `sim-payment-${Date.now()}`,
+      },
+      body: JSON.stringify({
+        session_type: 'PAY',
+        mode: 'TERMINAL',
+        currency: 'IDR',
+        amount: amount, // Use special amounts for different scenarios
+        country: 'ID',
+        channel_properties: { terminal_id: 'SIM001' },
+      }),
+    });
+    
+    const data = await res.json();
+    console.log('Simulation payment session created:', data.payment_session_id);
+    return data;
+  }
+  
+  // Test different scenarios
+  createSimulationPayment(10000);  // Success
+  createSimulationPayment(400508); // Decline
+  createSimulationPayment(400509); // Channel unavailable
+  ```
   </CodeGroup>
   
   <Check>
@@ -349,44 +386,6 @@ Now create a payment session and process it. Choose the approach that matches yo
   </Tip>
 </Tab>
 </Tabs>
-
-<CodeGroup>
-```javascript JavaScript (Simulation)
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-async function createSimulationPayment(amount = 10000) {
-  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-  
-  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-    method: 'POST',
-    headers: {
-      'Authorization': auth,
-      'Content-Type': 'application/json',
-      'Idempotency-key': `sim-payment-${Date.now()}`,
-    },
-    body: JSON.stringify({
-      session_type: 'PAY',
-      mode: 'TERMINAL',
-      currency: 'IDR',
-      amount: amount, // Use special amounts for different scenarios
-      country: 'ID',
-      channel_properties: { terminal_id: 'SIM001' },
-    }),
-  });
-  
-  const data = await res.json();
-  console.log('Simulation payment session created:', data.payment_session_id);
-  return data;
-}
-
-// Test different scenarios
-createSimulationPayment(10000);  // Success
-createSimulationPayment(400508); // Decline
-createSimulationPayment(400509); // Channel unavailable
-```</CodeGroup>
 
 ## 4. Monitor callbacks
 
