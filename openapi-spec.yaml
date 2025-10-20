@@ -242,7 +242,7 @@ components:
               - MY_QR
               - MY_CARD
               - MY_EWALLET
-          
+
     CreateTerminalPaymentSession:
       type: object
       required:
@@ -260,8 +260,7 @@ components:
           type: string
           example: 'cus_123456789'
         customer:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/Customer'
         currency:
           type: string
           enum:
@@ -596,4 +595,46 @@ components:
           example: 'INVALID_REQUEST'
         message:
           type: string
-          example: 'Missing required parameter: terminal_id'
+          example: 'Missing required parameter: terminal_id
+    Customer:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - INDIVIDUAL
+            - BUSINESS
+          example: 'INDIVIDUAL'
+        reference_id:
+          type: string
+          example: 'cus_123456789'
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: test@xendit.co
+        mobile_number:
+          type: string
+          example: '+62123456789'
+          nullable: true
+        phone_number:
+          type: string
+          example: '+62123456789'
+          nullable: true
+        individual_detail:
+          type: object
+          nullable: true
+          properties:
+            given_names:
+              type: string
+              example: 'John Doe'
+            surname:
+              type: string
+              example: 'Doe'
+              nullable: true
+        business_detail:
+          type: object
+          nullable: true
+          properties:
+            business_name:
+              type: string
