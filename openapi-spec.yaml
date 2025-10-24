@@ -595,7 +595,7 @@ components:
           example: 'INVALID_REQUEST'
         message:
           type: string
-          example: 'Missing required parameter: terminal_id
+          example: 'Missing required parameter: terminal_id'
     Customer:
       type: object
       properties:
