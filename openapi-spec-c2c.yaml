@@ -151,7 +151,8 @@ components:
             type: string
             minLength: 1
             maxLength: 100
-            description: Merchant's order ID.
+            description: Merchant's order ID. Use only letters and numbers (alphanumeric). Hyphens, underscores, and other special characters are not allowed and may cause the transaction to fail to execute or complete.
+            pattern: '^[A-Za-z0-9]+$'
             example: test1223323
           request_amount:
             type: number
@@ -264,7 +265,7 @@ components:
         properties:
           order_id:
             type: string
-            description: Merchant's order ID.
+            description: Merchant's order ID. Uses only letters and numbers (alphanumeric). Hyphens, underscores, and other special characters are not allowed and may cause the transaction to fail to execute or complete.
             example: test1223323
     CancelResponse:
       allOf:
@@ -282,7 +283,7 @@ components:
         properties:
           order_id:
             type: string
-            description: Merchant's order ID.
+            description: Merchant's order ID. Uses only letters and numbers (alphanumeric). Hyphens, underscores, and other special characters are not allowed and may cause the transaction to fail to execute or complete.
             example: test1223323
     SettlementResponse:
       type: object
