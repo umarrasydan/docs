@@ -154,7 +154,7 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
 Before you begin, ensure you have the following:
 
 - **Client key**: Request an In-Person Payment `CLIENT_KEY` from the Xendit team
-- **Terminal device information**: Obtain the Terminal ID and IP address for each device
+- **Terminal device information**: Obtain the <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP address</a> for each device
 - **Android project**: Set up with minimum SDK version 21 (Android 5.0)
 
 <Warning>
@@ -244,7 +244,7 @@ Manage and restart terminal service connections:
 </Tab>
 
 <Tab title="Restart Single Connection">
-  Provide the terminal ID to restart a specific terminal connection:
+  Provide the <a href="#finding-terminal-information">terminal ID</a> to restart a specific terminal connection:
   
   ```kotlin
   // This restarts the connection to a specific Terminal
@@ -337,10 +337,10 @@ TerminalGateway.observeError(
     }
     ErrorCode.FAILED_TO_CONNECT -> {
       // Network connectivity issue
-      // Check network connection and terminal IP
+      // Check network connection and terminal <a href="#finding-terminal-information">IP</a>
     }
     ErrorCode.AUTHENTICATION_FAILED -> {
-      // Invalid credentials or terminal ID
+      // Invalid credentials or <a href="#finding-terminal-information">terminal ID</a>
       // Verify client key and terminal configuration
     }
     // ... handle other error codes
@@ -380,7 +380,7 @@ data class TerminalError(
 | UNSUPPORTED | -5 | Operation or platform not supported |
 | TERMINAL_BUSY | -6 | Terminal is processing another transaction |
 | ENCRYPTION_FAILED | -7 | Encryption key invalid or encryption process failed |
-| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check TID and credentials |
+| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check <a href="#finding-terminal-information">TID</a> and credentials |
 
 ### Error Handling Best Practices
 
@@ -390,7 +390,7 @@ Implement comprehensive error handling for robust payment processing:
 fun handleTerminalError(error: TerminalError?) {
   when (error?.code) {
     ErrorCode.AUTHENTICATION_FAILED -> {
-      // Verify API key and terminal ID
+      // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
       Log.e("TerminalGateway", "Authentication failed: ${error.message}")
       // Show user-friendly message and retry with correct credentials
     }
@@ -405,7 +405,7 @@ fun handleTerminalError(error: TerminalError?) {
     ErrorCode.FAILED_TO_CONNECT, ErrorCode.NOT_CONNECTED -> {
       // Network connectivity issues
       Log.e("TerminalGateway", "Connection failed: ${error.message}")
-      // Check network connection and terminal IP address
+      // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
       checkNetworkConnectivity()
     }
     
@@ -460,7 +460,7 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
 
   **Solution**:
   1. Ensure all transactions are initiated only through the SDK
-  2. Contact the Xendit EDC team to enable POS-only mode for your Terminal IDs
+  2. Contact the Xendit EDC team to enable POS-only mode for your <a href="#finding-terminal-information">Terminal IDs</a>
   3. Configure terminal settings to disable manual transaction entry
 
   <Tip>
@@ -499,7 +499,7 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
 
   **Solutions**:
   - **Check network connectivity**: Ensure both devices are on the same network
-  - **Verify IP addresses**: Confirm terminal IP addresses are correct and accessible
+  - **Verify IP addresses**: Confirm terminal <a href="#finding-terminal-information">IP addresses</a> are correct and accessible
   - **Firewall settings**: Check if firewall is blocking the connection ports
   - **Terminal status**: Ensure the terminal is powered on and in ready state
   - **SDK initialization**: Verify client key and terminal configuration

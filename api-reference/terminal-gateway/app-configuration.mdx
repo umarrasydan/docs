@@ -116,7 +116,7 @@ When the app opens for the first time, a modal will appear. Enter your testing C
 </Step>
 
 <Step title="Configure Device">
-  Fill in Terminal ID and IP Address, and click "Add Device" button.
+  Fill in <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP Address</a>, and click "Add Device" button.
 
 <Frame>
 <img src="/images/app/fill-terminal-id-ip.png" alt="Filling in terminal ID and IP address configuration" />
@@ -258,7 +258,7 @@ Each device in the terminal list displays a status indicator that changes color 
 
 | Status | Color | Description |
 |--------|-------|-------------|
-| Unreachable/Offline | Red | EDC terminal is unreachable or offline due to incorrect IP address, network issues, or missing EDC configuration |
+| Unreachable/Offline | Red | EDC terminal is unreachable or offline due to incorrect <a href="#finding-terminal-information">IP address</a>, network issues, or missing EDC configuration |
 | Processing | Yellow | A transaction is currently in progress on the EDC terminal |
 | Online | Green | EDC terminal is online, connected, and ready for transactions |
 | Disabled | Grey | EDC terminal is disabled and not available for transactions |
@@ -271,7 +271,7 @@ Each device in the terminal list displays a status indicator that changes color 
 
 **Solutions**:
 
-- Verify the terminal IP address is correct and accessible
+- Verify the terminal <a href="#finding-terminal-information">IP address</a> is correct and accessible
 - Check network connectivity between the app and terminal
 - Ensure the terminal is powered on and properly configured
 - Verify firewall settings aren't blocking the connection
@@ -336,3 +336,8 @@ Each device in the terminal list displays a status indicator that changes color 
   Monitor device status indicators regularly to ensure your terminal fleet is
   operating correctly. Red or grey statuses may require immediate attention.
 </Tip>
+
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
+
+<FindingTerminalInformation />
+
