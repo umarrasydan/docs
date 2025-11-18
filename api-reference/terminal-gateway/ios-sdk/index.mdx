@@ -118,7 +118,7 @@ Install the Terminal Gateway SDK by adding it as a framework in Xcode:
 
 ## Getting Started
 
-Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal IP address.
+Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal <a href="#finding-terminal-information">IP address</a>.
 
 <Warning>
 Terminal Gateway requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
@@ -165,7 +165,7 @@ TerminalGateway.shared.registerDevices(devices: [
 ```
 
 <Tip>
-For detailed instructions on finding Terminal ID and IP address for different terminal providers, see our [Finding Terminal Information guide](#finding-terminal-information).
+For detailed instructions on finding <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP address</a> for different terminal providers, see our [Finding Terminal Information guide](#finding-terminal-information).
 </Tip>
 
 ## Optional Methods
@@ -193,7 +193,7 @@ Manage and restart terminal service connections:
 </Tab>
 
 <Tab title="Restart Single Connection">
-  Provide the terminal ID to restart a specific terminal connection:
+  Provide the <a href="#finding-terminal-information">terminal ID</a> to restart a specific terminal connection:
   
   ```swift
   // This restarts the connection to a specific Terminal
@@ -262,7 +262,7 @@ struct TerminalError {
 | UNSUPPORTED | -5 | Operation or platform not supported |
 | TERMINAL_BUSY | -6 | Terminal is processing another transaction |
 | ENCRYPTION_FAILED | -7 | Encryption key invalid or encryption process failed |
-| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check TID and credentials |
+| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check <a href="#finding-terminal-information">TID</a> and credentials |
 
 ### Error Handling Best Practices
 
@@ -272,7 +272,7 @@ Implement comprehensive error handling for robust payment processing:
 func handleTerminalError(_ error: TerminalError?) {
     switch error?.code {
     case .authenticationFailed:
-        // Verify API key and terminal ID
+        // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
         print("Authentication failed: \(error?.message ?? "")")
         // Show user-friendly message and retry with correct credentials
         
@@ -285,7 +285,7 @@ func handleTerminalError(_ error: TerminalError?) {
     case .failedToConnect, .notConnected:
         // Network connectivity issues
         print("Connection failed: \(error?.message ?? "")")
-        // Check network connection and terminal IP address
+        // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
         checkNetworkConnectivity()
         
     case .keyInvalid, .invalidCredential:
@@ -336,7 +336,7 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
 
   **Solution**:
   1. Ensure all transactions are initiated only through the SDK
-  2. Contact the Xendit EDC team to enable POS-only mode for your Terminal IDs
+  2. Contact the Xendit EDC team to enable POS-only mode for your <a href="#finding-terminal-information">Terminal IDs</a>
   3. Configure terminal settings to disable manual transaction entry
 
   <Tip>
@@ -372,7 +372,7 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
 
   **Solutions**:
   - **Check network connectivity**: Ensure both devices are on the same network
-  - **Verify IP addresses**: Confirm terminal IP addresses are correct and accessible
+  - **Verify IP addresses**: Confirm terminal <a href="#finding-terminal-information">IP addresses</a> are correct and accessible
   - **Firewall settings**: Check if firewall is blocking the connection ports
   - **Terminal status**: Ensure the terminal is powered on and in ready state
   - **SDK initialization**: Verify client key and terminal configuration
