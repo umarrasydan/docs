@@ -228,8 +228,7 @@ components:
               - VN_CARD
               - VN_QR
               - TH_ALIPAY_PLUS
-              - TH_WECHATPAY_CIL
-              - TH_WECHATPAY_OCGT
+              - TH_WECHATPAY
               - TH_TRUEMONEY
               - TH_LINEPAY
               - TH_SHOPEEPAY
