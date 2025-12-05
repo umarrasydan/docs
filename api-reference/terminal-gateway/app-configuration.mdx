@@ -20,7 +20,7 @@ The Terminal Gateway app helps developers integrate their application with Xendi
     What's new:
     - Fixed the NTT payment method value to ensure correct provider mapping
     - Updated the BRI payment flow to validate transaction data before performing terminal actions
-    - Added timeout configuration for card and QR transactions (BRI only) to control operation windows
+    - Added timeout configuration for card and QR transactions to control operation windows
     - Added retry logic that leverages the Terminal API for more resilient recovery
   </Accordion>
   <Accordion title="v1.5.0 — 20-Nov-2025">
@@ -90,7 +90,7 @@ Choose your operating system to download the Terminal Gateway app installer:
   Download the Windows installer (v1.6.0)
 
   ```
-  SHA256: 
+  SHA256: efceec75dd27e3d8d74b9b1fa134d6cb2e52ff972b1f29f970d3d1f1dd30b1bf
   ```
 </Card>
 
@@ -264,13 +264,9 @@ Configure the app for different environments based on your development and produ
 </Tab>
 </Tabs>
 
-## Transaction Timeout (BRI only)
+## Transaction Timeout
 
-Use transaction timeouts to auto-cancel in the app and reissue BRI transactions when a terminal does not respond in time. You can set independent limits for card and QR flows.
-
-<Warning>
-Transaction timeout only applies to BRI. Other providers ignore these values.
-</Warning>
+Use transaction timeouts to auto-cancel in the app and reissue transactions when a terminal does not respond in time. You can set independent limits for card and QR flows.
 
 <Steps>
 <Step title="Open Settings">
