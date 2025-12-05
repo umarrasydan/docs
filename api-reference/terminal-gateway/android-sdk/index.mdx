@@ -131,8 +131,8 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
     implementation("co.xendit.terminal:gateway-android:<latest_version>")
     implementation("co.xendit.terminal:id-bri-android:<latest_version>")
 
-    // GHL (Thailand) - uncomment if needed
-    // implementation("co.xendit.terminal:th-ghl-android:<latest_version>")
+    // NTT (Thailand) - uncomment if needed
+    // implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
   }
   ```
   
@@ -142,8 +142,8 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
     implementation 'co.xendit.terminal:gateway-android:<latest_version>'
     implementation 'co.xendit.terminal:id-bri-android:<latest_version>'
 
-    // GHL (Thailand) - uncomment if needed
-    // implementation 'co.xendit.terminal:th-ghl-android:<latest_version>'
+    // NTT (Thailand) - uncomment if needed
+    // implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
   }
   ```
   </CodeGroup>
@@ -183,7 +183,7 @@ class MyApp : Application() {
 
     // Add terminal providers based on your needs
     TerminalGateway.addProvider(TerminalBRI)
-    // TerminalGateway.addProvider(TerminalGHL)
+    // TerminalGateway.addProvider(TerminalNTT)
   }
 }
 ```
