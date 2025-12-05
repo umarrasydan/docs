@@ -16,6 +16,13 @@ The Terminal Gateway app helps developers integrate their application with Xendi
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.6.0 — 5-Dec-2025">
+    What's new:
+    - Fixed the NTT payment method value to ensure correct provider mapping
+    - Updated the BRI payment flow to validate transaction data before performing terminal actions
+    - Added timeout configuration for card and QR transactions (BRI only) to control operation windows
+    - Added retry logic that leverages the Terminal API for more resilient recovery
+  </Accordion>
   <Accordion title="v1.5.0 — 20-Nov-2025">
     What's new:
     - Added support for multiple concurrent device connections so you can orchestrate simultaneous sessions across different terminals
@@ -71,27 +78,27 @@ The Terminal Gateway app helps developers integrate their application with Xendi
 Choose your operating system to download the Terminal Gateway app installer:
 
 <CardGroup cols={2}>
-<Card title="macOS (.dmg)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.5.0.dmg">
-  Download the macOS installer (v1.5.0)
+<Card title="macOS (.dmg)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.6.0.dmg">
+  Download the macOS installer (v1.6.0)
 
   ```
-  SHA256: 2899f58a99b391b7165a4eea955cba62d6db023a4b1412e2445c088d23fab4a4
-  ```
-</Card>
-
-<Card title="Windows (.msi)" icon="windows" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.5.0.msi">
-  Download the Windows installer (v1.5.0)
-
-  ```
-  SHA256: 82e7cd69ccdeb2bedb9924f002de3f69da502c3ad2033bc71144a33e9da1ee32
+  SHA256: f35520476b0cabccecc2fb4912c081168c6c1070018394cacd823dfd018cfd95
   ```
 </Card>
 
-<Card title="Android (.apk)" icon="android" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.5.0.apk">
-  Download the Android APK (v1.5.0)
+<Card title="Windows (.msi)" icon="windows" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.6.0.msi">
+  Download the Windows installer (v1.6.0)
 
   ```
-  SHA256: 7837bb7a48af1e91692dc7e2ae15cf336066a3e9b1f84433d481f1788755793b
+  SHA256: 
+  ```
+</Card>
+
+<Card title="Android (.apk)" icon="android" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.6.0.apk">
+  Download the Android APK (v1.6.0)
+
+  ```
+  SHA256: d1839cbc3c98979c220f87a688672d4bac6a9567821b141e52c332281c638c6d
   ```
 </Card>
 </CardGroup>
@@ -256,6 +263,37 @@ Configure the app for different environments based on your development and produ
   </Warning>
 </Tab>
 </Tabs>
+
+## Transaction Timeout (BRI only)
+
+Use transaction timeouts to auto-cancel in the app and reissue BRI transactions when a terminal does not respond in time. You can set independent limits for card and QR flows.
+
+<Warning>
+Transaction timeout only applies to BRI. Other providers ignore these values.
+</Warning>
+
+<Steps>
+<Step title="Open Settings">
+  Click the settings icon in the top-right corner of the app home screen.
+</Step>
+
+<Step title="Select Transaction Timeout">
+  In Settings, choose **Transaction Timeout** under the Network section.
+
+  <Frame>
+  <img src="/images/app/transaction-timeout-settings.png" alt="Gateway app settings screen showing the Transaction Timeout option under Network" />
+  </Frame>
+</Step>
+
+<Step title="Configure Card and QR timeouts">
+  - Card Timeout (minutes) — maximum time the terminal has to complete a card transaction before the app auto-cancels and retries the transaction.  
+  - QR Timeout (minutes) — maximum time for QR transactions before the app auto-cancels and retries the transaction.
+</Step>
+
+<Step title="Save changes">
+  Click **Save Changes** to apply the new timeouts.
+</Step>
+</Steps>
 
 ## Device Status Monitoring
 
