@@ -40,7 +40,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   implementation("co.xendit.terminal:core:0.4.0")
   implementation("co.xendit.terminal:gateway:0.4.0")
   implementation("co.xendit.terminal:id-bri:0.4.0") // For BRI terminals
-  // If you support GHL, also add:
+  // If you support NTT, also add:
   // implementation("co.xendit.terminal:th-ghl:0.4.0")
   ```
 
@@ -78,8 +78,8 @@ The new architecture separates the concerns of direct terminal communication (ha
       TerminalApp.initialize(this, TEST_CLIENT_KEY,
           TerminalMode.INTEGRATION) // Use TerminalMode from new SDK
       TerminalGateway.addProvider(TerminalBRI) // Add the BRI provider
-      // If you support GHL, also add:
-      // TerminalGateway.addProvider(TerminalGHL)
+      // If you support NTT, also add:
+      // TerminalGateway.addProvider(TerminalNTT)
       // ...
   }
   ```

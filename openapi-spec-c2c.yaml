@@ -347,7 +347,7 @@ paths:
           type: string
           enum:
           - BRI
-          - GHL
+          - NTT
         description: Provider name.
       - name: simulation
         in: header
@@ -458,7 +458,7 @@ paths:
           type: string
           enum:
           - BRI
-          - GHL
+          - NTT
         description: Provider name.
       - name: simulation
         in: header
@@ -565,7 +565,7 @@ paths:
           type: string
           enum:
           - BRI
-          - GHL
+          - NTT
         description: Provider name.
       - name: simulation
         in: header
@@ -663,7 +663,7 @@ paths:
           type: string
           enum:
           - BRI
-          - GHL
+          - NTT
         description: Provider name.
       - name: simulation
         in: header
@@ -766,7 +766,7 @@ paths:
           type: string
           enum:
           - BRI
-          - GHL
+          - NTT
         description: Provider name.
       - name: simulation
         in: header
