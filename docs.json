@@ -34,6 +34,7 @@
               "api-reference/terminal-api/concepts",
               "POST /v1/terminal/sessions",
               "GET /v1/terminal/sessions/{id}",
+              "POST /v1/terminal/sessions/{id}/retry",
               "GET /v1/terminal/payments/{id}",
               "POST /v1/terminal/payments/{id}/void",
               "POST /v1/terminal/commands",
