@@ -19,7 +19,7 @@ This SDK works alongside the Terminal API to provide a complete in-person paymen
     - Fixed NTT payment method value mapping to ensure correct provider selection
     - Updated BRI payment flow to validate transaction data before executing terminal actions
     - Added timeout configuration for card and QR transactions to auto-cancel and retry stalled requests
-    - Added retry logic via Terminal API for more resilient recovery after timeouts
+    - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
   </Accordion>
   <Accordion title="v0.6.0 — 20-Nov-2025">
     What's new:
@@ -381,6 +381,31 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
       // Payment still in progress
   }
   ```
+</Accordion>
+
+<Accordion title="Transaction Stuck or Missing Callback After Receipt Printed">
+  **Problem**: Transaction appears stuck or you don't receive a callback after the terminal prints a receipt, indicating the transaction may be incomplete.
+
+  <Note>
+  This troubleshooting section applies only to BRI terminals.
+  </Note>
+
+  **Solution**:
+  Call the Terminal API retry endpoint to request the app check the transaction status and redo the transaction if it's incomplete:
+
+  ```swift
+  // Retry transaction via Terminal API
+  let response = try await terminalApi.retrySession(sessionId: sessionId)
+  // The app will check transaction status and redo if incomplete
+  ```
+
+  <Info>
+  The retry endpoint <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> instructs the app to verify the current transaction status with the terminal and automatically redo the transaction if it's found to be incomplete.
+  </Info>
+
+  <Tip>
+  Use this retry mechanism when you see a receipt printed but haven't received a callback, as it may indicate the transaction didn't complete successfully on the terminal side.
+  </Tip>
 </Accordion>
 
 <Accordion title="Connection Issues">
