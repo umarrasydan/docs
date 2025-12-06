@@ -21,7 +21,7 @@ The Terminal Gateway app helps developers integrate their application with Xendi
     - Fixed the NTT payment method value to ensure correct provider mapping
     - Updated the BRI payment flow to validate transaction data before performing terminal actions
     - Added timeout configuration for card and QR transactions to control operation windows
-    - Added retry logic that leverages the Terminal API for more resilient recovery
+    - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
   </Accordion>
   <Accordion title="v1.5.0 — 20-Nov-2025">
     What's new:
@@ -377,6 +377,82 @@ Each device in the terminal list displays a status indicator that changes color 
   Monitor device status indicators regularly to ensure your terminal fleet is
   operating correctly. Red or grey statuses may require immediate attention.
 </Tip>
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Unresponsive EDC Machine">
+  **Problem**: The EDC (Electronic Data Capture) machine becomes unresponsive or stops processing transactions.
+
+  **Solution**: 
+  1. Restart the EDC machine by holding the power button and selecting "Restart"
+  2. Wait for the device to fully boot up and reconnect
+  3. Verify the terminal is back online using the connection monitoring features
+
+  <Warning>
+  Always ensure the EDC is properly restarted before attempting new transactions to avoid data corruption.
+  </Warning>
+</Accordion>
+
+<Accordion title="Kiosk Mode Configuration">
+  **Problem**: Unexpected behaviors or unauthorized access to terminal functions.
+
+  **Solution**:
+  1. Ensure all transactions are initiated only through the app
+  2. Contact the Xendit EDC team to enable POS-only mode for your <a href="#finding-terminal-information">Terminal IDs</a>
+  3. Configure terminal settings to disable manual transaction entry
+
+  <Tip>
+  POS-only mode prevents manual transaction entry and ensures all operations go through your application.
+  </Tip>
+</Accordion>
+
+<Accordion title="No Response After Payment Completion">
+  **Problem**: EDC fails to send transaction results to the app after payment completion.
+
+  **Solution**:
+  1. Query the Payment Session using the Terminal API to retrieve the latest status
+  2. Check network connectivity between the EDC and your application
+  3. Verify the callback URL configuration in your payment session
+  4. Implement retry logic for failed status updates
+</Accordion>
+
+<Accordion title="Transaction Stuck or Missing Callback After Receipt Printed">
+  **Problem**: Transaction appears stuck or you don't receive a callback after the terminal prints a receipt, indicating the transaction may be incomplete.
+
+  <Note>
+  This troubleshooting section applies only to BRI terminals.
+  </Note>
+
+  **Solution**:
+  Call the Terminal API retry endpoint <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> to request the app check the transaction status and redo the transaction if it's incomplete.
+
+  <Info>
+  The retry endpoint instructs the app to verify the current transaction status with the terminal and automatically redo the transaction if it's found to be incomplete.
+  </Info>
+
+  <Tip>
+  Use this retry mechanism when you see a receipt printed but haven't received a callback, as it may indicate the transaction didn't complete successfully on the terminal side.
+  </Tip>
+</Accordion>
+
+<Accordion title="Connection Issues">
+  **Problem**: Unable to establish or maintain connection with terminal devices.
+
+  **Solutions**:
+  - **Check network connectivity**: Ensure both devices are on the same network
+  - **Verify IP addresses**: Confirm terminal <a href="#finding-terminal-information">IP addresses</a> are correct and accessible
+  - **Firewall settings**: Check if firewall is blocking the connection ports
+  - **Terminal status**: Ensure the terminal is powered on and in ready state
+  - **App initialization**: Verify client key and terminal configuration
+
+  <Note>
+  Use the connection monitoring features to diagnose specific connection issues.
+  </Note>
+</Accordion>
+</AccordionGroup>
 
 import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
 
