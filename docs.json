@@ -62,6 +62,14 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Terminal Client",
+            "pages": [
+              "api-reference/terminal-client/introduction",
+              "api-reference/terminal-client/android-sdk/index",
+              "api-reference/terminal-client/ios-sdk/index"
+            ]
           }
         ]
       }

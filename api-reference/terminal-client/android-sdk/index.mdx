@@ -1,0 +1,815 @@
+---
+title: "Android SDK (Kotlin)"
+description: "Integrate Xendit's Terminal Client SDK into your Android applications with our comprehensive Kotlin SDK"
+---
+
+# Terminal Client SDK for Android (Kotlin)
+
+The Terminal Client SDK for Android enables you to integrate secure payment processing into your Android applications. Connect to physical payment terminals through the local gateway service and process transactions seamlessly using our Kotlin-based SDK.
+
+<Info>
+This SDK works alongside the Terminal Gateway service to provide complete in-person payment functionality. You'll use Terminal Client to communicate with the local gateway that manages connections to physical payment devices.
+</Info>
+
+<Warning>
+**Terminal Gateway Required**: For BRI and NTT terminals, you must install the Terminal Gateway application on your local device before using Terminal Client SDK. See the [Terminal Gateway App Configuration](/api-reference/terminal-gateway/app-configuration) guide for installation and setup instructions.
+</Warning>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="Latest Version">
+    Terminal Client SDK provides a unified API for interacting with payment terminals through the Terminal Gateway service.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+The SDK follows semantic versioning. Breaking changes will bump the major version number.
+</Note>
+
+## Installation
+
+<Warning>
+**Prerequisite**: For BRI and NTT terminals, ensure the Terminal Gateway application is installed and running on your local device. See the [Terminal Gateway App Configuration](/api-reference/terminal-gateway/app-configuration) guide for details.
+</Warning>
+
+Add the Terminal Client SDK to your Android project:
+
+<Steps>
+<Step title="Add dependencies">
+  Add the required dependencies to your `build.gradle.kts` or `build.gradle` file:
+  
+  <CodeGroup>
+  ```kotlin build.gradle.kts
+  dependencies {
+    // Terminal Client SDK
+    implementation("co.xendit.terminal:client-android:VERSION")
+    
+    // Optional: Provider-specific dependencies (for provider-specific TerminalDevice methods)
+    // For BRI terminals
+    // implementation("co.xendit.terminal:id-bri-android:VERSION")
+    // For NTT terminals
+    // implementation("co.xendit.terminal:th-ntt-android:VERSION")
+  }
+  ```
+  
+  ```groovy build.gradle
+  dependencies {
+    // Terminal Client SDK
+    implementation 'co.xendit.terminal:client-android:VERSION'
+    
+    // Optional: Provider-specific dependencies (for provider-specific TerminalDevice methods)
+    // For BRI terminals
+    // implementation 'co.xendit.terminal:id-bri-android:VERSION'
+    // For NTT terminals
+    // implementation 'co.xendit.terminal:th-ntt-android:VERSION'
+  }
+  ```
+  </CodeGroup>
+  
+  <Note>
+  Provider-specific dependencies (e.g., `id-bri-android` or `th-ntt-android`) are optional and only needed if you want to use provider-specific `TerminalDevice` creation methods like `TerminalDevice.bri()` or `TerminalDevice.ntt()`. The generic `TerminalDevice.create()` method works without these dependencies.
+  </Note>
+  
+  <Check>
+  Sync your project to download the dependencies.
+  </Check>
+</Step>
+
+<Step title="Initialize Terminal App">
+  Initialize the Terminal App with your client key:
+  
+  ```kotlin
+  import co.xendit.terminal.core.TerminalApp
+  
+  // In your Application class or Activity
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+  // or TerminalMode.SANDBOX for testing
+  ```
+  
+  <Warning>
+  Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
+  </Warning>
+</Step>
+
+<Step title="Configure Terminal Device">
+  Set up your terminal device configuration:
+  
+  <Tabs>
+  <Tab title="Generic Method">
+    Use the generic `create` method:
+    
+    ```kotlin
+    import co.xendit.terminal.client.TerminalClient
+    import co.xendit.terminal.core.data.TerminalDevice
+    
+    // Configure the default terminal device
+    val terminalDevice = TerminalDevice.create(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.100",
+      provider = "BRI" // or "NTT"
+    )
+    
+    TerminalClient.setTerminalDevice(terminalDevice)
+    ```
+  </Tab>
+  
+  <Tab title="Provider-Specific Method">
+    Use provider-specific methods when you include the provider dependency:
+    
+    ```kotlin
+    import co.xendit.terminal.client.TerminalClient
+    import co.xendit.terminal.core.data.TerminalDevice
+    
+    // Add provider dependency in build.gradle
+    // implementation("co.xendit.terminal:id-bri-android:VERSION")
+    // or
+    // implementation("co.xendit.terminal:th-ntt-android:VERSION")
+    
+    // For BRI terminals
+    val terminalDevice = TerminalDevice.bri(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.100"
+    )
+    
+    // For NTT terminals
+    // val terminalDevice = TerminalDevice.ntt(
+    //   id = "TERMINAL_ID",
+    //   ipAddress = "192.168.1.100"
+    // )
+    
+    TerminalClient.setTerminalDevice(terminalDevice)
+    ```
+    
+    <Note>
+    Provider-specific methods require adding the corresponding provider dependency: `co.xendit.terminal:<country>-<provider>-android:VERSION` (e.g., `id-bri-android` or `th-ntt-android`).
+    </Note>
+  </Tab>
+  </Tabs>
+  
+  <Tip>
+  You can also specify a device per request instead of setting a default device.
+  </Tip>
+</Step>
+
+<Step title="Configure Gateway Port (Optional)">
+  If your Terminal Gateway service runs on a different port, configure it:
+  
+  ```kotlin
+  // Default port is 8189
+  TerminalClient.setPort("8189")
+  ```
+</Step>
+</Steps>
+
+## API Usage
+
+### Create Payment
+
+Process a payment transaction:
+
+<Tabs>
+<Tab title="Generic Method">
+  Use `PaymentMethod.fromValue()`:
+  
+  ```kotlin
+  import co.xendit.terminal.client.TerminalClient
+  import co.xendit.terminal.client.data.Payment
+  import co.xendit.terminal.client.data.TerminalException
+  import co.xendit.terminal.core.data.PaymentMethod
+  
+  // Create payment data
+  val payment = Payment(
+    orderID = "ORDER_123",
+    amount = 10000.0,
+    paymentMethod = PaymentMethod.fromValue("card") // or "ewallet", "qr"
+  )
+  ```
+</Tab>
+
+<Tab title="Provider-Specific Method">
+  Use provider-specific methods when you include the provider dependency:
+  
+  ```kotlin
+  import co.xendit.terminal.client.TerminalClient
+  import co.xendit.terminal.client.data.Payment
+  import co.xendit.terminal.client.data.TerminalException
+  import co.xendit.terminal.core.data.PaymentMethod
+  
+  // Add provider dependency in build.gradle
+  // implementation("co.xendit.terminal:id-bri-android:VERSION")
+  // or
+  // implementation("co.xendit.terminal:th-ntt-android:VERSION")
+  
+  // Create payment data
+  val payment = Payment(
+    orderID = "ORDER_123",
+    amount = 10000.0,
+    paymentMethod = PaymentMethod.card() // or PaymentMethod.ewallet(), PaymentMethod.qr()
+  )
+  ```
+  
+  <Note>
+  Provider-specific methods require adding the corresponding provider dependency: `co.xendit.terminal:<country>-<provider>-android:VERSION` (e.g., `id-bri-android` or `th-ntt-android`).
+  </Note>
+</Tab>
+</Tabs>
+
+```kotlin
+// Execute payment (suspend function)
+
+// Execute payment (suspend function)
+try {
+  val result = TerminalClient.createPayment(
+    data = payment,
+    device = terminalDevice, // Optional: uses default if not provided
+    isSimulation = false // Optional: set to true for simulation mode
+  )
+  
+  // Handle successful payment
+  println("Payment successful: ${result.status}")
+} catch (e: TerminalException) {
+  // Handle terminal-specific errors
+  println("Payment failed: ${e.message}")
+} catch (e: Exception) {
+  // Handle network or other errors
+  println("Error: ${e.message}")
+}
+```
+
+### Cancel Payment
+
+Cancel an ongoing payment transaction:
+
+```kotlin
+import co.xendit.terminal.client.TerminalClient
+import co.xendit.terminal.client.data.Cancel
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create cancel data
+val cancel = Cancel(
+  paymentMethod = PaymentMethod.fromValue("card"), // Optional: can be null
+  // or PaymentMethod.card() if using provider-specific dependency
+  terminalReference = "123456" // Reference from previous transaction
+)
+
+try {
+  val result = TerminalClient.cancelPayment(
+    data = cancel,
+    device = terminalDevice,
+    isSimulation = false
+  )
+  
+  println("Cancellation successful: ${result.status}")
+} catch (e: TerminalException) {
+  println("Cancellation failed: ${e.message}")
+}
+```
+
+<Tip>
+You can create a `Cancel` object from a previous `TerminalResult` using `Cancel.fromResult(result)`.
+</Tip>
+
+### Print Receipt
+
+Trigger receipt printing on the terminal:
+
+```kotlin
+import co.xendit.terminal.client.TerminalClient
+import co.xendit.terminal.client.data.Receipt
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create receipt data
+val receipt = Receipt(
+  paymentMethod = PaymentMethod.fromValue("card"), // Optional: can be null
+  // or PaymentMethod.card() if using provider-specific dependency
+  terminalReference = "123456" // Reference from previous transaction
+)
+
+try {
+  val result = TerminalClient.printReceipt(
+    data = receipt,
+    device = terminalDevice,
+    isSimulation = false
+  )
+  
+  println("Receipt print command sent: ${result.status}")
+} catch (e: TerminalException) {
+  println("Receipt print failed: ${e.message}")
+}
+```
+
+### Perform Settlement
+
+Initiate a settlement (batch close) process:
+
+```kotlin
+import co.xendit.terminal.client.TerminalClient
+import co.xendit.terminal.client.data.Settlement
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create settlement data
+val settlement = Settlement(
+  paymentMethod = PaymentMethod.fromValue("card") // Optional: null for all payment methods
+  // or PaymentMethod.card() if using provider-specific dependency
+)
+
+try {
+  val result = TerminalClient.performSettlement(
+    data = settlement,
+    device = terminalDevice,
+    isSimulation = false
+  )
+  
+  println("Settlement successful: ${result.status}")
+} catch (e: TerminalException) {
+  println("Settlement failed: ${e.message}")
+}
+```
+
+### Get Transaction History
+
+Retrieve transaction history from the terminal:
+
+```kotlin
+import co.xendit.terminal.client.TerminalClient
+import co.xendit.terminal.client.data.Histories
+import co.xendit.terminal.client.data.TransactionStatus
+
+// Create histories data with optional filters
+val histories = Histories(
+  commands = listOf("PAY", "CANCEL"), // Optional: filter by command types
+  statuses = listOf(TransactionStatus.SUCCESS), // Optional: filter by statuses
+  from = "2024-01-01T00:00:00Z", // Optional: ISO 8601 format start date
+  to = "2024-01-31T23:59:59Z" // Optional: ISO 8601 format end date
+)
+
+try {
+  val history = TerminalClient.getHistory(
+    data = histories,
+    device = terminalDevice
+  )
+  
+  println("Retrieved ${history.size} transactions")
+  history.forEach { transaction ->
+    println("Transaction: ${transaction.status}")
+  }
+} catch (e: TerminalException) {
+  println("Failed to retrieve history: ${e.message}")
+}
+```
+
+## Async API Usage
+
+For interoperability with Java or callback-based code, use the async methods:
+
+### Create Payment (Async)
+
+```kotlin
+import co.xendit.terminal.client.data.Payment
+import co.xendit.terminal.core.data.PaymentMethod
+
+val payment = Payment(
+  orderID = "ORDER_123",
+  amount = 10000.0,
+  paymentMethod = PaymentMethod.fromValue("card")
+  // or PaymentMethod.card() if using provider-specific dependency
+)
+
+TerminalClient.createPaymentAsync(
+  data = payment,
+  device = terminalDevice,
+  isSimulation = false
+) { result ->
+  result.onSuccess { paymentResult ->
+    // Handle successful payment
+    println("Payment successful: ${paymentResult.status}")
+  }.onFailure { error ->
+    // Handle error
+    when (error) {
+      is TerminalException -> {
+        println("Terminal error: ${error.message}")
+      }
+      else -> {
+        println("Error: ${error.message}")
+      }
+    }
+  }
+}
+```
+
+### Cancel Payment (Async)
+
+```kotlin
+import co.xendit.terminal.client.data.Cancel
+import co.xendit.terminal.core.data.PaymentMethod
+
+val cancel = Cancel(
+  paymentMethod = PaymentMethod.fromValue("card"),
+  // or PaymentMethod.card() if using provider-specific dependency
+  terminalReference = "123456"
+)
+
+TerminalClient.cancelPaymentAsync(
+  data = cancel,
+  device = terminalDevice,
+  isSimulation = false
+) { result ->
+  result.onSuccess { cancelResult ->
+    println("Cancellation successful: ${cancelResult.status}")
+  }.onFailure { error ->
+    println("Cancellation failed: ${error.message}")
+  }
+}
+```
+
+### Print Receipt (Async)
+
+```kotlin
+import co.xendit.terminal.client.data.Receipt
+import co.xendit.terminal.core.data.PaymentMethod
+
+val receipt = Receipt(
+  paymentMethod = PaymentMethod.fromValue("card"),
+  // or PaymentMethod.card() if using provider-specific dependency
+  terminalReference = "123456"
+)
+
+TerminalClient.printReceiptAsync(
+  data = receipt,
+  device = terminalDevice,
+  isSimulation = false
+) { result ->
+  result.onSuccess { receiptResult ->
+    println("Receipt print command sent: ${receiptResult.status}")
+  }.onFailure { error ->
+    println("Receipt print failed: ${error.message}")
+  }
+}
+```
+
+### Perform Settlement (Async)
+
+```kotlin
+import co.xendit.terminal.client.data.Settlement
+import co.xendit.terminal.core.data.PaymentMethod
+
+val settlement = Settlement(
+  paymentMethod = PaymentMethod.fromValue("card")
+  // or PaymentMethod.card() if using provider-specific dependency
+)
+
+TerminalClient.performSettlementAsync(
+  data = settlement,
+  device = terminalDevice,
+  isSimulation = false
+) { result ->
+  result.onSuccess { settlementResult ->
+    println("Settlement successful: ${settlementResult.status}")
+  }.onFailure { error ->
+    println("Settlement failed: ${error.message}")
+  }
+}
+```
+
+### Get History (Async)
+
+```kotlin
+import co.xendit.terminal.client.data.Histories
+import co.xendit.terminal.client.data.TransactionStatus
+
+val histories = Histories(
+  commands = listOf("PAY"),
+  statuses = listOf(TransactionStatus.SUCCESS),
+  from = "2024-01-01T00:00:00Z",
+  to = "2024-01-31T23:59:59Z"
+)
+
+TerminalClient.getHistoryAsync(
+  data = histories,
+  device = terminalDevice
+) { result ->
+  result.onSuccess { history ->
+    println("Retrieved ${history.size} transactions")
+  }.onFailure { error ->
+    println("Failed to retrieve history: ${error.message}")
+  }
+}
+```
+
+## Error Handling
+
+### TerminalException
+
+The SDK throws `TerminalException` for terminal-specific errors:
+
+```kotlin
+import co.xendit.terminal.client.data.TerminalException
+import co.xendit.terminal.client.data.ApiError
+import co.xendit.terminal.core.data.ErrorCode
+
+try {
+  val result = TerminalClient.createPayment(paymentRequest)
+} catch (e: TerminalException) {
+  when (e.error.code) {
+    ErrorCode.FAILED_TO_CONNECT -> {
+      // Terminal Gateway service not reachable
+      println("Cannot connect to Terminal Gateway")
+    }
+    ErrorCode.AUTHENTICATION_FAILED -> {
+      // Invalid client key or terminal credentials
+      println("Authentication failed")
+    }
+    ErrorCode.TERMINAL_BUSY -> {
+      // Terminal is processing another transaction
+      println("Terminal is busy")
+    }
+    else -> {
+      println("Error: ${e.error.message}")
+    }
+  }
+}
+```
+
+### Error Structure
+
+```kotlin
+data class TerminalException(
+  val httpStatus: Int,
+  val error: ApiError
+)
+
+data class ApiError(
+  val code: ErrorCode,
+  val message: String
+)
+```
+
+## Configuration
+
+### Setting Default Terminal Device
+
+Set a default device that will be used for all requests:
+
+<CodeGroup>
+```kotlin Generic Method
+// Using generic create method
+val defaultDevice = TerminalDevice.create(
+  id = "TERMINAL_001",
+  ipAddress = "192.168.1.100",
+  provider = "BRI"
+)
+
+TerminalClient.setTerminalDevice(defaultDevice)
+
+// Now you can call methods without specifying device
+val result = TerminalClient.createPayment(paymentRequest)
+```
+
+```kotlin Provider-Specific Method
+// Using provider-specific method (requires provider dependency)
+val defaultDevice = TerminalDevice.bri(
+  id = "TERMINAL_001",
+  ipAddress = "192.168.1.100"
+)
+
+TerminalClient.setTerminalDevice(defaultDevice)
+
+// Now you can call methods without specifying device
+val result = TerminalClient.createPayment(paymentRequest)
+```
+</CodeGroup>
+
+### Per-Request Device Override
+
+Specify a different device for a specific request:
+
+<CodeGroup>
+```kotlin Generic Method
+// Using generic create method
+val customDevice = TerminalDevice.create(
+  id = "TERMINAL_002",
+  ipAddress = "192.168.1.101",
+  provider = "BRI"
+)
+
+// Use custom device for this request
+val result = TerminalClient.createPayment(
+  request = paymentRequest,
+  device = customDevice
+)
+```
+
+```kotlin Provider-Specific Method
+// Using provider-specific method
+val customDevice = TerminalDevice.bri(
+  id = "TERMINAL_002",
+  ipAddress = "192.168.1.101"
+)
+
+// Use custom device for this request
+val result = TerminalClient.createPayment(
+  request = paymentRequest,
+  device = customDevice
+)
+```
+</CodeGroup>
+
+### Simulation Mode
+
+Enable simulation mode for testing without physical terminals:
+
+```kotlin
+// Global simulation mode (if supported)
+// Or per-request simulation
+val result = TerminalClient.createPayment(
+  request = paymentRequest,
+  isSimulation = true
+)
+```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Cannot Connect to Terminal Gateway">
+  **Problem**: SDK cannot reach the Terminal Gateway service.
+  
+  **Solutions**:
+  1. Verify Terminal Gateway service is running locally
+  2. Check the port configuration (default: 8189)
+  3. Ensure the terminal device IP address is correct
+  4. Verify network connectivity between your app and gateway
+  
+  ```kotlin
+  // Verify port configuration
+  TerminalClient.setPort("8189")
+  
+  // Check terminal device IP (using generic method)
+  val device = TerminalDevice.create(
+    id = "TERMINAL_ID",
+    ipAddress = "192.168.1.100", // Verify this IP
+    provider = "BRI"
+  )
+  
+  // Or using provider-specific method
+  // val device = TerminalDevice.bri(
+  //   id = "TERMINAL_ID",
+  //   ipAddress = "192.168.1.100"
+  // )
+  ```
+</Accordion>
+
+<Accordion title="No Terminal Device Provided">
+  **Problem**: Error indicating no terminal device is configured.
+  
+  **Solution**: Set a default terminal device before making requests:
+  
+  ```kotlin
+  // Set default device
+  TerminalClient.setTerminalDevice(terminalDevice)
+  
+  // Or provide device per request
+  TerminalClient.createPayment(
+    request = paymentRequest,
+    device = terminalDevice
+  )
+  ```
+</Accordion>
+
+<Accordion title="Authentication Failed">
+  **Problem**: Requests fail with authentication errors.
+  
+  **Solutions**:
+  1. Verify TerminalApp is initialized with correct client key
+  2. Check terminal ID matches the configured device
+  3. Ensure client key has Terminal Client permissions
+  
+  ```kotlin
+  // Re-initialize with correct client key
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+  ```
+</Accordion>
+
+<Accordion title="Network Errors">
+  **Problem**: Network-level errors when communicating with gateway.
+  
+  **Solutions**:
+  1. Check network connectivity
+  2. Verify firewall settings allow connections to gateway port
+  3. Ensure Terminal Gateway service is accessible
+  4. Check terminal device IP address is reachable
+  
+  <Tip>
+  Use network debugging tools to verify connectivity between your app and the Terminal Gateway service.
+  </Tip>
+</Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+### Error Handling
+
+Always implement comprehensive error handling:
+
+```kotlin
+suspend fun processPaymentSafely(orderID: String, amount: Double): Result<TerminalResult> {
+  return try {
+    val payment = Payment(
+      orderID = orderID,
+      amount = amount,
+      paymentMethod = PaymentMethod.fromValue("card")
+      // or PaymentMethod.card() if using provider-specific dependency
+    )
+    val result = TerminalClient.createPayment(payment)
+    Result.success(result)
+  } catch (e: TerminalException) {
+    when (e.error.code) {
+      ErrorCode.TERMINAL_BUSY -> {
+        // Retry after delay
+        delay(5000)
+        processPaymentSafely(orderID, amount)
+      }
+      ErrorCode.FAILED_TO_CONNECT -> {
+        // Check connectivity and retry
+        Result.failure(e)
+      }
+      else -> Result.failure(e)
+    }
+  } catch (e: Exception) {
+    Result.failure(e)
+  }
+}
+```
+
+### Coroutine Scope Management
+
+Use appropriate coroutine scopes for async operations:
+
+```kotlin
+class PaymentActivity : AppCompatActivity() {
+  private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+  
+  override fun onDestroy() {
+    super.onDestroy()
+    scope.cancel()
+  }
+  
+  fun processPayment() {
+    val payment = Payment(
+      orderID = "ORDER_123",
+      amount = 10000.0,
+      paymentMethod = PaymentMethod.fromValue("card")
+    )
+    
+    scope.launch {
+      try {
+        val result = TerminalClient.createPayment(payment)
+        // Update UI
+      } catch (e: Exception) {
+        // Handle error
+      }
+    }
+  }
+}
+```
+
+### Device Management
+
+Manage multiple terminal devices efficiently:
+
+```kotlin
+class TerminalManager {
+  private val devices = mutableMapOf<String, TerminalDevice>()
+  
+  fun registerDevice(id: String, ip: String, provider: String) {
+    // Using generic create method
+    devices[id] = TerminalDevice.create(id, ip, provider)
+    
+    // Or using provider-specific method
+    // devices[id] = TerminalDevice.bri(id, ip)
+  }
+  
+  suspend fun processPaymentOnDevice(
+    deviceId: String,
+    orderID: String,
+    amount: Double
+  ): TerminalResult {
+    val device = devices[deviceId]
+      ?: throw IllegalArgumentException("Device not found")
+    
+    val payment = Payment(
+      orderID = orderID,
+      amount = amount,
+      paymentMethod = PaymentMethod.fromValue("card")
+      // or PaymentMethod.card() if using provider-specific dependency
+    )
+    return TerminalClient.createPayment(payment, device = device)
+  }
+}
+```
+
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
+
+<FindingTerminalInformation />
