@@ -7,6 +7,10 @@ description: 'Complete API reference for in-person payment processing using Xend
 
 The Terminal API enables you to process in-person payments using Xendit's terminal devices. This API provides comprehensive functionality for creating payment sessions, managing terminal operations, and handling real-time payment callbacks.
 
+<Warning>
+**Gateway App Required**: For BRI and NTT terminals, you must install the Terminal Gateway application on your local device before using the Terminal API (H2H). Cashup terminals connect directly without requiring the gateway app. See the [Terminal Gateway App Configuration](/sdk/gateway/app-configuration) guide for installation and setup instructions.
+</Warning>
+
 <Info>
   **New to Terminal API?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get
   your first terminal payment processed in under 10 minutes.
@@ -29,7 +33,7 @@ The Terminal API provides these core capabilities:
 - **API Credentials**: In-Person Payment API key from Xendit team
 
 ### For Physical Terminal Integration
-- **Terminal Gateway**: App or SDK installed on your terminal devices
+- **Terminal H2H**: App or SDK installed on your terminal devices
 - **Network Access**: Terminal devices must have internet connectivity
 
 ### For Simulation Testing (No Terminal Required)
@@ -83,15 +87,15 @@ curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   for Basic Authentication, even though the password is empty.
 </Warning>
 
-## Terminal Gateway Setup
+## Terminal H2H Setup
 
-The Terminal Gateway is required to manage your terminal devices:
+The Terminal H2H is required to manage your terminal devices:
 
 <Tabs>
 <Tab title="Desktop App">
   **Available Platforms**: Windows, macOS
   
-  Download and install the Terminal Gateway desktop application:
+  Download and install the Terminal H2H desktop application:
   
   1. Download the app from the Xendit dashboard
   2. Install and launch the application
@@ -106,7 +110,7 @@ The Terminal Gateway is required to manage your terminal devices:
 <Tab title="Mobile SDK">
   **Available Platforms**: Android (Kotlin), iOS (Swift)
   
-  Integrate the Terminal Gateway SDK into your mobile application:
+  Integrate the Terminal H2H SDK into your mobile application:
   
   ```kotlin
   // Android (Kotlin)
@@ -119,7 +123,7 @@ The Terminal Gateway is required to manage your terminal devices:
   ```
   
   <Tip>
-  See our [Terminal Gateway documentation](/api-reference/terminal-gateway/introduction) for detailed integration guides.
+  See our [Terminal H2H documentation](/sdk/h2h/introduction) for detailed integration guides.
   </Tip>
 </Tab>
 </Tabs>

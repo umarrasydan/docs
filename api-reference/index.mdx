@@ -1,0 +1,76 @@
+---
+title: "Terminal API Overview"
+description: "Compare Terminal API (H2H) and Terminal API (C2C) and choose the right integration path"
+---
+
+The Xendit Terminal APIs power in-person payments across two integration models. Use this overview to identify the right API track before diving into the detailed references.
+
+<Check>
+Terminal API (H2H) is the recommended starting point for most merchants because it provides managed device orchestration, standardized workflows, and the fastest route to certification.
+</Check>
+
+## Integration options
+
+<Tabs>
+  <Tab title="Terminal API (H2H)">
+    <p>Host-to-Host (H2H) centralizes payment orchestration through Xendit's managed gateway, keeping your app lightweight while still offering granular payment session control.</p>
+    <ul>
+      <li>Managed device lifecycle via Terminal H2H applications (desktop or mobile).</li>
+      <li>Unified session and callback model that automatically handles retries and reconciliation.</li>
+      <li>Supports multi-country payment acceptance with minimal additional coding.</li>
+    </ul>
+    <Tip>
+    Begin with the <a href="/api-reference/terminal-api/introduction">Terminal API (H2H) introduction</a> and follow its Quickstart to stand up sandbox payments in under 10 minutes.
+    </Tip>
+  </Tab>
+  <Tab title="Terminal API (C2C)">
+    <p>Client-to-Client (C2C) gives you direct control over commands sent to each terminal, letting you design bespoke experiences at the cost of greater operational ownership.</p>
+    <ul>
+      <li>Ideal for specialized hardware setups, kiosks, or offline-first workflows.</li>
+      <li>Requires the Terminal Gateway App; BRI and NTT providers are not available without it.</li>
+      <li>Exposes RESTful endpoints only—no SDKs for this API track.</li>
+      <li>Requires custom handling of device states, receipt delivery, and failure recovery.</li>
+      <li>Supports multi-country payment acceptance with minimal additional coding.</li>
+    </ul>
+    <Warning>
+    Choose C2C only if you have strong device engineering capabilities—mixing H2H and C2C APIs within the same deployment is unsupported.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Architecture comparison
+
+| Capability | Terminal API (H2H) | Terminal API (C2C) |
+| --- | --- | --- |
+| Device management | Gateway App or H2H SDK handles pairing for you | Your app or service maintains device connections |
+| Session orchestration | Managed by Xendit with standardized callbacks | Fully custom—implement your own workflows |
+| Time-to-market | Fast—fewer edge cases and pre-built flows | Longer—requires bespoke command handling |
+| Recommended for | Assisted checkout, staff POS, rapid pilots | Kiosks, unattended terminals, advanced custom flows |
+
+## Sample use cases
+
+<Tabs>
+  <Tab title="Retail POS rollout (H2H)">
+    <p>A national retail chain wants a consistent checkout experience across dozens of staffed stores. Payments need to keep flowing even when teams rotate or terminals move between counters.</p>
+    <Tip>
+    H2H excels when you need a managed operations layer that keeps terminals paired, orchestrates retries, and standardizes receipts so every store follows the same playbook.
+    </Tip>
+    <ul>
+      <li>Central operations teams can monitor every device from a single dashboard instead of logging into individual terminals.</li>
+      <li>Regional expansion is simply a matter of adding more terminals; the API contract and callbacks stay identical.</li>
+    </ul>
+  </Tab>
+<Tab title="Custom kiosk network (C2C)">
+    <p>An experiential marketing team is rolling out unattended kiosks in malls and airports. Each kiosk needs local-device logic and the ability to continue operating if connectivity blips.</p>
+    <Tip>
+    C2C offers direct terminal control so your kiosk software can decide exactly when to prompt, cancel, or retry while still working with your chosen hardware.
+    </Tip>
+    <ul>
+      <li>Fallback plans—like queueing payments until the mall network recovers—are easier to tailor for each venue.</li>
+    </ul>
+  </Tab>
+</Tabs>
+
+<Tip>
+If you later need capabilities from the other track, plan a migration instead of running both simultaneously—see the latest guidance in <a href="/guides/migration/xen-bri-to-h2h">migration guides</a>.
+</Tip>

@@ -1,586 +1,852 @@
 ---
 title: "Quickstart"
+mode: "wide"
 description: "Set up your development environment and process your first in-person payment in under 10 minutes"
 ---
 
-## Prerequisites
+import IntegrationModeComparison from '/snippets/integration-mode-comparison.mdx';
+import H2HQuickstartContent from '/snippets/h2h-quickstart-content.mdx';
+import H2HSDKQuickstartContent from '/snippets/h2h-sdk-quickstart-content.mdx';
+import C2CApiQuickstartContent from '/snippets/c2c-api-quickstart-content.mdx';
+import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
 
-- Terminal API key from Xendit In-Person Payment team
-- Node.js or your preferred development environment
+{/* Provider Selection - Level 1 */}
+<div id="provider-selection">
+  <div style={{ textAlign: 'left', marginBottom: '48px' }}>
+    <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '16px', color: '#111827' }}>
+      Choose Your Payment Provider(s)
+    </h2>
+    <p style={{ fontSize: '18px', color: '#6b7280', maxWidth: '600px', margin: '0' }}>
+      Select one or more payment providers for your terminal integration
+    </p>
+  </div>
 
-### For Physical Terminal Testing
-- Terminal Gateway set up (desktop app or Android/iOS SDK)
-- Physical terminal device connected and showing "Ready" status
-- Terminal registered with Xendit for test mode (contact support if needed)
-- Valid `terminal_id` from your registered device
+  <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ marginBottom: '32px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Indonesia (ID)</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        {/* BRI Provider */}
+        <div id="provider-bri" className="provider-card" style={{
+          backgroundColor: '#ffffff',
+          border: '2px solid #e5e7eb',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }} onClick={() => {
+          const checkbox = document.getElementById('bri-checkbox');
+          const card = document.getElementById('provider-bri');
+          checkbox.checked = !checkbox.checked;
+          if (checkbox.checked) {
+            card.style.borderColor = '#0066cc';
+            card.style.boxShadow = '0 4px 12px 0 #0066cc40';
+          } else {
+            card.style.borderColor = '#e5e7eb';
+            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+        }}>
+          <input type="checkbox" id="bri-checkbox" style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '20px',
+            height: '20px',
+            accentColor: '#0066cc'
+          }} />
+          
+          <div>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>BRI</h4>
+          </div>
+        </div>
 
-### For Simulation Testing (No Terminal Required)
-- Any `terminal_id` value (e.g., `SIM001`) - no registration needed
-- Special test amounts to trigger different payment scenarios
-- Use `4040404` as terminal_id to test invalid terminal error handling
+        {/* Cashup Provider */}
+        <div id="provider-cashup" className="provider-card" style={{
+          backgroundColor: '#ffffff',
+          border: '2px solid #e5e7eb',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }} onClick={() => {
+          const checkbox = document.getElementById('cashup-checkbox');
+          const card = document.getElementById('provider-cashup');
+          checkbox.checked = !checkbox.checked;
+          if (checkbox.checked) {
+            card.style.borderColor = '#059669';
+            card.style.boxShadow = '0 4px 12px 0 #05966940';
+          } else {
+            card.style.borderColor = '#e5e7eb';
+            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+        }}>
+          <input type="checkbox" id="cashup-checkbox" style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '20px',
+            height: '20px',
+            accentColor: '#059669'
+          }} />
+          
+          <div>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Cashup</h4>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<Info>
-**Don't have a physical terminal yet?** No problem! You can start integration immediately using our simulation capabilities. Use special test amounts and terminal IDs to simulate different payment scenarios without needing physical hardware.
-</Info>
+    <div style={{ marginBottom: '32px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Thailand (TH)</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        {/* NTT Provider */}
+        <div id="provider-ntt" className="provider-card" style={{
+          backgroundColor: '#ffffff',
+          border: '2px solid #e5e7eb',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }} onClick={() => {
+          const checkbox = document.getElementById('ntt-checkbox');
+          const card = document.getElementById('provider-ntt');
+          checkbox.checked = !checkbox.checked;
+          if (checkbox.checked) {
+            card.style.borderColor = '#dc2626';
+            card.style.boxShadow = '0 4px 12px 0 #dc262640';
+          } else {
+            card.style.borderColor = '#e5e7eb';
+            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+        }}>
+          <input type="checkbox" id="ntt-checkbox" style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '20px',
+            height: '20px',
+            accentColor: '#dc2626'
+          }} />
+          
+          <div>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>NTT</h4>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<Warning>
-Use sandbox/test devices and small amounts while testing. Do not use production keys in development.
-</Warning>
+    <div>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Vietnam (VN)</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        {/* Atom Provider */}
+        <div id="provider-atom" className="provider-card" style={{
+          backgroundColor: '#ffffff',
+          border: '2px solid #e5e7eb',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }} onClick={() => {
+          const checkbox = document.getElementById('atom-checkbox');
+          const card = document.getElementById('provider-atom');
+          checkbox.checked = !checkbox.checked;
+          if (checkbox.checked) {
+            card.style.borderColor = '#7c3aed';
+            card.style.boxShadow = '0 4px 12px 0 #7c3aed40';
+          } else {
+            card.style.borderColor = '#e5e7eb';
+            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+        }}>
+          <input type="checkbox" id="atom-checkbox" style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '20px',
+            height: '20px',
+            accentColor: '#7c3aed'
+          }} />
+          
+          <div>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Atom</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-## 1. Configure your environment
+  {/* Continue Button */}
+  <div style={{ textAlign: 'center', marginTop: '48px' }}>
+    <button 
+      id="continue-button"
+      onClick={() => {
+        const briSelected = document.getElementById('bri-checkbox')?.checked || false;
+        const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
+        const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+        const atomSelected = document.getElementById('atom-checkbox')?.checked || false;
 
-Set up your local development environment with the necessary credentials and base URLs.
+        // If only Atom is selected, jump straight to the H2H app flow
+        if (atomSelected && !briSelected && !nttSelected && !cashupSelected) {
+          document.getElementById('provider-selection').style.display = 'none';
+          document.getElementById('integration-mode-selection').style.display = 'none';
+          document.getElementById('h2h-quickstart').style.display = 'none';
+          const gatewayInfo = document.getElementById('gateway-app-info');
+          if (gatewayInfo) {
+            gatewayInfo.style.display = '';
+          }
+          document.getElementById('h2h-app-content').style.display = 'block';
+          window.location.hash = 'h2h-app-content';
+          return;
+        }
 
-<Steps>
-<Step title="Create environment file">
-  Create a `.env` file in your project root:
-  
-  ```bash .env
-  TERMINAL_API_KEY=your_dev_terminal_api_key
-  TERMINAL_BASE_URL=https://terminal-dev.xendit.co
-  CALLBACK_URL=http://localhost:3000/terminal/callbacks
-  TERMINAL_ID=TERM001
-  ```
-  
-  <Warning>
-  Never commit secrets to version control. Add `.env` to your `.gitignore` file.
-  </Warning>
-</Step>
+        document.getElementById('provider-selection').style.display = 'none';
+        document.getElementById('integration-mode-selection').style.display = 'block';
+        window.location.hash = 'integration-mode-selection';
+      }}
+      style={{
+        display: 'inline-block',
+        padding: '16px 32px',
+        backgroundColor: '#10b981',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '12px',
+        fontSize: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        boxShadow: '0 4px 12px 0 rgba(16, 185, 129, 0.3)'
+      }}
+    >
+      Continue with Selected Provider(s)
+    </button>
+  </div>
+</div>
 
-<Step title="Install dependencies">
-  Install required packages for your development environment:
-  
-  <CodeGroup>
-  ```bash Node.js
-  npm install node-fetch express dotenv
-  ```
-  
-  ```bash Python
-  pip install requests flask python-dotenv
-  ```
-  </CodeGroup>
-</Step>
-
-<Step title="Set up webhook server">
-  Create a local Express server to receive callbacks:
-  
-  ```javascript webhook.js
-  import express from 'express';
-  import dotenv from 'dotenv';
-  
-  dotenv.config();
-  const app = express();
-  app.use(express.json());
-  
-  app.post('/terminal/callbacks', (req, res) => {
-    console.log('Event:', req.body?.type, req.body?.data?.status);
-    console.log('Full payload:', JSON.stringify(req.body, null, 2));
-    res.sendStatus(200);
-  });
-  
-  app.listen(3000, () => {
-    console.log('Webhook server running on http://localhost:3000');
-    console.log('Use ngrok to expose this server for testing');
-  });
-  ```
-  
-  <Tip>
-  Use ngrok (`npm install -g ngrok && ngrok http 3000`) to expose your local server publicly for webhook testing.
-  </Tip>
-</Step>
-</Steps>
-
-## 2. Choose your testing approach
-
-<Tabs>
-<Tab title="Simulation Testing (Recommended for getting started)">
-  **Perfect for merchants waiting on terminal delivery or initial integration**
-  
-  Test payment flows without physical hardware using special test amounts and scenarios.
-  
-  <Steps>
-  <Step title="Use any terminal ID">
-    For simulation testing, you can use any `terminal_id` value. The system will automatically simulate payment responses.
-    
-    ```bash .env
-    TERMINAL_ID=SIM001  # Any value works for simulation
-    ```
-  </Step>
-  
-  <Step title="Test different scenarios">
-    Use these special amounts to simulate various payment outcomes:
-    
-    | Amount | Scenario | Expected Result |
-    |--------|----------|-----------------|
-    | `400508` | Payment declined | Session created, transaction fails |
-    | `400509` | Channel unavailable | Session creation fails |
-    | `400711` | User cancellation | Session created, then canceled |
-    | `4040404` (as terminal_id) | Invalid terminal | Session creation fails |
-    | Any other amount | Success flow | Payment completes successfully |
-    
-    <Tip>
-    Start with a normal amount like `10000` to test the success flow, then try the special amounts to test error handling.
-    </Tip>
-  </Step>
-  
-  <Step title="Run simulation test">
-    ```javascript test-simulation.js
-    import fetch from 'node-fetch';
-    import dotenv from 'dotenv';
-
-    dotenv.config();
-
-    async function testSimulation() {
-      const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+<script type="text/javascript">
+{`
+  setTimeout(function() {
+    window.toggleProvider = function(provider) {
+      const checkbox = document.getElementById(provider + '-checkbox');
+      const card = document.getElementById('provider-' + provider);
       
-      // Test successful payment simulation
-      const successTest = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': auth,
-          'Content-Type': 'application/json',
-          'Idempotency-key': `sim-success-${Date.now()}`,
-        },
-        body: JSON.stringify({
-          session_type: 'PAY',
-          mode: 'TERMINAL',
-          currency: 'IDR',
-          amount: 10000, // Normal amount = success
-          country: 'ID',
-          channel_properties: { terminal_id: 'SIM001' },
-        }),
-      });
+      // Toggle checkbox
+      checkbox.checked = !checkbox.checked;
       
-      const successData = await successTest.json();
-      console.log('✅ Success simulation:', successData.status);
-      
-      // Test payment decline simulation
-      const declineTest = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': auth,
-          'Content-Type': 'application/json',
-          'Idempotency-key': `sim-decline-${Date.now()}`,
-        },
-        body: JSON.stringify({
-          session_type: 'PAY',
-          mode: 'TERMINAL',
-          currency: 'IDR',
-          amount: 400508, // Special amount = decline
-          country: 'ID',
-          channel_properties: { terminal_id: 'SIM001' },
-        }),
-      });
-      
-      const declineData = await declineTest.json();
-      console.log('⚠️ Decline simulation:', declineData.status);
-    }
-
-    testSimulation();
-    ```
-    
-    <Check>
-    You receive different responses based on the test amounts, simulating real payment scenarios without physical hardware.
-    </Check>
-  </Step>
-  </Steps>
-  
-  <Note>
-  **Simulation Benefits**: Start integration immediately, test error handling, validate webhook flows, and prepare for production - all without waiting for terminal delivery.
-  </Note>
-</Tab>
-
-<Tab title="Physical Terminal Testing">
-  **For merchants with connected terminal devices**
-  
-  Test with actual hardware for the most realistic payment experience.
-  
-  <Steps>
-  <Step title="Verify terminal registration">
-    Ensure your terminal is registered for test mode:
-    - Check that your Terminal Gateway shows "Connected" or "Ready" status
-    - Confirm terminal is registered with Xendit (contact support if unsure)
-    - Verify you're using test mode in Terminal Gateway settings
-    
-    <Warning>
-    Unregistered terminals will automatically fall back to simulation mode, even if physically connected.
-    </Warning>
-  </Step>
-  
-  <Step title="Test API connectivity">
-    Make a test request to validate your API key and terminal setup:
-    
-    ```javascript test-terminal.js
-    import fetch from 'node-fetch';
-    import dotenv from 'dotenv';
-
-    dotenv.config();
-
-    async function testTerminal() {
-      const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-      
-      const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': auth,
-          'Content-Type': 'application/json',
-          'Idempotency-key': `test-${Date.now()}`,
-        },
-        body: JSON.stringify({
-          session_type: 'PAY',
-          mode: 'TERMINAL',
-          currency: 'IDR',
-          amount: 1000, // Small test amount
-          country: 'ID',
-          channel_properties: { terminal_id: process.env.TERMINAL_ID },
-        }),
-      });
-      
-      const data = await res.json();
-      
-      if (res.ok) {
-        console.log('✅ Terminal connection successful');
-        console.log('Session ID:', data.payment_session_id);
-        console.log('Status:', data.status);
+      // Update card styling
+      if (checkbox.checked) {
+        const color = provider === 'bri' ? '#0066cc' : provider === 'ntt' ? '#dc2626' : provider === 'cashup' ? '#059669' : '#7c3aed';
+        card.style.borderColor = color;
+        card.style.boxShadow = '0 4px 12px 0 ' + color + '40';
       } else {
-        console.log('❌ Error:', data.error_code, data.message);
+        card.style.borderColor = '#e5e7eb';
+        card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
       }
-    }
+    };
+  }, 100);
+`}
+</script>
 
-    testTerminal();
-    ```
+{/* Integration Mode Selection - Level 2 */}
+<div id="integration-mode-selection" className="quickstart-content" style={{display: 'none'}}>
+  <div style={{ marginBottom: '48px' }}>
+    <button 
+      onClick={() => {
+        document.getElementById('integration-mode-selection').style.display = 'none';
+        document.getElementById('provider-selection').style.display = 'block';
+        window.location.hash = '';
+      }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 16px',
+        backgroundColor: '#f3f4f6',
+        color: '#374151',
+        border: 'none',
+        borderRadius: '8px',
+        fontWeight: '500',
+        cursor: 'pointer',
+        marginBottom: '24px'
+      }}
+    >
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+      </svg>
+      Back to Provider Selection
+    </button>
     
-    <Check>
-    You receive a 200 response with a session ID and the physical terminal prompts for payment.
-    </Check>
-    
-    <Tip>
-    If you get a `TERMINAL_NOT_FOUND` error, your terminal may not be registered. Contact Xendit support to register it for test mode.
-    </Tip>
-  </Step>
+    <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '16px', color: '#111827' }}>
+      Choose Your Integration Mode
+    </h2>
+    <p style={{ fontSize: '16px', color: '#6b7280', maxWidth: '600px', margin: '0' }}>
+      Select the integration approach that best fits your technical requirements
+    </p>
+  </div>
+
+  <IntegrationModeComparison />
+</div>
+
+<div id="h2h-quickstart" className="quickstart-content" style={{display: 'none'}}>
+  <div style={{ marginBottom: '24px' }}>
+    <button 
+      onClick={() => {
+        document.getElementById('h2h-quickstart').style.display = 'none';
+        document.getElementById('integration-mode-selection').style.display = 'block';
+        window.location.hash = 'integration-mode-selection';
+      }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 16px',
+        backgroundColor: '#f3f4f6',
+        color: '#374151',
+        border: 'none',
+        borderRadius: '8px',
+        fontWeight: '500',
+        cursor: 'pointer'
+      }}
+    >
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+      </svg>
+      Back to Integration Mode
+    </button>
+  </div>
   
-  <Step title="Validate physical interaction">
-    Confirm the terminal responds to the API call:
-    - Terminal display shows payment amount
-    - Card reader is active and ready
-    - Payment can be completed with test card
-    - Webhook callbacks are received
-    
-    <Check>
-    Physical terminal displays payment prompt and accepts card interactions.
-    </Check>
-  </Step>
-  </Steps>
-</Tab>
-</Tabs>
+  <div className="selection-banner h2h-banner">
+    <svg style={{ width: '24px', height: '24px', color: '#10b981' }} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+    </svg>
+    <div>
+      <h3 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>
+        Great choice! You selected Host-to-Host (H2H)
+      </h3>
+      <p style={{ margin: '0', fontSize: '14px', opacity: '0.8' }}>
+        Choose your implementation approach
+      </p>
+    </div>
+  </div>
 
-## 3. Create your first payment session
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+    {/* App Installation Option */}
+    <div style={{
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '16px',
+      padding: '24px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }} onClick={() => {
+      // Check if only Cashup is selected
+      const briSelected = document.getElementById('bri-checkbox')?.checked || false;
+      const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
+      const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+      
+      const gatewayInfo = document.getElementById('gateway-app-info');
+      if (cashupSelected && !briSelected && !nttSelected) {
+        gatewayInfo.style.display = 'none';
+      } else {
+        gatewayInfo.style.display = '';
+      }
+      
+      document.getElementById('h2h-quickstart').style.display = 'none';
+      document.getElementById('h2h-app-content').style.display = 'block';
+      window.location.hash = 'h2h-app-content';
+    }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>App Installation</h4>
+        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Use our pre-built Terminal H2H app</p>
+      </div>
+      
+      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
+        <li>Quick setup with Terminal H2H app</li>
+        <li>No development required</li>
+        <li>Ready-to-use interface</li>
+        <li>Perfect for non-technical teams</li>
+      </ul>
+      
+      <button 
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#10b981',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}
+      >
+        Use Terminal H2H App
+      </button>
+    </div>
 
-Now create a payment session and process it. Choose the approach that matches your setup:
+    {/* Embed SDK Option */}
+    <div style={{
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '16px',
+      padding: '24px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>Embed SDK</h4>
+        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Integrate SDK into your own app</p>
+      </div>
+      
+      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
+        <li>Custom integration in your app</li>
+        <li>Full control over UI/UX</li>
+        <li>Android and iOS SDKs</li>
+        <li>Advanced customization options</li>
+      </ul>
+      
+      <button 
+        onClick={() => {
+          document.getElementById('h2h-quickstart').style.display = 'none';
+          document.getElementById('h2h-sdk-content').style.display = 'block';
+          window.location.hash = 'h2h-sdk-content';
+        }}
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#6b7280',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}
+      >
+        Use H2H SDK
+      </button>
+    </div>
+  </div>
+</div>
 
-<Tabs>
-<Tab title="Simulation Payment">
-  **Perfect for testing without physical terminals**
+{/* H2H App Installation Content */}
+<div id="h2h-app-content" className="quickstart-content" style={{display: 'none'}}>
+  <div id="gateway-app-info">
+    <Info>
+    For H2H app installation and configuration, please refer to the Gateway App documentation.
+    </Info>
+
+    <div style={{ marginBottom: '24px' }}>
+      <a href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" style={{
+        display: 'block',
+        padding: '20px 24px',
+        backgroundColor: '#ffffff',
+        border: '2px solid #e5e7eb',
+        borderRadius: '12px',
+        textDecoration: 'none',
+        color: 'inherit',
+        transition: 'all 0.2s ease',
+        cursor: 'pointer'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontSize: '24px' }}>💻</div>
+          <div>
+            <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+              Gateway App Setup
+            </div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+              Complete Gateway App installation and configuration guide
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <H2HQuickstartContent />
+
+</div>
+
+{/* H2H SDK Integration Content */}
+<div id="h2h-sdk-content" className="quickstart-content" style={{display: 'none'}}>
+  <Info>
+  For Terminal H2H SDK integration, please refer to the comprehensive Terminal H2H documentation.
+  </Info>
+
+  <div style={{ marginBottom: '24px' }}>
+    <a href="/sdk/h2h/introduction" style={{
+      display: 'block',
+      padding: '20px 24px',
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      textDecoration: 'none',
+      color: 'inherit',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>📚</div>
+        <div>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            Terminal H2H Documentation
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Complete Terminal H2H SDK guide with platform-specific implementations
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <H2HSDKQuickstartContent />
+</div>
+
+<div id="c2c-quickstart" className="quickstart-content" style={{display: 'none'}}>
+  <div style={{ marginBottom: '24px' }}>
+    <button 
+      onClick={() => {
+        document.getElementById('c2c-quickstart').style.display = 'none';
+        document.getElementById('integration-mode-selection').style.display = 'block';
+        window.location.hash = 'integration-mode-selection';
+      }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 16px',
+        backgroundColor: '#f3f4f6',
+        color: '#374151',
+        border: 'none',
+        borderRadius: '8px',
+        fontWeight: '500',
+        cursor: 'pointer'
+      }}
+    >
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+      </svg>
+      Back to Integration Mode
+    </button>
+  </div>
   
-  <CodeGroup>
-  ```bash cURL (Success Simulation)
-  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
-    -u 'YOUR_TERMINAL_API_KEY:' \
-    -H 'Content-Type: application/json' \
-    -H 'Idempotency-key: sim-success-'"$(date +%s)" \
-    -d '{
-      "session_type": "PAY",
-      "mode": "TERMINAL",
-      "currency": "IDR",
-      "amount": 10000,
-      "country": "ID",
-      "channel_properties": { "terminal_id": "SIM001" }
-    }'
-  ```
-  
-  ```bash cURL (Decline Simulation)
-  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
-    -u 'YOUR_TERMINAL_API_KEY:' \
-    -H 'Content-Type: application/json' \
-    -H 'Idempotency-key: sim-decline-'"$(date +%s)" \
-    -d '{
-      "session_type": "PAY",
-      "mode": "TERMINAL",
-      "currency": "IDR",
-      "amount": 400508,
-      "country": "ID",
-      "channel_properties": { "terminal_id": "SIM001" }
-    }'
-  ```
-  
-  ```javascript JavaScript (Simulation)
-  import fetch from 'node-fetch';
-  import dotenv from 'dotenv';
-  
-  dotenv.config();
-  
-  async function createSimulationPayment(amount = 10000) {
-    const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-    
-    const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json',
-        'Idempotency-key': `sim-payment-${Date.now()}`,
-      },
-      body: JSON.stringify({
-        session_type: 'PAY',
-        mode: 'TERMINAL',
-        currency: 'IDR',
-        amount: amount, // Use special amounts for different scenarios
-        country: 'ID',
-        channel_properties: { terminal_id: 'SIM001' },
-      }),
-    });
-    
-    const data = await res.json();
-    console.log('Simulation payment session created:', data.payment_session_id);
-    return data;
-  }
-  
-  // Test different scenarios
-  createSimulationPayment(10000);  // Success
-  createSimulationPayment(400508); // Decline
-  createSimulationPayment(400509); // Channel unavailable
-  ```
-  </CodeGroup>
-  
-  <Check>
-  **Success**: Session created with `ACTIVE` status, then automatically transitions to `COMPLETED`  
-  **Decline**: Session created with `ACTIVE` status, then transitions to `FAILED`
-  </Check>
-</Tab>
+  <div className="selection-banner c2c-banner">
+    <svg style={{ width: '24px', height: '24px', color: '#6b7280' }} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+    </svg>
+    <div>
+      <h3 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>
+        You selected Client-to-Client (C2C)
+      </h3>
+      <p style={{ margin: '0', fontSize: '14px', opacity: '0.8' }}>
+        Choose your terminal integration approach
+      </p>
+    </div>
+  </div>
 
-<Tab title="Physical Terminal Payment">
-  **For merchants with connected terminals**
-  
-  <CodeGroup>
-  ```bash cURL
-  curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
-    -u 'YOUR_TERMINAL_API_KEY:' \
-    -H 'Content-Type: application/json' \
-    -H 'Idempotency-key: payment-'"$(date +%s)" \
-    -d '{
-      "session_type": "PAY",
-      "mode": "TERMINAL",
-      "currency": "IDR",
-      "amount": 10000,
-      "country": "ID",
-      "channel_properties": { "terminal_id": "TERM001" }
-    }'
-  ```
-  
-  ```javascript JavaScript
-  import fetch from 'node-fetch';
-  import dotenv from 'dotenv';
-  
-  dotenv.config();
-  
-  async function createTerminalPayment(amount, terminalId) {
-    const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-    
-    const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/sessions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json',
-        'Idempotency-key': `payment-${Date.now()}`,
-      },
-      body: JSON.stringify({
-        session_type: 'PAY',
-        mode: 'TERMINAL',
-        currency: 'IDR',
-        amount: amount,
-        country: 'ID',
-        channel_properties: { terminal_id: terminalId },
-      }),
-    });
-    
-    const data = await res.json();
-    console.log('Payment session created:', data.payment_session_id);
-    return data;
-  }
-  
-  // Use your registered terminal ID
-  createTerminalPayment(10000, process.env.TERMINAL_ID);
-  ```
-  </CodeGroup>
-  
-  <Check>
-  The terminal device prompts for payment. Ask the customer to tap/insert/swipe their card.
-  </Check>
-  
-  <Tip>
-  If the device doesn't prompt, verify the terminal is connected in Gateway and the `terminal_id` matches your device configuration.
-  </Tip>
-</Tab>
-</Tabs>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+    {/* API-based Option */}
+    <div style={{
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '16px',
+      padding: '24px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>API-based</h4>
+        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Use Gateway App + REST API</p>
+      </div>
+      
+      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
+        <li id="c2c-gateway-app-li">Requires Gateway App installation</li>
+        <li>RESTful API integration</li>
+        <li>Centralized terminal management</li>
+        <li>Web-based configuration</li>
+      </ul>
+      
+      <button 
+        onClick={() => {
+          // Hide Gateway App Setup when only Cashup is selected
+          const briSelected = document.getElementById('bri-checkbox')?.checked || false;
+          const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
+          const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+          const gatewaySetup = document.getElementById('c2c-gateway-app-setup');
+          
+          if (gatewaySetup) {
+            gatewaySetup.style.display = (cashupSelected && !briSelected && !nttSelected) ? 'none' : 'block';
+          }
 
-## 4. Monitor callbacks
+          document.getElementById('c2c-quickstart').style.display = 'none';
+          document.getElementById('c2c-api-content').style.display = 'block';
+          window.location.hash = 'c2c-api-content';
+        }}
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#6b7280',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}
+      >
+        Use API Integration
+      </button>
+    </div>
 
-Your webhook server (started in step 1) will receive real-time payment updates. Monitor the console output to see callback events.
+    {/* SDK-based Option */}
+    <div style={{
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '16px',
+      padding: '24px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>SDK-based</h4>
+        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Direct terminal communication</p>
+      </div>
+      
+      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
+        <li>Direct device communication</li>
+        <li>Android and iOS SDKs</li>
+        <li>Custom terminal flows</li>
+        <li>Maximum flexibility</li>
+      </ul>
+      
+      <button 
+        onClick={() => {
+          document.getElementById('c2c-quickstart').style.display = 'none';
+          document.getElementById('c2c-sdk-content').style.display = 'block';
+          window.location.hash = 'c2c-sdk-content';
+        }}
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#374151',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}
+      >
+        Use C2C SDK
+      </button>
+    </div>
+  </div>
+</div>
 
-<Info>
-Callback events include `PAYMENT_CREATED`, `PAYMENT_SUCCEEDED`, `PAYMENT_FAILED`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
-</Info>
+{/* C2C API Integration Content */}
+<div id="c2c-api-content" className="quickstart-content" style={{display: 'none'}}>
+  <Info>
+  You've chosen the C2C API integration path. First install and configure the Gateway App, then use the C2C API to communicate with your terminals.
+  </Info>
 
-## 5. Verify payment details
+  <div style={{ marginBottom: '24px' }}>
+    <a id="c2c-gateway-app-setup" href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" style={{
+      display: 'block',
+      padding: '20px 24px',
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      textDecoration: 'none',
+      color: 'inherit',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>💻</div>
+        <div>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            Gateway App Setup
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Install and configure the Gateway App
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
 
-Query payment details after receiving a success callback.
+  <div style={{ marginBottom: '24px' }}>
+    <a href="/api-reference/c2c/introduction" style={{
+      display: 'block',
+      padding: '20px 24px',
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      textDecoration: 'none',
+      color: 'inherit',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>📖</div>
+        <div>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            C2C API Reference
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Complete C2C API documentation and endpoints
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
 
-<CodeGroup>
-```bash cURL
-curl -X GET 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID' \
-  -u 'YOUR_TERMINAL_API_KEY:'
-```
+  <C2CApiQuickstartContent />
 
-```javascript JavaScript
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
+  <h2>Troubleshooting</h2>
+  <AccordionGroup>
+    <Accordion title="Gateway App not responding">
+      - Confirm the Gateway App is running on the same network segment as your POS.
+      - Check that the device IP and port are reachable (default 8189).
+      - Restart the Gateway App after changing provider credentials or API keys.
+    </Accordion>
+    <Accordion title="401 or 403 errors from C2C API">
+      - Verify you are using the Gateway App API key rather than your Dashboard key.
+      - Include the correct provider header (BRI, NTT, or CASHUP) with each request.
+      - Regenerate the Gateway App credentials if the key rotation recently occurred.
+    </Accordion>
+    <Accordion title="Terminal does not prompt for payment">
+      - Ensure the terminal is registered in the Gateway App with the exact terminal ID (TID).
+      - Confirm the device shows Connected/Ready status in the Gateway App UI.
+      - Recheck LAN connectivity and firewall rules that might block terminal traffic.
+    </Accordion>
+  </AccordionGroup>
 
-dotenv.config();
+  <h2>Next steps</h2>
+  <CardGroup cols={2}>
+    <Card title="C2C REST API Guide" icon="book" href="/api-reference/c2c/restful-api">
+      Dive deeper into payload formats, error codes, and advanced operations.
+    </Card>
+    <Card title="Gateway App Operations" icon="computer" href="/sdk/gateway/app-configuration">
+      Learn how to monitor device fleets and rotate credentials safely.
+    </Card>
+    <Card title="Terminal API (H2H)" icon="globe" href="/api-reference/terminal-api/introduction">
+      Compare with the managed H2H flow if you later need centralized orchestration.
+    </Card>
+  </CardGroup>
 
-async function getPaymentDetails(paymentId) {
-  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-  
-  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/payments/${paymentId}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': auth,
-    },
-  });
-  
-  const data = await res.json();
-  console.log('Payment status:', data.status);
-  console.log('Amount:', data.request_amount);
-  return data;
-}
-```
-</CodeGroup>
+  <h2>Production deployment</h2>
+  <ol>
+    <li>Switch the Gateway App to production mode and provision production API keys.</li>
+    <li>Whitelist production terminal IPs and ensure secure TLS termination on your POS.</li>
+    <li>Run end-to-end tests with small live amounts before opening to staff.</li>
+    <li>Set up monitoring for Gateway App health, API latency, and payment callbacks.</li>
+  </ol>
+</div>
 
-<Check>
-Confirm status is `SUCCEEDED` and amounts match your session.
-</Check>
+{/* C2C SDK Integration Content */}
+<div id="c2c-sdk-content" className="quickstart-content" style={{display: 'none'}}>
+  <Info>
+  You've chosen the C2C SDK integration path. This provides direct terminal communication for maximum flexibility and customization.
+  </Info>
 
-## 6. Optional: Void a payment
+  <div style={{ marginBottom: '24px' }}>
+    <a href="/sdk/c2c/android-sdk" style={{
+      display: 'block',
+      padding: '20px 24px',
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      textDecoration: 'none',
+      color: 'inherit',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>🤖</div>
+        <div>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            Android C2C SDK
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Complete Android C2C SDK integration guide
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
 
-If needed, you can void a payment transaction:
+  <div style={{ marginBottom: '24px' }}>
+    <a href="/sdk/c2c/ios-sdk" style={{
+      display: 'block',
+      padding: '20px 24px',
+      backgroundColor: '#ffffff',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      textDecoration: 'none',
+      color: 'inherit',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>🍎</div>
+        <div>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            iOS C2C SDK
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Complete iOS C2C SDK integration guide
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
 
-<CodeGroup>
-```bash cURL
-curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID/void' \
-  -u 'YOUR_TERMINAL_API_KEY:'
-```
+  <C2CSDKQuickstartContent />
 
-```javascript JavaScript
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
+  <h2>Troubleshooting</h2>
+  <AccordionGroup>
+    <Accordion title="SDK initialization fails">
+      - Confirm the Client Key matches the environment (sandbox vs production).
+      - Initialize the SDK during application start before invoking any payment calls.
+      - Add required permissions (BLE, network) to your AndroidManifest or Info.plist.
+    </Accordion>
+    <Accordion title="Terminal remains offline">
+      - Check that the terminal device IP is reachable from the mobile device.
+      - Verify the provider SDK (BRI, NTT, Cashup) is registered before setting the device.
+      - Recreate the terminal pairing if the device was rebooted or network changed.
+    </Accordion>
+    <Accordion title="Payment command returns errors">
+      - Inspect the SDK error object for provider-specific codes and retry guidance.
+      - Ensure amount, currency, and payment method align with the provider’s supported values.
+      - For persistent failures, fall back to the API mode and compare payloads.
+    </Accordion>
+  </AccordionGroup>
 
-dotenv.config();
+  <h2>Next steps</h2>
+  <CardGroup cols={2}>
+    <Card title="Android SDK Deep Dive" icon="code" href="/sdk/c2c/android-sdk">
+      Explore lifecycle hooks, receipt printing, and advanced device management.
+    </Card>
+    <Card title="iOS SDK Deep Dive" icon="code" href="/sdk/c2c/ios-sdk">
+      Review concurrency patterns, error domains, and background execution rules.
+    </Card>
+    <Card title="Migration Guidance" icon="arrow-right" href="/guides/migration/xen-bri-to-h2h">
+      Plan future transitions between Gateway App and SDK-based solutions.
+    </Card>
+  </CardGroup>
 
-async function voidPayment(paymentId) {
-  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
-  
-  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/payments/${paymentId}/void`, {
-    method: 'POST',
-    headers: {
-      'Authorization': auth,
-    },
-  });
-  
-  const data = await res.json();
-  console.log('Void response:', data);
-  return data;
-}
-
-// voidPayment('your-payment-id');
-```
-</CodeGroup>
-
-## Troubleshooting
-
-<AccordionGroup>
-<Accordion title="401 Unauthorized">
-- Ensure you include a trailing colon in the Basic Auth username encoding
-- Verify the key is a Terminal API key (not Dashboard API key)
-- Check that you're using the development base URL for testing
-</Accordion>
-
-<Accordion title="Simulation not working as expected">
-- Verify you're using the correct special amounts: `400508` (decline), `400509` (channel unavailable), `400711` (cancellation)
-- Check that you're in test mode (using development base URL)
-- Any `terminal_id` works for simulation - you don't need a real terminal registered
-- Normal amounts (not special test amounts) will always succeed in simulation mode
-</Accordion>
-
-<Accordion title="Terminal not prompting (Physical terminals only)">
-- Confirm Terminal Gateway shows device as Connected/Ready
-- Verify `terminal_id` matches your device configuration exactly
-- Check network connectivity on the device
-- Ensure device has correct time settings
-- **For simulation testing**: You don't need a physical terminal - any terminal_id will work
-</Accordion>
-
-<Accordion title="Webhook not receiving callbacks">
-- Use ngrok to expose your local server publicly
-- Ensure your webhook endpoint returns HTTP 200
-- Check server logs and firewall settings
-- Verify the webhook URL is configured correctly
-- **For simulation**: Callbacks work the same way as physical terminals
-</Accordion>
-
-<Accordion title="Environment variables not loading">
-- Verify `.env` file is in the correct location
-- Check that you're calling `dotenv.config()` before using environment variables
-- Ensure `.env` file is not committed to version control
-</Accordion>
-
-<Accordion title="Ready to transition from simulation to physical terminal">
-- Install and configure Terminal Gateway app or SDK
-- Register your physical terminal devices with actual Terminal IDs and IP addresses
-- Update your environment variables to use real terminal IDs
-- Test with small amounts on the physical device
-- All your existing integration code will work without changes!
-</Accordion>
-</AccordionGroup>
-
-## Next steps
-
-Now that you have a working integration, explore these advanced features:
-
-<CardGroup cols={2}>
-  <Card title="Terminal API Introduction" icon="book" href="/api-reference/terminal-api/introduction">
-    Complete Terminal API documentation and reference
-  </Card>
-  
-  <Card title="Terminal Gateway" icon="globe" href="/api-reference/terminal-gateway/introduction">
-    Learn about Terminal Gateway SDKs for Android and iOS
-  </Card>
-  
-  <Card title="Payment Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
-    Handle real-time payment notifications and status updates
-  </Card>
-  
-  <Card title="Gateway App Configuration" icon="computer" href="/api-reference/terminal-gateway/app-configuration">
-    Configure Terminal Gateway app for your devices
-  </Card>
-</CardGroup>
-
-## Production deployment
-
-When ready for production:
-
-1. **Switch to live API keys** - Use production Terminal API key and base URL `https://terminal.xendit.co`
-2. **Update webhook URLs** - Configure production webhook endpoints that are publicly accessible
-3. **Test thoroughly** - Start with small amounts and verify all payment flows work correctly
-4. **Monitor and log** - Set up proper logging and monitoring for payment events
-
-<Warning>
-Always test thoroughly with small amounts in production before processing real customer payments.
-</Warning>
+  <h2>Production deployment</h2>
+  <ol>
+    <li>Embed secure storage for client keys and rotate them on schedule.</li>
+    <li>Enable crash and telemetry reporting for SDK interactions and payment outcomes.</li>
+    <li>Run pilot stores with real terminals before rolling out widely.</li>
+    <li>Document recovery flows so field teams can re-pair or reset devices quickly.</li>
+  </ol>
+</div>

@@ -1,19 +1,28 @@
 ---
 title: "iOS SDK (Swift)"
-description: "Integrate payment processing with physical terminals using the Terminal Gateway SDK for iOS (Swift)"
+description: "Integrate payment processing with physical terminals using the Terminal H2H SDK for iOS (Swift)"
 ---
 
-# Terminal Gateway SDK for iOS (Swift)
+# Terminal H2H SDK for iOS (Swift)
 
-The Terminal Gateway SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals and process transactions seamlessly using our comprehensive Swift SDK.
+The Terminal H2H SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals and process transactions seamlessly using our comprehensive Swift SDK.
 
 <Info>
-This SDK works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal Gateway SDK to interact with physical payment devices.
+This SDK works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal H2H SDK to interact with physical payment devices.
 </Info>
 
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.0.0 — 30-Jan-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+    - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
+    
+    <Warning>
+    **Breaking Change**: Class name changed from `TerminalGateway` to `TerminalH2H`. Update your imports and references accordingly.
+    </Warning>
+  </Accordion>
   <Accordion title="v0.7.0 — 5-Dec-2025">
     What's new:
     - Fixed NTT payment method value mapping to ensure correct provider selection
@@ -49,7 +58,7 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 
 ## Download
 
-Download the Terminal Gateway iOS SDK:
+Download the Terminal H2H iOS SDK:
 
 <CardGroup cols={1}>
 <Card title="iOS SDK (v0.7.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+iOS-0.7.0.zip">
@@ -61,79 +70,16 @@ Download the Terminal Gateway iOS SDK:
 </Card>
 </CardGroup>
 
-## Installation
+import IOSInstallation from '/snippets/ios-installation.mdx';
 
-Install the Terminal Gateway SDK by adding it as a framework in Xcode:
-
-<Steps>
-<Step title="Add Sentry dependency">
-  Add the Sentry pod to your Podfile:
-  
-  ```ruby Podfile
-  target 'YourApp' do
-    pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
-  end
-  ```
-  
-  <Check>
-  Run `pod install` to install the dependency.
-  </Check>
-</Step>
-
-<Step title="Extract framework">
-  Extract the TerminalGateway.xcframework zip file in your project directory.
-  
-  <Frame>
-  <img src="/images/ios/extract-zip.png" alt="Extracting TerminalGateway.xcframework zip file in Finder" />
-  </Frame>
-</Step>
-
-<Step title="Add framework to project">
-  In Xcode, select your target and navigate to the "General" tab.
-  
-  Find "Frameworks, Libraries, and Embedded Content" and click the "+" button.
-  
-  <Frame>
-  <img src="/images/ios/select-target.png" alt="Selecting target and navigating to General tab in Xcode" />
-  </Frame>
-  
-  <Frame>
-  <img src="/images/ios/find-frameworks.png" alt="Finding Frameworks, Libraries, and Embedded Content section in Xcode" />
-  </Frame>
-</Step>
-
-<Step title="Import framework">
-  Click "Add Other..." and select "Add Files..."
-  
-  Search for TerminalGateway.xcframework, select it, and click "Open".
-  
-  <Frame>
-  <img src="/images/ios/import-framework-add-files.png" alt="Importing TerminalGateway.xcframework in Xcode using Add Files dialog" />
-  </Frame>
-</Step>
-
-<Step title="Configure build settings">
-  Go to "Build Settings" and make the following changes:
-  
-  - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
-  - Search for "Other Linker Flags" and add "-lsqlite3"
-  
-  <Frame>
-  <img src="/images/ios/enable-sandbox-no.png" alt="Setting ENABLE_USER_SCRIPT_SANDBOXING to NO in Xcode Build Settings" />
-  </Frame>
-  
-  <Frame>
-  <img src="/images/ios/add-lsqlite3.png" alt="Adding -lsqlite3 to Other Linker Flags in Xcode Build Settings" />
-  </Frame>
-</Step>
-</Steps>
+<IOSInstallation />
 
 ## Getting Started
 
 Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal <a href="#finding-terminal-information">IP address</a>.
 
 <Warning>
-Terminal Gateway requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
+Terminal H2H requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
 </Warning>
 
 ### Step 1: Initialize SDK
@@ -145,10 +91,6 @@ TerminalApp.shared.initialize(
    clientKey: TEST_CLIENT_KEY,
    mode: TerminalMode.integration
 )
-
-TerminalGateway.shared.addProvider(provider: TerminalBRI.shared)
-// For NTT
-// TerminalGateway.shared.addProvider(provider: TerminalNTT.shared)
 ```
 
 The SDK supports two modes:
@@ -163,12 +105,68 @@ The SDK supports two modes:
 </Tab>
 </Tabs>
 
-### Step 2: Register Terminal Device
+### Step 2: Add Terminal Providers
+
+Add the specific terminal providers you need for your integration:
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```swift
+// Add BRI provider for Indonesian terminals
+TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+```
+
+<Info>
+BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+</Info>
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```swift
+// Add NTT provider for Thai terminals
+TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
+```
+
+<Info>
+NTT provider supports multi-function terminals with card payments and QR code transactions.
+</Info>
+</Tab>
+
+<Tab title="Cashup Provider (Indonesia)">
+```swift
+// Add Cashup provider for Indonesian smart terminals
+TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
+```
+
+<Info>
+Cashup provider supports modern smart payment devices with cards, e-wallets, and QR code capabilities.
+</Info>
+</Tab>
+
+<Tab title="Multiple Providers">
+```swift
+// Add multiple providers for supporting different terminal types
+TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
+TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
+```
+
+<Warning>
+Only add providers for terminal types you actually plan to use. Each provider adds to your app's size and initialization time.
+</Warning>
+</Tab>
+</Tabs>
+
+<Check>
+After adding providers, they will be available for use when registering terminal devices in the next step.
+</Check>
+
+### Step 3: Register Terminal Device
 
 Register multiple devices by calling the `registerDevices` method:
 
 ```swift
-TerminalGateway.shared.registerDevices(devices: [ 
+TerminalH2H.shared.registerDevices(devices: [ 
   TerminalDevice(id: Terminal_ID_1, ipAddress: Terminal_IP_1),    
   TerminalDevice(id: Terminal_ID_2, ipAddress: Terminal_IP_2), 
   TerminalDevice(id: Terminal_ID_3, ipAddress: Terminal_IP_3) 
@@ -180,6 +178,37 @@ TerminalGateway.shared.registerDevices(devices: [
 For detailed instructions on finding <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP address</a> for different terminal providers, see our [Finding Terminal Information guide](#finding-terminal-information).
 </Tip>
 
+### Step 4: Calling Terminal API
+
+With Terminal H2H SDK configured, you can now process payments using the Terminal API. The SDK handles communication with physical terminals through the local gateway service.
+
+```bash
+# Example: Create a payment session
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+  -u 'API_KEY:' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-key: unique-session-123' \
+  -d '{
+    "terminal_id": "TERMINAL_ID",
+    "amount": 10000,
+    "currency": "IDR",
+    "external_id": "payment-123",
+    "payment_method": "card"
+  }'
+```
+
+<Info>
+For complete API documentation including request/response formats, error handling, and advanced features, see the [Terminal API (H2H)](/api-reference/terminal-api/introduction) documentation.
+</Info>
+
+<Tip>
+The Terminal H2H SDK automatically manages the connection to your registered terminal devices and handles communication protocols for different providers.
+</Tip>
+
+<Check>
+You're now ready to process payments using the Terminal H2H SDK integrated with Terminal API.
+</Check>
+
 ## Optional Methods
 
 ### Set Operation Timeout
@@ -187,11 +216,11 @@ For detailed instructions on finding <a href="#finding-terminal-information">Ter
 Configure the maximum allowed time for operations to complete before the service cancels and retries the transaction:
 
 ```swift
-TerminalGateway.shared.setOperationTimeout(minutes: 5) // default value is 5 minutes
+TerminalH2H.shared.setOperationTimeout(minutes: 5) // default value is 5 minutes
 
 // Set provider-specific timeouts
-TerminalGateway.shared.setOperationTimeout(type: TimeoutType.card, minutes: 10)
-TerminalGateway.shared.setOperationTimeout(type: TimeoutType.qr, minutes: 10)
+TerminalH2H.shared.setOperationTimeout(type: TimeoutType.card, minutes: 10)
+TerminalH2H.shared.setOperationTimeout(type: TimeoutType.qr, minutes: 10)
 ```
 
 ### Restart Terminal Connection
@@ -204,7 +233,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts all connections
-  TerminalGateway.shared.restart(terminalID: nil)
+  TerminalH2H.shared.restart(terminalID: nil)
   ```
 </Tab>
 
@@ -213,7 +242,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts the connection to a specific Terminal
-  TerminalGateway.shared.restart(terminalID: TERMINAL_ID)
+  TerminalH2H.shared.restart(terminalID: TERMINAL_ID)
   ```
 </Tab>
 </Tabs>
@@ -223,7 +252,7 @@ Manage and restart terminal service connections:
 Monitor Terminal connection status using the `observeEDCConnection` method:
 
 ```swift
-TerminalGateway.shared
+TerminalH2H.shared
   .observeConnection(device: terminalDevice) { state in     
    // Handle connection state changes
 }
@@ -245,7 +274,7 @@ The SDK handles the following connection states:
 Monitor Terminal error states using the `observeError` method:
 
 ```swift
-TerminalGateway.shared.observeError(onResult: { device, error in
+TerminalH2H.shared.observeError(onResult: { device, error in
     // Handle error state events
 })
 ```
@@ -254,7 +283,7 @@ TerminalGateway.shared.observeError(onResult: { device, error in
 
 ### Error Data Structure
 
-All errors returned by the Terminal Gateway SDK follow this structure:
+All errors returned by the Terminal H2H SDK follow this structure:
 
 ```swift
 struct TerminalError {

@@ -1,11 +1,11 @@
 ---
-title: 'Xen BRI SDK to Terminal Gateway SDK'
-description: 'Complete guide for migrating from Xen BRI SDK to Terminal Gateway SDK with step-by-step instructions and code examples'
+title: 'Xen BRI SDK to Terminal H2H SDK'
+description: 'Complete guide for migrating from Xen BRI SDK to Terminal H2H SDK with step-by-step instructions and code examples'
 ---
 
-# Xen BRI SDK to Terminal Gateway SDK
+# Xen BRI SDK to Terminal H2H SDK
 
-This comprehensive guide walks you through migrating your Android application from the standalone Xen BRI SDK (version 0.3.1) to the new Terminal Gateway SDK (version 0.4.0) and Terminal API (version 0.4.1). The new architecture provides better integration with the Xendit In-Person Payment platform and supports multiple terminal providers.
+This comprehensive guide walks you through migrating your Android application from the standalone Xen BRI SDK (version 0.3.1) to the new Terminal H2H SDK (version 0.4.0) and Terminal API (H2H) (version 0.4.1). The new architecture provides better integration with the Xendit In-Person Payment platform and supports multiple terminal providers.
 
 <Info>
 This migration involves significant architectural changes. We recommend testing thoroughly in your development environment before deploying to production.
@@ -13,20 +13,20 @@ This migration involves significant architectural changes. We recommend testing 
 
 ## Overview of Changes
 
-The new architecture separates the concerns of direct terminal communication (handled by the Terminal Gateway SDK) and payment session management (handled by the Terminal API). This provides a more unified approach for different terminal providers and better integration with the Xendit In-Person Payment platform.
+The new architecture separates the concerns of direct terminal communication (handled by the Terminal H2H SDK) and payment session management (handled by the Terminal API (H2H)). This provides a more unified approach for different terminal providers and better integration with the Xendit In-Person Payment platform.
 
 **Key Changes:**
 
-* **SDK Consolidation:** The `XenBriTerminal` SDK is replaced by the `Terminal Gateway SDK`, which acts as a common interface for various terminal providers (e.g., `TerminalBRI`).  
-* **API for Payment Sessions:** Instead of direct `saleIntent` calls from the SDK, payment sessions are now managed via the Terminal API.  
+* **SDK Consolidation:** The `XenBriTerminal` SDK is replaced by the `Terminal H2H SDK`, which acts as a common interface for various terminal providers (e.g., `TerminalBRI`).  
+* **API for Payment Sessions:** Instead of direct `saleIntent` calls from the SDK, payment sessions are now managed via the Terminal API (H2H).  
 * **Simplified Connection Management:** Device registration and connection state observation are now handled more uniformly through the `TerminalGateway`.  
-* **Unified Error Handling:** Error codes are standardized across the Terminal Gateway SDK.
+* **Unified Error Handling:** Error codes are standardized across the Terminal H2H SDK.
 
 ## Migration Steps
 
 <Steps>
 <Step title="Update SDK Dependencies">
-  Remove the old `Xen BRI SDK` dependency and add the new `Terminal Gateway SDK` dependencies in your module's `build.gradle` file.
+  Remove the old `Xen BRI SDK` dependency and add the new `Terminal H2H SDK` dependencies in your module's `build.gradle` file.
 
   **Old Dependency (to remove):**
   
@@ -85,11 +85,11 @@ The new architecture separates the concerns of direct terminal communication (ha
   ```
 
   <Note>
-  **Client Key:** Note that for the Terminal API, you will need an `API_KEY` from the Xendit In-Person Payment team, which is different from the `CLIENT_KEY` used in the SDK initialization. The `TerminalApp.initialize` still uses a `CLIENT_KEY`.
+  **Client Key:** Note that for the Terminal API (H2H), you will need an `API_KEY` from the Xendit In-Person Payment team, which is different from the `CLIENT_KEY` used in the SDK initialization. The `TerminalApp.initialize` still uses a `CLIENT_KEY`.
   </Note>
 
   <Note>
-  **TerminalMode:** The `XenTerminalMode` enum is replaced by `TerminalMode`. Use `TerminalMode.INTEGRATION` for testing with physical terminals and `TerminalMode.LIVE` for production. `TerminalMode.SIMULATION` is no longer available directly in the `TerminalApp.initialize` method; instead, you would create payment sessions with appropriate simulation parameters via the Terminal API if needed.
+  **TerminalMode:** The `XenTerminalMode` enum is replaced by `TerminalMode`. Use `TerminalMode.INTEGRATION` for testing with physical terminals and `TerminalMode.LIVE` for production. `TerminalMode.SIMULATION` is no longer available directly in the `TerminalApp.initialize` method; instead, you would create payment sessions with appropriate simulation parameters via the Terminal API (H2H) if needed.
   </Note>
 </Step>
 
@@ -124,7 +124,7 @@ The new architecture separates the concerns of direct terminal communication (ha
 <Step title="Create Payment Transactions">
   The `saleIntent` method is replaced by a two-step process:
 
-  1. **Create a Payment Session via Terminal API:** Your backend (or a direct API call from your app if applicable) initiates a payment session with the Xendit's Payment Terminal API.  
+  1. **Create a Payment Session via Terminal API (H2H):** Your backend (or a direct API call from your app if applicable) initiates a payment session with the Xendit's Payment Terminal API (H2H).  
   2. **The SDK will then handle the interaction with the physical terminal** to process the payment based on the created session.
 
   **Old Payment Creation:**
@@ -142,7 +142,7 @@ The new architecture separates the concerns of direct terminal communication (ha
 
   **New Payment Creation (High-Level Flow):**
 
-  1. **Your Application/Backend (using Terminal API):**  
+  1. **Your Application/Backend (using Terminal API (H2H)):**  
      * Make a POST request to `/v1/terminal/sessions` to create a payment session.  
      * **Endpoint:** `https://terminal-dev.xendit.co` (Development) or `https://terminal.xendit.co` (Live)  
      * **Headers:**  
@@ -171,13 +171,13 @@ The new architecture separates the concerns of direct terminal communication (ha
   }
   ```
 
-     * The API will return a `payment_session_id`. The Terminal Gateway SDK on the terminal device, observing the commands from the API, will then initiate the payment process on the physical terminal.  
-  2. **Terminal Gateway SDK (Observing Connection and Error States):**  
-     The Terminal Gateway SDK will automatically process the payment command received from the API for the registered terminal. Your app can observe the connection and error states to react to the payment flow.
+     * The API will return a `payment_session_id`. The Terminal H2H SDK on the terminal device, observing the commands from the API, will then initiate the payment process on the physical terminal.  
+  2. **Terminal H2H SDK (Observing Connection and Error States):**  
+     The Terminal H2H SDK will automatically process the payment command received from the API for the registered terminal. Your app can observe the connection and error states to react to the payment flow.
 </Step>
 
 <Step title="Handle Optional Methods">
-  The `Terminal Gateway SDK` provides new methods for these operations, often correlating with the Terminal API's "Push Operation Command" functionality.
+  The `Terminal H2H SDK` provides new methods for these operations, often correlating with the Terminal API (H2H)'s "Push Operation Command" functionality.
 
   ### Reprint Receipt
 
@@ -193,7 +193,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   }
   ```
 
-  **New (using Terminal API's Push Operation Command - only supported for Indonesia's BRI terminals):**
+  **New (using Terminal API (H2H)'s Push Operation Command - only supported for Indonesia's BRI terminals):**
 
   Your application/backend would make a POST request to `/v1/terminal/commands`.
 
@@ -206,7 +206,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   }
   ```
 
-  The Terminal Gateway SDK would then receive this command and execute the print operation.
+  The Terminal H2H SDK would then receive this command and execute the print operation.
 
   ### Settlement
 
@@ -218,7 +218,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   }
   ```
 
-  **New (using Terminal API's Push Operation Command - only supported for Indonesia's BRI terminals):**
+  **New (using Terminal API (H2H)'s Push Operation Command - only supported for Indonesia's BRI terminals):**
 
   Your application/backend would make a POST request to `/v1/terminal/commands`.
 
@@ -243,7 +243,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   }
   ```
 
-  **New (using Terminal API's Void a Payment):**
+  **New (using Terminal API (H2H)'s Void a Payment):**
 
   Your application/backend would make a POST request to `/v1/terminal/payments/:payment_id/void`.
 
@@ -257,7 +257,7 @@ The new architecture separates the concerns of direct terminal communication (ha
 </Step>
 
 <Step title="Observe Connection and Error States">
-  The methods for observing connection and error states have been updated in the Terminal Gateway SDK.
+  The methods for observing connection and error states have been updated in the Terminal H2H SDK.
 
   ### Observing Connection State
 
@@ -304,7 +304,7 @@ The new architecture separates the concerns of direct terminal communication (ha
   val flow = terminalDevice.error
   ```
 
-  The `Error Data Structure` and `Error Codes` have been standardized and are detailed in the `Terminal Gateway SDK for Android (Kotlin)` documentation. Review these to update your error handling logic accordingly.
+  The `Error Data Structure` and `Error Codes` have been standardized and are detailed in the `Terminal H2H SDK for Android (Kotlin)` documentation. Review these to update your error handling logic accordingly.
 </Step>
 
 <Step title="Troubleshooting and Kiosk Mode">
@@ -316,7 +316,7 @@ The new architecture separates the concerns of direct terminal communication (ha
 
 ## Summary of Key Changes for BRI Terminals
 
-| Feature / Method | Old Xen BRI SDK (0.3.1) | New Terminal Gateway SDK (0.4.0) + Terminal API (0.4.1) |
+| Feature / Method | Old Xen BRI SDK (0.3.1) | New Terminal H2H SDK (0.4.0) + Terminal API (H2H) (0.4.1) |
 | :---- | :---- | :---- |
 | SDK Dependency | `implementation("co.xendit:xen_edc_sdk-android:0.3.0")` | `implementation("co.xendit.terminal:core:0.4.0")`<br/>`implementation("co.xendit.terminal:gateway:0.4.0")`<br/>`implementation("co.xendit.terminal:id-bri:0.4.0")` |
 | SDK Initialization | `XenBriTerminal.initialize(context, CLIENT_KEY, XenTerminalMode.MODE)` | `TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.MODE)`<br/>`TerminalGateway.addProvider(TerminalBRI)` |
@@ -327,7 +327,7 @@ The new architecture separates the concerns of direct terminal communication (ha
 | Settlement | `XenBriTerminal.settlementIntent(...)` | **API Call:** `POST /v1/terminal/commands` with `command: SETTLE` (Indonesia only) |
 | Observe Connection State | `XenBriTerminal.observeConnection(...)` | `TerminalGateway.observeConnection(..., terminalDevice)` |
 | Observe Error State | Part of `saleIntent` callback | `TerminalGateway.observeError(...)` |
-| Simulation Mode | `XenTerminalMode.SIMULATION` | Not directly in `initialize`. Use Terminal API for testing with real terminals in test mode. |
+| Simulation Mode | `XenTerminalMode.SIMULATION` | Not directly in `initialize`. Use Terminal API (H2H) for testing with real terminals in test mode. |
 
 <Warning>
 This migration involves significant architectural changes. Make sure to test thoroughly in your development environment before deploying to production.

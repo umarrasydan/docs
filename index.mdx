@@ -68,8 +68,8 @@ In this setup, your POS system communicates directly with Xendit Payment Termina
 ```mermaid
 sequenceDiagram
     participant Merchant as Merchant POS System
-    participant Xendit as Terminal API
-    participant Gateway as Terminal Gateway
+    participant Xendit as Terminal API (H2H)
+    participant Gateway as Terminal H2H
     participant Terminal as Payment Terminal EDC
     participant Customer as Customer
     participant Bank as Card Network/Bank
@@ -94,7 +94,7 @@ sequenceDiagram
 
 <Steps>
 <Step title="Create payment session">
-Your POS system creates a payment session through Terminal API with the transaction amount and terminal details.
+Your POS system creates a payment session through Terminal API (H2H) with the transaction amount and terminal details.
 </Step>
 
 <Step title="Customer completes payment">
@@ -184,20 +184,20 @@ Once approved, you'll receive your device, complete onboarding, and start accept
 
 Before you begin integration, ensure you have:
 
-- **Terminal API key** from the Xendit In-Person Payment team (for API authentication)
-- **Terminal Gateway client key** from the Xendit In-Person Payment team (for SDK/app initialization)
-- Terminal Gateway set up (desktop app or Android/iOS SDK)
+- **Terminal API (H2H) key** from the Xendit In-Person Payment team (for API authentication)
+- **Terminal H2H client key** from the Xendit In-Person Payment team (for SDK/app initialization)
+- Terminal H2H set up (desktop app or Android/iOS SDK)
 - A terminal with Terminal ID and network connectivity
 - Your environment base URL:
   - Development: `https://terminal-dev.xendit.co`
   - Production: `https://terminal.xendit.co`
 
 <Info>
-**Two different keys**: The Terminal API uses an `API_KEY` for authentication, while the Terminal Gateway SDK/app uses a `CLIENT_KEY` for initialization. Contact the Xendit In-Person Payment team to obtain both keys.
+**Two different keys**: The Terminal API (H2H) uses an `API_KEY` for authentication, while the Terminal H2H SDK/app uses a `CLIENT_KEY` for initialization. Contact the Xendit In-Person Payment team to obtain both keys.
 </Info>
 
 <Warning>
-Terminal API uses HTTP Basic Auth with your Terminal API key as the username and an empty password. Always include a trailing colon when constructing the header.
+Terminal API (H2H) uses HTTP Basic Auth with your Terminal API (H2H) key as the username and an empty password. Always include a trailing colon when constructing the header.
 </Warning>
 
 ### Quick Start
@@ -217,16 +217,16 @@ Xendit's Payment Terminal consists of two main components that work together:
 
 <CardGroup cols={2}>
   <Card
-    title="Terminal API"
+    title="Terminal API (H2H)"
     icon="terminal"
     href="/api-reference/terminal-api/introduction"
   >
     Create and manage payment sessions for in-person transactions. Handles payment processing, callbacks, and transaction management.
   </Card>
   <Card
-    title="Terminal Gateway"
+    title="Terminal H2H"
     icon="globe"
-    href="/api-reference/terminal-gateway/introduction"
+    href="/sdk/h2h/introduction"
   >
     Connect and manage physical terminal devices. Available as desktop app and mobile SDKs for Android and iOS.
   </Card>
@@ -234,8 +234,8 @@ Xendit's Payment Terminal consists of two main components that work together:
 
 ## Integration Workflow
 
-1. **Create a session** with Terminal API for an amount, currency, and terminal.
-2. **Execute on device** through Terminal Gateway; the customer taps/inserts/swipes.
+1. **Create a session** with Terminal API (H2H) for an amount, currency, and terminal.
+2. **Execute on device** through Terminal H2H; the customer taps/inserts/swipes.
 3. **Receive callbacks** for real-time status updates.
 4. **Query details** for reconciliation or show receipts.
 
@@ -258,7 +258,7 @@ Explore the essential capabilities of Xendit's Payment Terminal:
   <Card
     title="Device Management"
     icon="circle-nodes"
-    href="/api-reference/terminal-gateway/app-configuration"
+    href="/sdk/gateway/app-configuration"
   >
     Configure and manage your terminal devices using the Terminal Gateway application with step-by-step setup guides.
   </Card>
@@ -272,21 +272,21 @@ Choose your development platform for detailed integration instructions:
   <Card
     title="Android SDK"
     icon="android"
-    href="/api-reference/terminal-gateway/android-sdk"
+    href="/sdk/h2h/android-sdk"
   >
     Native Android development with Kotlin SDK for terminal device integration.
   </Card>
   <Card
     title="iOS SDK"
     icon="apple"
-    href="/api-reference/terminal-gateway/ios-sdk"
+    href="/sdk/h2h/ios-sdk"
   >
     Native iOS development with Swift SDK for terminal device integration.
   </Card>
   <Card
     title="Terminal Gateway App"
     icon="desktop"
-    href="/api-reference/terminal-gateway/app-configuration"
+    href="/sdk/gateway/app-configuration"
   >
     Desktop application setup and configuration for managing terminal devices.
   </Card>
@@ -300,16 +300,16 @@ Everything you need to build with Xendit's Payment Terminal:
   <Card
     title="Migration Guide"
     icon="arrow-right"
-    href="/guides/migration/xen-bri-to-terminal-gateway"
+    href="/guides/migration/xen-bri-to-h2h"
   >
-    Migrate from Xen BRI SDK to Terminal Gateway SDK with detailed code examples and architectural changes.
+    Migrate from Xen BRI SDK to Terminal H2H SDK with detailed code examples and architectural changes.
   </Card>
   <Card
     title="API Reference"
     icon="book"
     href="/api-reference/terminal-api/introduction"
   >
-    Complete Terminal API documentation with endpoints, authentication, and response schemas.
+    Complete Terminal API (H2H) documentation with endpoints, authentication, and response schemas.
   </Card>
   <Card
     title="Finding Terminal Information"
@@ -323,7 +323,7 @@ Everything you need to build with Xendit's Payment Terminal:
     icon="life-ring"
     href="mailto:inpersonpayments@xendit.co"
   >
-    Get personalized assistance from our Terminal API support team for integration questions.
+    Get personalized assistance from our Terminal API (H2H) support team for integration questions.
   </Card>
 </CardGroup>
 
@@ -334,5 +334,5 @@ Everything you need to build with Xendit's Payment Terminal:
   icon="envelope"
   href="mailto:inpersonpayments@xendit.co"
 >
-  Get personalized assistance from our Terminal API support team for integration questions, device setup, or technical issues.
+  Get personalized assistance from our Terminal API (H2H) support team for integration questions, device setup, or technical issues.
 </Card>
