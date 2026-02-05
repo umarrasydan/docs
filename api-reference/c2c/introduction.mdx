@@ -1,7 +1,11 @@
 ---
 title: 'Introduction'
-description: 'Overview of the Terminal Gateway Client-to-client HTTP API and required app configuration.'
+description: 'Overview of the Terminal C2C RESTful HTTP API for client-to-client communication and required app configuration.'
 ---
+
+<Warning>
+**Gateway App Required**: For BRI and NTT terminals, you must install the Terminal Gateway application on your local device before using the Terminal API (C2C). Cashup terminals connect directly without requiring the gateway app. See the [Terminal Gateway App Configuration](/sdk/gateway/app-configuration) guide for installation and setup instructions.
+</Warning>
 
 <Warning>
 **Client-to-client mode is an involved form of integration** that requires careful network setup and management. It is designed for very specific use cases and is **not recommended for most integrations**.
@@ -12,12 +16,12 @@ Client-to-client lets your POS or backend call the Terminal Gateway app over the
 </Info>
 
 <Tip>
-**Most integrations should use the standard Terminal API** instead of client-to-client mode. The Terminal API provides centralized terminal management, better scalability, and simplified network requirements.
+**Most integrations should use the standard Terminal API (H2H)** instead of client-to-client mode. The Terminal API (H2H) provides centralized terminal management, better scalability, and simplified network requirements.
 </Tip>
 
 <Steps>
 <Step title="Configure the Terminal Gateway app">
-  Follow the setup in <a href="/api-reference/terminal-gateway/app-configuration#client-to-client">App configuration</a> to:
+  Follow the setup in <a href="/sdk/gateway/app-configuration#client-to-client">App configuration</a> to:
   - Enable Client-to-client mode
   - Note the device IP and port (default 8189)
   - Set the API key
@@ -28,7 +32,7 @@ Client-to-client lets your POS or backend call the Terminal Gateway app over the
 </Step>
 
 <Step title="Use the Client-to-client API">
-  After configuration, use the API documented under Terminal Gateway to:
+  After configuration, use the API documented under Terminal H2H to:
   - Create payments (`POST /commands/pay`)
   - Cancel payments (`POST /commands/cancel`)
   - Print receipts (`POST /commands/receipt`)
@@ -38,7 +42,7 @@ Client-to-client lets your POS or backend call the Terminal Gateway app over the
 </Steps>
 
 <Tip>
-Requests must include the correct provider header (e.g., `BRI`, `NTT`) and `X-API-KEY` set in the app.
+Requests must include the correct provider header (e.g., `BRI`, `NTT`, `CASHUP`) and `X-API-KEY` set in the app.
 </Tip>
 
 ## Choosing a connection mode

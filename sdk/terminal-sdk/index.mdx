@@ -1,0 +1,73 @@
+---
+title: "Terminal SDK Overview"
+description: "Understand when to choose Terminal H2H or Terminal C2C SDKs and how they work together in the Xendit terminal stack"
+---
+
+Welcome to the Terminal SDK hub. Use this page to pick the right SDK pathway and to understand how the host-to-host (H2H) and client-to-client (C2C) options differ.
+
+## Why build with Terminal SDKs?
+
+- **Single app experience:** Keep staff or customers inside your Android or iOS app while you manage payments, receipts, and device states end-to-end.
+- **Provider flexibility:** Add or swap terminal providers (BRI, Cashup, NTT, and more) without rewriting your integration from scratch.
+- **Shared tooling:** Rely on the same credential, logging, and monitoring patterns across both SDK families.
+
+## Choose the right track
+
+<Tabs>
+  <Tab title="Terminal H2H">
+    <p>Ideal for staffed environments (flagship retail, pop-up shops) where associates stay in a single mobile workflow. The SDK handles UI-safe prompts, signature capture, and communicates with Xendit's managed orchestration layer.</p>
+    <ul>
+      <li>Leverage standardized payment sessions, callbacks, and reconciliation flows.</li>
+      <li>Perfect for teams that want managed device orchestration with minimal upkeep.</li>
+      <li>Works alongside the Terminal API (H2H) for back-office automation.</li>
+    </ul>
+    <Check>
+    Jump to the <a href="/sdk/h2h/introduction">Terminal H2H introduction</a> to dive into platform concepts and SDK setup.
+    </Check>
+  </Tab>
+  <Tab title="Terminal C2C">
+    <p>Designed for kiosks, embedded devices, and venues that demand complete control over terminal commands, peripherals, and offline strategies.</p>
+    <ul>
+      <li>Issue PAY, CANCEL, RECEIPT, and SETTLEMENT commands directly from your application.</li>
+      <li>Coordinate custom flows with scanners, printers, or loyalty systems.</li>
+      <li>Operate even when the network blips by queueing or retrying commands yourself.</li>
+    </ul>
+    <Tip>
+    Start with the <a href="/sdk/c2c/introduction">Terminal C2C overview</a> to explore capabilities, architecture, and platform prerequisites.
+    </Tip>
+  </Tab>
+</Tabs>
+
+## Implementation checklist
+
+<Steps>
+  <Step title="Align on operating model">
+    Confirm whether each merchant location will run the managed H2H track, the direct C2C track, or a mix by venue. Document expectations in your rollout plan.
+  </Step>
+  <Step title="Provision credentials">
+    Request the appropriate CLIENT_KEY and API credentials from the Xendit In-Person Payment team, noting that sandbox and production environments use separate keys.
+  </Step>
+  <Step title="Prepare device inventory">
+    Maintain terminal IDs, IP addresses, and provider mappings for every site. This ensures your app can register terminals programmatically.
+  </Step>
+  <Step title="Plan observability">
+    Decide how you will surface command results, device connectivity, and reconciliation status to operations teams before you go live.
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Terminal H2H SDKs" icon="device" href="/sdk/h2h/introduction">
+    Follow platform-specific guides for Android and iOS implementations.
+  </Card>
+  <Card title="Terminal C2C SDKs" icon="terminal" href="/sdk/c2c/introduction">
+    Explore command APIs, provider helpers, and kiosk deployment patterns.
+  </Card>
+  <Card title="Gateway App" icon="desktop" href="/sdk/gateway/introduction">
+    Compare running SDKs inside your app versus delegating device control to the Gateway App.
+  </Card>
+  <Card title="Migration guides" icon="shuffle" href="/guides/migration/xen-bri-sdk-to-c2c">
+    Review detailed migration paths for teams updating from legacy SDKs.
+  </Card>
+</CardGroup>

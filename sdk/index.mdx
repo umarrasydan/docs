@@ -1,0 +1,87 @@
+---
+title: "SDK & Libraries Overview"
+description: "Choose the right Terminal Gateway, Terminal H2H, or Terminal C2C toolkit for your in-person payments"
+---
+
+Welcome to the SDK & Libraries hub. Use this page to decide whether you should either operate with the Terminal Gateway App or embed the Terminal H2H/C2C SDKs for a single, cohesive merchant application.
+
+<Warning>
+Choose one track: run the standalone Gateway App or ship an in-app experience with Terminal H2H or C2C SDKs. Mixing the Gateway App with SDK integrations leads to conflicting device sessions.
+</Warning>
+
+## Select the right toolkit
+
+<Tabs>
+  <Tab title="Gateway App">
+    <p>The Terminal Gateway App is a ready-to-use companion that manages device discovery, firmware, and secure networking on shared workstations.</p>
+    <ul>
+      <li>Best for merchants who want a quick deployment with minimal engineering effort.</li>
+      <li>Keeps payment acceptance separate from your point-of-sale app while centralizing configuration.</li>
+      <li>Ideal when stores can operate a dedicated workstation alongside the merchant-facing application.</li>
+    </ul>
+    <Check>
+    Follow the setup guide in <a href="/sdk/gateway/app-configuration">Gateway App configuration</a> to manage devices across locations.
+    </Check>
+  </Tab>
+  <Tab title="Terminal H2H">
+    <p>Terminal H2H SDKs let you embed Xendit's pre-certified payment experience inside your own Android or iOS applications.</p>
+    <ul>
+      <li>Recommended when you want consistent UI/UX and to avoid maintaining a second application.</li>
+      <li>Devices connect through your app so staff stay within a single workflow.</li>
+      <li>Use the H2H API for server orchestration, receipts, and callbacks.</li>
+    </ul>
+    <Tip>
+    Start with the <a href="/sdk/h2h/introduction">Terminal H2H introduction</a> then dive into the <a href="/sdk/h2h/android-sdk">Android SDK</a> or <a href="/sdk/h2h/ios-sdk">iOS SDK</a> quickstarts.
+    </Tip>
+  </Tab>
+  <Tab title="Terminal C2C">
+    <p>Terminal C2C SDKs expose low-level device control so you can design bespoke acceptance flows and manage peripherals directly.</p>
+    <ul>
+      <li>Perfect for integrators who need advanced routing, custom UI, or offline workflows.</li>
+      <li>Runs entirely inside your application, eliminating extra installs for store staff.</li>
+      <li>Requires explicit handling of state machines, receipts, and failure recovery.</li>
+    </ul>
+    <Info>
+    Review the <a href="/sdk/c2c/introduction">Terminal C2C overview</a> then select <a href="/sdk/c2c/android-sdk">Android</a> or <a href="/sdk/c2c/ios-sdk">iOS</a> guides to implement your desired channel.
+    </Info>
+  </Tab>
+</Tabs>
+
+## Sample use cases
+
+<Tabs>
+  <Tab title="Web POS (Gateway App)">
+    <p>A browser-based POS team wants to accept cards without rebuilding their app in native mobile languages.</p>
+    <Tip>
+    Choose the Gateway App when your cashier experience already runs on Windows or macOS and you prefer to keep payments outside the browser for compliance, driver management, and quick deployment.
+    </Tip>
+    <ul>
+      <li>Operations manage hardware from a single companion app while developers continue shipping updates in web frameworks.</li>
+      <li>IT teams can lock down dedicated workstations, separating PCI controls from the POS codebase.</li>
+    </ul>
+  </Tab>
+  <Tab title="Assisted checkout (H2H)">
+    <p>A mobile retail app powers assisted selling inside flagships and pop-ups, and staff expect to stay in one interface during checkout.</p>
+    <Tip>
+    Pick H2H SDKs when associates already carry Android or iOS devices and you want them to trigger payments, signature capture, and receipts without switching apps.
+    </Tip>
+    <ul>
+      <li>Training is faster: new hires learn one app that covers product lookup, cart building, and tendering.</li>
+      <li>Store designers keep consistent branding because payments inherit your app's look and feel.</li>
+    </ul>
+  </Tab>
+  <Tab title="Self-service kiosk (C2C)">
+    <p>A self-service kiosk fleet depends on custom flows, offline tolerance, and tight integration with scanners, printers, and loyalty systems.</p>
+    <Tip>
+    Opt for C2C SDKs when you need end-to-end control over every terminal command, from prompting the customer to handling edge cases during outages.
+    </Tip>
+    <ul>
+      <li>Engineers can coordinate peripherals, screen content, and payments from one application.</li>
+      <li>Support teams define venue-specific fallbacks, such as queueing payments when mall networks are unreliable.</li>
+    </ul>
+  </Tab>
+</Tabs>
+
+<Tip>
+Document the chosen operating model in your runbook so support teams know whether to escalate to Gateway App operators or the dedicated H2H/C2C SDK maintainers.
+</Tip>

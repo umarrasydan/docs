@@ -1,0 +1,233 @@
+---
+title: 'Xen BRI SDK to Terminal C2C SDK'
+description: 'Step-by-step migration guide for moving Android apps from the Xen BRI SDK to the Terminal C2C SDK and client-to-client payment architecture'
+---
+
+# Xen BRI SDK to Terminal C2C SDK
+
+This guide helps you migrate an Android project from the legacy Xen BRI SDK (version 0.3.x) to the modern Terminal C2C SDK (version 1.0.0) and client-to-client architecture. The new stack keeps your payment logic inside a single mobile application while still leveraging Xendit-managed security, telemetry, and multi-provider support.
+
+<Info>
+Plan for integration, staging, and pilot phases. The C2C architecture changes how payments are initiated, monitored, and recovered, so dedicate time for regression testing with your device fleet.
+</Info>
+
+## Overview of Changes
+
+The Terminal C2C SDK consolidates device orchestration, networking, and payment command handling behind the `TerminalC2C` facade. Instead of calling `saleIntent` directly on the device, your app now constructs requests that the SDK dispatches to the Terminal Gateway over the local network. This enables richer device telemetry, unified error handling, and support for additional providers.
+
+**Key upgrades:**
+
+- **Unified dependencies:** Replace `co.xendit:xen_edc_sdk-android` with the Terminal C2C core, provider, and helper artifacts.
+- **Centralized device management:** Configure terminals through `TerminalDevice` helpers and register them with `TerminalC2C.setTerminalDevice` or per-call overrides.
+- **Command-based payments:** Migrate to `TerminalC2C.createPayment()` and related command APIs (`cancelPayment`, `printReceipt`, `getCommandHistory`).
+- **Standardized error surfaces:** Handle `TerminalException` categories (network, authentication, device) instead of provider-specific enums.
+- **Operational visibility:** Leverage command histories and status polling to surface kiosk health and reconciliation signals.
+
+## Migration Steps
+
+<Steps>
+<Step title="Update SDK dependencies">
+  Remove the legacy Xen BRI SDK and add the Terminal C2C artifacts to your module `build.gradle(.kts)` file.
+
+  **Remove:**
+
+  ```kotlin
+  implementation("co.xendit:xen_edc_sdk-android:0.3.0")
+  ```
+
+  **Add (minimum set):**
+
+  ```kotlin
+  dependencies {
+      implementation("co.xendit.terminal:core-android:1.0.0")
+      implementation("co.xendit.terminal:c2c-android:1.0.0")
+      implementation("co.xendit.terminal:id-bri-android:1.0.0")
+      // Optional: include other providers you plan to support
+      // implementation("co.xendit.terminal:id-cashup-android:1.0.0")
+      // implementation("co.xendit.terminal:th-ntt-android:1.0.0")
+  }
+  ```
+
+  <Note>
+  If you host the artifacts locally, keep the `maven("./repository")` entry in `settings.gradle` or `build.gradle` as described in the Terminal C2C SDK installation guide.
+  </Note>
+</Step>
+
+<Step title="Initialize the core services">
+  Initialization now splits across `TerminalApp` (platform bootstrap) and `TerminalC2C` (provider registration). Migrate the logic inside your `Application` class or launch activity.
+
+  **Old:**
+
+  ```kotlin
+  override fun onCreate() {
+      super.onCreate()
+      XenBriTerminal.initialize(this, CLIENT_KEY, XenTerminalMode.INTEGRATION)
+      XenBriTerminal.useWifi(TID, "192.168.1.50")
+  }
+  ```
+
+  **New:**
+
+  ```kotlin
+  override fun onCreate() {
+      super.onCreate()
+      TerminalApp.initialize(this, CLIENT_KEY, TerminalMode.SANDBOX)
+      TerminalC2C.addProvider(TerminalBRI)
+      // Add additional providers as needed
+      // TerminalC2C.addProvider(TerminalCashup)
+  }
+  ```
+
+  <Tip>
+  Keep your SDK `CLIENT_KEY` for `TerminalApp.initialize`. API requests to the Terminal Gateway still use the service credentials issued by the Xendit In-Person Payment team.
+  </Tip>
+</Step>
+
+<Step title="Register terminal devices">
+  Replace direct Wi-Fi/Bluetooth pairing calls with the new `TerminalDevice` helpers. Store device metadata (Terminal ID, IP, provider) in configuration so you can update them without rebuilding the app.
+
+  ```kotlin
+  import co.xendit.terminal.c2c.TerminalC2C
+  import co.xendit.terminal.core.data.TerminalDevice
+
+  val briTerminal = TerminalDevice.bri(
+      id = "TID123456",
+      ipAddress = "192.168.10.25"
+  )
+
+  TerminalC2C.setTerminalDevice(briTerminal)
+  ```
+
+  <Info>
+  Use `TerminalDevice.create(id, ipAddress, provider)` if you prefer not to add provider-specific artifacts. For multi-terminal sites, persist a list and choose the device per transaction using the `terminalDevice` argument on each command.
+  </Info>
+</Step>
+
+<Step title="Migrate payment execution">
+  Replace `saleIntent` with the command-based API provided by Terminal C2C. The SDK handles the HTTP call to the Gateway, relays prompts to the terminal, and returns a structured result.
+
+  ```kotlin
+  import co.xendit.terminal.c2c.TerminalC2C
+  import co.xendit.terminal.c2c.data.Payment
+  import co.xendit.terminal.c2c.data.PaymentMethod
+
+  val payment = Payment(
+      orderID = "ORDER-123",
+      amount = 150000.0,
+      currency = "IDR",
+      paymentMethod = PaymentMethod.insertCard(),
+      metadata = mapOf("cashier_id" to "A17")
+  )
+
+    val result = TerminalC2C.createPayment(payment)
+    if (result.status == "SUCCESS") {
+      showReceipt(result)
+    } else {
+      handleFailure(result)
+    }
+  ```
+
+  <Warning>
+  Always wrap calls in try/catch for `TerminalException` to handle network, authentication, or provider failures gracefully. Inspect `httpStatus` and `error.code` to decide whether to retry, void, or escalate to support.
+  </Warning>
+</Step>
+
+<Step title="Map operational commands">
+  Terminal C2C exposes dedicated helpers for voids, receipts, settlement, and transaction history. Migrate any ad-hoc socket calls to these managed APIs.
+
+  ```kotlin
+  import co.xendit.terminal.c2c.data.Cancel
+  import co.xendit.terminal.c2c.data.Receipt
+  import co.xendit.terminal.c2c.data.Settlement
+  import co.xendit.terminal.c2c.data.Histories
+  import co.xendit.terminal.core.data.PaymentMethod
+  import co.xendit.terminal.core.data.Status
+  import co.xendit.terminal.core.data.response.CommandType
+
+  // Cancel an in-flight transaction
+    val terminalReference = persistedTransactions.load("ORDER-123").terminalReference
+
+    val cancel = Cancel(
+      paymentMethod = PaymentMethod.fromValue("card"),
+      terminalReference = terminalReference
+    )
+  TerminalC2C.cancelPayment(cancel)
+
+  // Reprint the receipt
+    val receipt = Receipt(
+      paymentMethod = PaymentMethod.fromValue("card"),
+      terminalReference = terminalReference
+    )
+  TerminalC2C.printReceipt(receipt)
+
+  // Perform settlement when closing the store
+  val settlement = Settlement(paymentMethod = null)
+  TerminalC2C.performSettlement(settlement)
+
+  // Review recent transactions for support diagnostics
+  val history = TerminalC2C.getHistory(
+    Histories(
+      commands = listOf(CommandType.PAY, CommandType.CANCEL),
+      statuses = listOf(Status.SUCCESS)
+    )
+  )
+  ```
+
+  <Tip>
+  Store `terminalReference` values returned in `TerminalC2C.createPayment` results so staff can void, reprint, or reconcile specific transactions later.
+  </Tip>
+</Step>
+
+<Step title="Strengthen error handling and support playbooks">
+  Replace legacy error enums with the structured `TerminalException` returned by the C2C SDK and align your monitoring with the new data model.
+
+  ```kotlin
+    try {
+      val result = TerminalC2C.createPayment(payment)
+      auditLogger.logSuccess(payment.orderID, result.status)
+  } catch (e: TerminalException) {
+    when (e.error.code) {
+      ErrorCode.AUTHENTICATION_FAILED -> notifySecurityTeam()
+      ErrorCode.TERMINAL_BUSY -> promptCashierToRetry()
+      ErrorCode.NETWORK_TIMEOUT -> queueForRetry(payment)
+      else -> showGenericError(e.error.message)
+    }
+    auditLogger.logFailure(e.httpStatus, e.error)
+  }
+  ```
+
+    <Note>
+    Imports for the snippet:
+
+    ```kotlin
+    import co.xendit.terminal.c2c.data.TerminalException
+    import co.xendit.terminal.core.data.ErrorCode
+    ```
+    </Note>
+
+  <Info>
+  Schedule periodic calls to `TerminalC2C.getHistory` or use your own telemetry layer to surface stalled commands, especially in unattended kiosk deployments.
+  </Info>
+</Step>
+</Steps>
+
+## Summary of Key Changes
+
+| Capability | Xen BRI SDK (0.3.x) | Terminal C2C SDK (1.0.0) |
+| --- | --- | --- |
+| Dependencies | `co.xendit:xen_edc_sdk-android:0.3.x` | `co.xendit.terminal:core-android`, `co.xendit.terminal:c2c-android`, provider artifacts |
+| Initialization | `XenBriTerminal.initialize(context, key, mode)` | `TerminalApp.initialize(context, key, mode)` + `TerminalC2C.addProvider(...)` |
+| Device setup | `useWifi(tid, ip)` / `useBluetooth()` | `TerminalDevice.create(...)` + `TerminalC2C.setTerminalDevice()` |
+| Payment flow | `saleIntent(parameters)` callback | `TerminalC2C.createPayment(payment)` returning command status |
+| Void / cancel | `cancelPaymentIntent(...)` | `TerminalC2C.cancelPayment(cancel)` |
+| Receipt print | `printReceiptIntent(...)` | `TerminalC2C.printReceipt(receipt)` |
+| Monitoring | Provider-specific listeners | `observeCommand`, `observeDeviceState`, command history APIs |
+| Simulation | SDK-integrated test mode | Use integration environment devices or Terminal Gateway simulator commands |
+
+<Warning>
+Production go-live requires new credentials for the Terminal Gateway plus updated whitelists for kiosk or POS IP addresses. Coordinate with the Xendit In-Person Payment team to provision the correct environment access.
+</Warning>
+
+<Tip>
+Need assistance during migration? Contact the Xendit In-Person Payment team at help@xendit.co with your merchant ID, current SDK version, and target rollout timeline.
+</Tip>

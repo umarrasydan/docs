@@ -1,0 +1,46 @@
+/* Quickstart wizard visibility controls */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.quickstart-content[style*="display: block"],
+#integration-mode-selection[style*="display: block"],
+#h2h-quickstart[style*="display: block"],
+#c2c-quickstart[style*="display: block"],
+#h2h-app-content[style*="display: block"],
+#h2h-sdk-content[style*="display: block"],
+#c2c-api-content[style*="display: block"],
+#c2c-sdk-content[style*="display: block"] {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.selection-banner {
+    padding: 16px 24px;
+    margin-bottom: 32px;
+    border-radius: 12px;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.h2h-banner {
+    border-color: #10b981;
+    background-color: #ecfdf5;
+    color: #065f46;
+}
+
+.c2c-banner {
+    border-color: #6b7280;
+    background-color: #f9fafb;
+    color: #374151;
+}

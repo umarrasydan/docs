@@ -1,0 +1,988 @@
+---
+title: "Android SDK (Kotlin)"
+description: "Integrate Xendit's Terminal C2C SDK into your Android applications with our comprehensive Kotlin SDK"
+---
+
+# Terminal C2C SDK for Android (Kotlin)
+
+The Terminal C2C SDK for Android enables you to integrate secure payment processing directly into your Android applications. This SDK provides a client-to-client communication interface that allows your POS system to interact with the Terminal Gateway over the local network.
+
+<Info>
+TerminalC2C is a singleton object that provides both synchronous (suspend) and asynchronous methods for payment operations. It handles HTTP communication with the Terminal Gateway, request serialization, response parsing, and comprehensive error handling.
+</Info>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="v1.0.0 — 30-Jan-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+    - Added multiple-provider support enabling apps to handle different terminal types simultaneously
+    - Enhanced TerminalDevice configuration with provider-specific methods
+    - Improved terminal selection for apps managing multiple EDC devices
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+The SDK follows semantic versioning. Breaking changes will bump the major version number.
+</Note>
+
+import AndroidDownload from '/snippets/android-download.mdx';
+
+<AndroidDownload />
+
+## Installation
+
+Follow these steps to add the Terminal C2C Android SDK to your project.
+
+<Steps>
+<Step title="Extract the SDK">
+  Extract the provided SDK zip file so that a `repository` directory is available in your project root.
+  
+  <Check>
+  Verify that the `repository` folder contains the necessary Maven artifacts for the SDK.
+  </Check>
+</Step>
+
+<Step title="Configure Gradle settings">
+  Add the repository to your Gradle configuration. Choose one of the following approaches:
+  
+  <Tabs>
+  <Tab title="Modern Approach (Recommended)">
+    Add the repository to your Gradle settings file:
+    
+    <CodeGroup>
+    ```kotlin settings.gradle(.kts)
+    dependencyResolutionManagement {
+      repositories {
+        // ... other repositories
+        maven("./repository")
+      }
+    }
+    ```
+    
+    ```groovy settings.gradle
+    dependencyResolutionManagement {
+      repositories {
+        // ... other repositories
+        maven { url './repository' }
+      }
+    }
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Old Android Project">
+    Add the repository to your root build.gradle file:
+    
+    <CodeGroup>
+    ```kotlin build.gradle.kts (root)
+    allprojects {
+      repositories {
+        // ... other repositories
+        maven("../repository")
+      }
+    }
+    ```
+    
+    ```groovy build.gradle (root)
+    allprojects {
+      repositories {
+        // ... other repositories
+        maven { url '../repository' }
+      }
+    }
+    ```
+    </CodeGroup>
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Add dependencies">
+  Add the required dependencies to your `build.gradle.kts` or `build.gradle` file:
+  
+  <CodeGroup>
+  ```kotlin build.gradle.kts
+  dependencies {
+    // Terminal C2C SDK
+    implementation("co.xendit.terminal:c2c-android:<latest_version>")
+    
+    // Core Terminal SDK (required)
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    
+    // Optional: Provider-specific dependencies for helper methods
+    // Indonesia - BRI terminals
+    implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+    
+    // Indonesia - Cashup terminals  
+    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+    
+    // Thailand - NTT terminals
+    implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+  }
+  ```
+  
+  ```groovy build.gradle
+  dependencies {
+    // Terminal C2C SDK
+    implementation 'co.xendit.terminal:c2c-android:<latest_version>'
+    
+    // Core Terminal SDK (required)
+    implementation 'co.xendit.terminal:core-android:<latest_version>'
+    
+    // Optional: Provider-specific dependencies for helper methods
+    // Indonesia - BRI terminals
+    implementation 'co.xendit.terminal:id-bri-android:<latest_version>'
+    
+    // Indonesia - Cashup terminals
+    implementation 'co.xendit.terminal:id-cashup-android:<latest_version>'
+    
+    // Thailand - NTT terminals
+    implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
+  }
+  ```
+  </CodeGroup>
+  
+  <Note>
+  Provider-specific dependencies are optional and enable convenient helper methods for creating `TerminalDevice` instances. Include only the dependencies for providers you plan to use.
+  </Note>
+  
+  <Check>
+  Sync your project to download the dependencies.
+  </Check>
+</Step>
+</Steps>
+
+## Getting Started
+
+Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal [IP address](#finding-terminal-information) and [Terminal ID (TID)](#finding-terminal-information).
+
+<Steps>
+<Step title="Initialize Terminal App">
+  Initialize the Terminal App with your client key:
+  
+  ```kotlin
+  import co.xendit.terminal.core.TerminalApp
+  
+  // In your Application class or Activity
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+  // or TerminalMode.SANDBOX for testing
+  ```
+  
+  <Warning>
+  Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
+  </Warning>
+</Step>
+
+<Step title="Add Terminal Providers">
+  <Tabs>
+  <Tab title="BRI Indonesia">
+    ```kotlin
+    // Add BRI provider for Indonesian terminals
+    TerminalC2C.addProvider(TerminalBRI)
+    ```
+    
+    **Required dependency:**
+    ```kotlin build.gradle.kts
+    implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+    ```
+    
+    <Info>
+    BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+    </Info>
+  </Tab>
+  
+  <Tab title="NTT Thailand">
+    ```kotlin
+    // Add NTT provider for Thai terminals
+    TerminalC2C.addProvider(TerminalNTT)
+    ```
+    
+    **Required dependency:**
+    ```kotlin build.gradle.kts
+    implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+    ```
+    
+    <Info>
+    NTT provider supports multi-function terminals with card payments and QR code transactions.
+    </Info>
+  </Tab>
+  
+  <Tab title="Cashup Indonesia">
+    ```kotlin
+    // Add Cashup provider for Indonesian terminals
+    TerminalC2C.addProvider(TerminalCashup)
+    ```
+    
+    **Required dependency:**
+    ```kotlin build.gradle.kts
+    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+    ```
+    
+    <Info>
+    Cashup provider offers simplified integration with essential payment methods.
+    </Info>
+  </Tab>
+  
+  <Tab title="Multiple Providers">
+    ```kotlin
+    // Add multiple providers
+    TerminalC2C.addProvider(TerminalBRI)
+    TerminalC2C.addProvider(TerminalNTT)
+    TerminalC2C.addProvider(TerminalCashup)
+    ```
+    
+    <Tip>
+    This setup allows your app to work with different terminal types based on your merchant's configuration.
+    </Tip>
+  </Tab>
+  </Tabs>
+  
+  <Note>
+  Provider dependencies are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific dependencies. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
+  </Note>
+</Step>
+
+<Step title="Configure Terminal Device">
+  <Tabs>
+  <Tab title="BRI Indonesia">
+    ```kotlin
+    // Add BRI provider for Indonesian terminals
+    TerminalC2C.addProvider(TerminalBRI)
+    ```
+    
+    **Required dependency:**
+    ```gradle app/build.gradle
+    dependencies {
+      implementation 'co.xendit.terminal:id-bri-android:latest'
+      // ... other dependencies
+    }
+    ```
+    
+    <Info>
+    BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+    </Info>
+  </Tab>
+  
+  <Tab title="NTT Thailand">
+    ```kotlin
+    // Add NTT provider for Thai terminals
+    TerminalC2C.addProvider(TerminalNTT)
+    ```
+    
+    **Required dependency:**
+    ```gradle app/build.gradle
+    dependencies {
+      implementation 'co.xendit.terminal:th-ntt-android:latest'
+      // ... other dependencies
+    }
+    ```
+    
+    <Info>
+    NTT provider supports multi-function terminals with card payments and QR code transactions.
+    </Info>
+  </Tab>
+  
+  <Tab title="Cashup Indonesia">
+    ```kotlin
+    // Add Cashup provider for Indonesian terminals
+    TerminalC2C.addProvider(TerminalCashup)
+    ```
+    
+    **Required dependency:**
+    ```gradle app/build.gradle
+    dependencies {
+      implementation 'co.xendit.terminal:id-cashup-android:latest'
+      // ... other dependencies
+    }
+    ```
+    
+    <Info>
+    Cashup provider offers simplified integration with essential payment methods.
+    </Info>
+  </Tab>
+  
+  <Tab title="Multiple Providers">
+    ```kotlin
+    // Add multiple providers
+    TerminalC2C.addProvider(TerminalBRI)
+    TerminalC2C.addProvider(TerminalNTT)
+    TerminalC2C.addProvider(TerminalCashup)
+    ```
+    
+    **Required dependencies:**
+    ```gradle app/build.gradle
+    dependencies {
+      implementation 'co.xendit.terminal:id-bri-android:latest'
+      implementation 'co.xendit.terminal:th-ntt-android:latest'
+      implementation 'co.xendit.terminal:id-cashup-android:latest'
+      // ... other dependencies
+    }
+    ```
+    
+    <Tip>
+    This setup allows your app to work with different terminal types based on your merchant's configuration.
+    </Tip>
+  </Tab>
+  </Tabs>
+  
+  <Note>
+  Provider dependencies are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific dependencies. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
+  </Note>
+</Step>
+
+<Step title="Configure Terminal Device">
+  Set up your terminal device configuration using the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information):
+  
+  <Tabs>
+  <Tab title="Generic Method">
+    Use the generic `create` method (available without provider dependencies):
+    
+    ```kotlin
+    import co.xendit.terminal.c2c.TerminalC2C
+    import co.xendit.terminal.core.data.TerminalDevice
+    
+    // Configure the default terminal device
+    val terminalDevice = TerminalDevice.create(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.100",
+      provider = "BRI" // or "CASHUP", "NTT"
+    )
+    
+    // Set as default device for TerminalC2C
+    TerminalC2C.setTerminalDevice(terminalDevice)
+    ```
+  </Tab>
+  
+  <Tab title="Provider-Specific Methods">
+    Use provider-specific helper methods when you include the corresponding provider dependency:
+    
+    ```kotlin
+    import co.xendit.terminal.c2c.TerminalC2C
+    import co.xendit.terminal.core.data.TerminalDevice
+    
+    // For BRI terminals (requires id-bri-android dependency)
+    val briDevice = TerminalDevice.bri(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.100"
+    )
+    
+    // For Cashup terminals (requires id-cashup-android dependency)
+    val cashupDevice = TerminalDevice.cashup(
+      id = "TERMINAL_ID", 
+      ipAddress = "192.168.1.101"
+    )
+    
+    // For NTT terminals (requires th-ntt-android dependency)
+    val nttDevice = TerminalDevice.ntt(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.102"
+    )
+    
+    // Set as default device for TerminalC2C
+    TerminalC2C.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
+    ```
+    
+    <Note>
+    Provider-specific methods require the corresponding dependency:
+    - `TerminalDevice.bri()` requires `co.xendit.terminal:id-bri-android`
+    - `TerminalDevice.cashup()` requires `co.xendit.terminal:id-cashup-android`  
+    - `TerminalDevice.ntt()` requires `co.xendit.terminal:th-ntt-android`
+    </Note>
+  </Tab>
+  
+  <Tab title="Multiple EDC Devices">
+    For apps handling multiple EDC devices, configure each terminal and specify per transaction:
+    
+    ```kotlin
+    import co.xendit.terminal.c2c.TerminalC2C
+    import co.xendit.terminal.core.data.TerminalDevice
+    
+    // Configure multiple terminal devices
+    val cashierTerminal = TerminalDevice.create(
+      id = "TID001",
+      ipAddress = "192.168.1.100",
+      provider = "BRI"
+    )
+    
+    val driveThruTerminal = TerminalDevice.create(
+      id = "TID002", 
+      ipAddress = "192.168.1.101",
+      provider = "BRI"
+    )
+    
+    val selfServiceTerminal = TerminalDevice.ntt(
+      id = "TID003",
+      ipAddress = "192.168.1.102"
+    )
+    
+    // Use specific terminal per transaction
+    val payment = Payment(
+      orderID = "ORDER_123",
+      amount = 10000.0,
+      paymentMethod = PaymentMethod.fromValue("card")
+    )
+    
+    // Specify terminal device per request
+    val result = TerminalC2C.createPayment(
+      payment = payment,
+      terminalDevice = cashierTerminal // Use specific terminal
+    )
+    ```
+    
+    <Info>
+    This approach allows dynamic terminal selection based on business logic, location, or user interaction without setting a global default.
+    </Info>
+  </Tab>
+  </Tabs>
+  
+  <Tip>
+  You can also specify a device per request instead of setting a default device.
+  </Tip>
+</Step>
+</Steps>
+
+## Supported Payment Methods by Provider
+
+<Tabs>
+<Tab title="BRI Terminals">
+
+When using `co.xendit.terminal:id-bri-android` dependency:
+
+| Payment Method | Description | Code Example |
+|---|---|---|
+| **Insert Card** | Chip card transactions | `PaymentMethod.insertCard()` |
+| **Contactless** | Tap-to-pay transactions | `PaymentMethod.contactless()` |
+| **QRIS** | QR code payments | `PaymentMethod.qris()` |
+| **Brizzi** | E-money card payments | `PaymentMethod.brizzi()` |
+
+<Note>
+BRI terminals support both physical card payments and digital payment methods popular in Indonesia.
+</Note>
+
+</Tab>
+
+<Tab title="Cashup Terminals">
+
+When using `co.xendit.terminal:id-cashup-android` dependency:
+
+| Payment Method | Description | Code Example |
+|---|---|---|
+| **Card** | Standard card transactions | `PaymentMethod.card()` |
+| **QRIS** | QR code payments | `PaymentMethod.qris()` |
+
+<Note>
+Cashup terminals focus on essential payment methods with card and QRIS support.
+</Note>
+
+</Tab>
+
+<Tab title="NTT Terminals">
+
+When using `co.xendit.terminal:th-ntt-android` dependency for Thailand market:
+
+| Payment Method | Description | Code Example |
+|---|---|---|
+| **Card** | Credit/debit card transactions | `PaymentMethod.card()` |
+| **MultiIPP** | Installment payments | `PaymentMethod.multiIpp()` |
+| **Alipay+** | Alipay transactions | `PaymentMethod.alipayPlus()` |
+| **WeChat Pay** | WeChat payments | `PaymentMethod.wechatPayCil()` |
+| **TrueMoney** | TrueMoney wallet | `PaymentMethod.trueMoney()` |
+| **LINE Pay** | LINE Pay wallet | `PaymentMethod.linePay()` |
+| **ShopeePay** | Shopee wallet | `PaymentMethod.shopee()` |
+| **ThaiQR** | Thai QR standard | `PaymentMethod.thaiQrCode()` |
+| **BBL QRCS** | Visa/Master QR | `PaymentMethod.bblQrcs()` |
+| **Atome** | Atome BNPL | `PaymentMethod.atome()` |
+| **Sabuy Money** | Sabuy wallet | `PaymentMethod.sabuyMoney()` |
+| **Max Me** | Max Me wallet | `PaymentMethod.maxMe()` |
+
+<Note>
+NTT terminals provide comprehensive payment method support for the Thai market, including local e-wallets and QR payment standards.
+</Note>
+
+</Tab>
+</Tabs>
+
+<Warning>
+Provider-specific payment methods require the corresponding provider dependency. Using generic `PaymentMethod.fromValue("method_name")` works with all providers but doesn't provide type safety.
+</Warning>
+
+## API Usage
+
+### Create Payment
+
+Process a payment transaction using the TerminalC2C singleton:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Payment
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create payment data
+val payment = Payment(
+    orderID = "ORDER_123",
+    amount = 10000.0,
+    paymentMethod = PaymentMethod.fromValue("card") // or "ewallet", "qr"
+)
+
+// Execute payment (suspend function)
+try {
+    val result = TerminalC2C.createPayment(payment)
+    println("Payment successful: ${result.status}")
+} catch (e: TerminalException) {
+    println("Payment failed: ${e.message}")
+} catch (e: Exception) {
+    println("Error: ${e.message}")
+}
+```
+
+<Tip>
+For non-coroutine environments, use `TerminalC2C.createPaymentAsync(payment, callback)`.
+</Tip>
+
+### Cancel Payment
+
+Cancel an ongoing payment transaction:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Cancel
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create cancel data
+val cancel = Cancel(
+    paymentMethod = PaymentMethod.fromValue("card"), // Optional
+    terminalReference = "123456" // Reference from previous transaction
+)
+
+try {
+    val result = TerminalC2C.cancelPayment(cancel)
+    println("Cancellation successful: ${result.status}")
+} catch (e: TerminalException) {
+    println("Cancellation failed: ${e.message}")
+}
+```
+
+### Print Receipt
+
+Trigger receipt printing on the terminal:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Receipt
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create receipt data
+val receipt = Receipt(
+    paymentMethod = PaymentMethod.fromValue("card"), // Optional
+    terminalReference = "123456" // Reference from previous transaction
+)
+
+try {
+    val result = TerminalC2C.printReceipt(receipt)
+    println("Receipt print command sent: ${result.status}")
+} catch (e: TerminalException) {
+    println("Receipt print failed: ${e.message}")
+}
+```
+
+### Perform Settlement
+
+Initiate a settlement (batch close) process:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Settlement
+import co.xendit.terminal.core.data.PaymentMethod
+
+// Create settlement data
+val settlement = Settlement(
+    paymentMethod = PaymentMethod.fromValue("card") // Optional: null for all payment methods
+)
+
+try {
+    val result = TerminalC2C.performSettlement(settlement)
+    println("Settlement successful: ${result.status}")
+} catch (e: TerminalException) {
+    println("Settlement failed: ${e.message}")
+}
+```
+
+### Get Transaction History
+
+Retrieve transaction history from the terminal:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Histories
+import co.xendit.terminal.core.data.Status
+import co.xendit.terminal.core.data.response.CommandType
+
+// Create histories data with optional filters
+val histories = Histories(
+    commands = listOf(CommandType.PAY, CommandType.CANCEL), // Optional: filter by command types
+    statuses = listOf(Status.SUCCESS), // Optional: filter by statuses
+    from = "2024-01-01T00:00:00Z", // Optional: ISO 8601 format start date
+    to = "2024-01-31T23:59:59Z" // Optional: ISO 8601 format end date
+)
+
+try {
+    val history = TerminalC2C.getHistory(histories)
+    println("Retrieved history: $history")
+    
+    history.transactions.forEach { transaction ->
+        println("Transaction: ${transaction.status}")
+    }
+} catch (e: TerminalException) {
+    println("Failed to retrieve history: ${e.message}")
+}
+```
+
+## Async API Usage
+
+For interoperability with Java or callback-based code, use the async methods:
+
+### Create Payment (Async)
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Payment
+import co.xendit.terminal.core.data.PaymentMethod
+
+val payment = Payment(
+    orderID = "ORDER_123",
+    amount = 10000.0,
+    paymentMethod = PaymentMethod.fromValue("card")
+)
+
+TerminalC2C.createPaymentAsync(payment) { result ->
+    result.onSuccess { paymentResult ->
+        println("Payment successful: ${paymentResult.status}")
+    }.onFailure { error ->
+        when (error) {
+            is TerminalException -> {
+                println("Terminal error: ${error.message}")
+            }
+            else -> {
+                println("Error: ${error.message}")
+            }
+        }
+    }
+}
+```
+
+### Cancel Payment (Async)
+
+```kotlin
+import co.xendit.terminal.c2c.data.Cancel
+import co.xendit.terminal.core.data.PaymentMethod
+
+val cancel = Cancel(
+    paymentMethod = PaymentMethod.fromValue("card"), // Optional
+    terminalReference = "123456"
+)
+
+TerminalC2C.cancelPaymentAsync(cancel) { result ->
+    result.onSuccess { cancelResult ->
+        println("Cancellation successful: ${cancelResult.status}")
+    }.onFailure { error ->
+        println("Cancellation failed: ${error.message}")
+    }
+}
+```
+
+### Print Receipt (Async)
+
+```kotlin
+import co.xendit.terminal.c2c.data.Receipt
+import co.xendit.terminal.core.data.PaymentMethod
+
+val receipt = Receipt(
+    paymentMethod = PaymentMethod.fromValue("card"), // Optional
+    terminalReference = "123456"
+)
+
+TerminalC2C.printReceiptAsync(receipt) { result ->
+    result.onSuccess { receiptResult ->
+        println("Receipt print command sent: ${receiptResult.status}")
+    }.onFailure { error ->
+        println("Receipt print failed: ${error.message}")
+    }
+}
+```
+
+### Perform Settlement (Async)
+
+```kotlin
+import co.xendit.terminal.c2c.data.Settlement
+import co.xendit.terminal.core.data.PaymentMethod
+
+val settlement = Settlement(
+    paymentMethod = PaymentMethod.fromValue("card") // Optional: null for all payment methods
+)
+
+TerminalC2C.performSettlementAsync(settlement) { result ->
+    result.onSuccess { settlementResult ->
+        println("Settlement successful: ${settlementResult.status}")
+    }.onFailure { error ->
+        println("Settlement failed: ${error.message}")
+    }
+}
+```
+
+### Get History (Async)
+
+```kotlin
+import co.xendit.terminal.c2c.data.Histories
+import co.xendit.terminal.core.data.Status
+import co.xendit.terminal.core.data.response.CommandType
+
+val histories = Histories(
+    commands = listOf(CommandType.PAY, CommandType.CANCEL), // Optional
+    statuses = listOf(Status.SUCCESS), // Optional
+    from = "2024-01-01T00:00:00Z",
+    to = "2024-01-31T23:59:59Z"
+)
+
+TerminalC2C.getHistoryAsync(histories) { result ->
+    result.onSuccess { historyResult ->
+        println("Retrieved history: $historyResult")
+        historyResult.transactions.forEach { transaction ->
+            println("Transaction: ${transaction.status}")
+        }
+    }.onFailure { error ->
+        println("Failed to retrieve history: ${error.message}")
+    }
+}
+```
+
+## Error Handling
+
+### TerminalException
+
+The SDK throws `TerminalException` for terminal-specific errors:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.c2c.data.ApiError
+
+try {
+    val result = TerminalC2C.createPayment(payment)
+} catch (e: TerminalException) {
+    val apiError = e.error
+    when (apiError.code) {
+        "FAILED_TO_CONNECT" -> {
+            // Terminal H2H service not reachable
+            println("Cannot connect to Terminal H2H")
+        }
+        "AUTHENTICATION_FAILED" -> {
+            // Invalid client key or terminal credentials
+            println("Authentication failed")
+        }
+        "TERMINAL_BUSY" -> {
+            // Terminal is processing another transaction
+            println("Terminal is busy")
+        }
+        else -> {
+            println("Error: ${apiError.message}")
+        }
+    }
+}
+```
+
+### Error Structure
+
+```kotlin
+data class TerminalException(
+  val httpStatus: Int,
+  val error: ApiError
+)
+
+data class ApiError(
+  val code: ErrorCode,
+  val message: String
+)
+```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Cannot Connect to Terminal H2H">
+  **Problem**: SDK cannot reach the Terminal H2H service.
+  
+  **Solution**:
+  1. Verify Terminal H2H service is running locally  
+  2. Check the terminal device IP address is correct
+  3. Verify network connectivity between your app and gateway
+  
+  ```kotlin
+  // Verify terminal device configuration
+  
+  // Using generic method
+  val device = TerminalDevice.create(
+    id = "TERMINAL_ID", 
+    ipAddress = "192.168.1.100", // Verify this IP
+    provider = "BRI" // or "CASHUP", "NTT"
+  )
+  
+  // Or using provider-specific helper (requires provider dependency)
+  // val device = TerminalDevice.bri("TERMINAL_ID", "192.168.1.100")
+  // val device = TerminalDevice.cashup("TERMINAL_ID", "192.168.1.100")
+  // val device = TerminalDevice.ntt("TERMINAL_ID", "192.168.1.100")
+  
+  TerminalC2C.setTerminalDevice(device)
+  ```
+</Accordion>
+
+<Accordion title="No Terminal Device Provided">
+  **Problem**: Error indicating no terminal device is configured.
+  
+  **Solution**: Set a default terminal device before making requests:
+  
+  ```kotlin
+  // Set default device
+  TerminalC2C.setTerminalDevice(terminalDevice)
+  
+  // Then make requests
+  val result = TerminalC2C.createPayment(payment)
+  ```
+</Accordion>
+
+<Accordion title="Authentication Failed">
+  **Problem**: Requests fail with authentication errors.
+  
+  **Solutions**:
+  1. Verify TerminalApp is initialized with correct client key
+  2. Check terminal ID matches the configured device
+  3. Ensure client key has Terminal C2C permissions
+  
+  ```kotlin
+  // Re-initialize with correct client key
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+  ```
+</Accordion>
+
+<Accordion title="Network Errors">
+  **Problem**: Network-level errors when communicating with gateway.
+  
+  **Solutions**:
+  1. Check network connectivity
+  2. Verify firewall settings allow connections to gateway port
+  3. Ensure Terminal Gateway service is accessible
+  4. Check terminal device IP address is reachable
+  
+  <Tip>
+  Use network debugging tools to verify connectivity between your app and the Terminal Gateway service.
+  </Tip>
+</Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+### Error Handling
+
+Always implement comprehensive error handling:
+
+```kotlin
+suspend fun processPaymentSafely(orderID: String, amount: Double): Result<TerminalResult> {
+    return try {
+        val payment = Payment(
+            orderID = orderID,
+            amount = amount,
+            paymentMethod = PaymentMethod.fromValue("card")
+        )
+        val result = TerminalC2C.createPayment(payment)
+        Result.success(result)
+    } catch (e: TerminalException) {
+        // Handle terminal-specific errors
+        Result.failure(e)
+    } catch (e: Exception) {
+        // Handle other errors
+        Result.failure(e)
+    }
+}
+```
+
+### Device Management
+
+Set up terminal device once during app initialization:
+
+<CodeGroup>
+```kotlin Generic Method
+class PaymentManager {
+    init {
+        // Configure terminal device once using generic method
+        val terminalDevice = TerminalDevice.create(
+            id = "TERMINAL_001",
+            ipAddress = "192.168.1.100",
+            provider = "BRI" // or "CASHUP", "NTT"
+        )
+        TerminalC2C.setTerminalDevice(terminalDevice)
+    }
+    
+    suspend fun createPayment(payment: Payment): TerminalResult {
+        return TerminalC2C.createPayment(payment)
+    }
+}
+```
+
+```kotlin Provider-Specific Method
+class PaymentManager {
+    init {
+        // Configure terminal device using provider-specific helper
+        // (requires corresponding provider dependency)
+        val terminalDevice = TerminalDevice.bri(
+            id = "TERMINAL_001",
+            ipAddress = "192.168.1.100"
+        )
+        // or TerminalDevice.cashup(), TerminalDevice.ntt()
+        
+        TerminalC2C.setTerminalDevice(terminalDevice)
+    }
+    
+    suspend fun createPayment(payment: Payment): TerminalResult {
+        return TerminalC2C.createPayment(payment)
+    }
+}
+```
+</CodeGroup>
+
+### Coroutine Scope Management
+
+Use appropriate coroutine scopes for async operations:
+
+```kotlin
+class PaymentActivity : AppCompatActivity() {
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
+    }
+    
+    fun processPayment() {
+        val payment = Payment(
+            orderID = "ORDER_123",
+            amount = 10000.0,
+            paymentMethod = PaymentMethod.fromValue("card")
+        )
+        
+        scope.launch {
+            try {
+                val result = TerminalC2C.createPayment(payment)
+                // Update UI
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+}
+```
+
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
+
+<FindingTerminalInformation />

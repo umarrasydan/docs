@@ -1,0 +1,845 @@
+---
+title: "iOS SDK (Swift)"
+description: "Integrate payment processing with physical terminals using the Terminal C2C SDK for iOS (Swift) - a singleton object for HTTP communication"
+---
+
+# Terminal C2C SDK for iOS (Swift)
+
+The Terminal C2C SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals through the local gateway service using the `TerminalC2C` singleton object that handles HTTP communication with Terminal H2H.
+
+<Info>
+This SDK uses a singleton pattern with the `TerminalC2C` object to communicate with the Terminal H2H service via HTTP requests. The SDK provides both async/await and callback-based APIs for payment processing.
+</Info>
+
+## Version information
+
+<AccordionGroup>
+  <Accordion title="v1.0.0 — 30-Jan-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+    - Added multiple-provider support enabling apps to handle different terminal types simultaneously
+    - Enhanced TerminalDevice configuration with provider-specific methods
+    - Improved terminal selection for apps managing multiple EDC devices
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+The SDK follows semantic versioning. Breaking changes will bump the major version number.
+</Note>
+
+## Download
+
+Download the Terminal C2C iOS SDK:
+
+<CardGroup cols={1}>
+<Card title="iOS SDK (Latest Version)" icon="apple" href="#">
+  Download the complete iOS SDK package including TerminalC2C.xcframework and documentation
+</Card>
+</CardGroup>
+
+import IOSInstallation from '/snippets/ios-installation.mdx';
+
+<IOSInstallation />
+
+<Note>
+**Optional provider frameworks** - Contact Xendit support for access to:
+
+**Terminal Device Methods:**
+- BRI framework: Enables `TerminalDevice.bri()` method for BRI terminals
+- NTT framework: Enables `TerminalDevice.ntt()` method for NTT terminals  
+- Cashup framework: Enables `TerminalDevice.cashup()` method for Cashup provider
+- Not required if using the generic `TerminalDevice.create()` method
+</Note>
+
+## Getting Started
+
+Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal [IP address](#finding-terminal-information) and [Terminal ID (TID)](#finding-terminal-information).
+
+
+### Step 1: Initialize SDK
+
+Call the `TerminalApp.shared.initialize()` method within the Application class of your app:
+
+```swift AppDelegate.swift
+import TerminalCore
+
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: .production // or .sandbox for testing
+  )
+  
+  return true
+}
+```
+
+<Warning>
+Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
+</Warning>
+
+### Step 2: Add Terminal Providers
+
+<Tabs>
+<Tab title="BRI Indonesia">
+  ```swift
+  // Add BRI provider for Indonesian terminals
+  TerminalC2C.shared.addProvider(provider: TerminalBRI.shared)
+  ```
+  
+  <Info>
+  BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+  </Info>
+</Tab>
+
+<Tab title="NTT Thailand">
+  ```swift
+  // Add NTT provider for Thai terminals
+  TerminalC2C.shared.addProvider(provider: TerminalNTT.shared)
+  ```
+  
+  <Info>
+  NTT provider supports multi-function terminals with card payments and QR code transactions.
+  </Info>
+</Tab>
+
+<Tab title="Cashup Indonesia">
+  ```swift
+  // Add Cashup provider for Indonesian terminals
+  TerminalC2C.shared.addProvider(provider: TerminalCashup.shared)
+  ```
+  
+  <Info>
+  Cashup provider offers simplified integration with essential payment methods.
+  </Info>
+</Tab>
+
+<Tab title="Multiple Providers">
+  ```swift
+  // Add multiple providers
+  TerminalC2C.shared.addProvider(provider: TerminalBRI.shared)
+  TerminalC2C.shared.addProvider(provider: TerminalNTT.shared)
+  TerminalC2C.shared.addProvider(provider: TerminalCashup.shared)
+  ```
+  
+  <Tip>
+  This setup allows your app to work with different terminal types based on your merchant's configuration.
+  </Tip>
+</Tab>
+</Tabs>
+
+<Note>
+Provider frameworks are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific frameworks. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
+</Note>
+
+### Step 3: Configure Terminal Device
+  Set up your terminal device configuration using the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information):
+  
+  <Tabs>
+  <Tab title="Generic Method">
+    Use the generic `create` method:
+    
+    ```swift
+    import TerminalC2C
+    import TerminalCore
+    
+    // Configure the default terminal device
+    let terminalDevice = TerminalDevice.create(
+      id: "TERMINAL_ID",
+      ipAddress: "192.168.1.100",
+      provider: "BRI" // or "CASHUP", "NTT"
+    )
+    
+    TerminalC2C.shared.setTerminalDevice(terminalDevice)
+    ```
+  </Tab>
+  
+  <Tab title="Provider-Specific Methods">
+    Use provider-specific helper methods (available without additional dependencies):
+    
+    ```swift
+    import TerminalC2C
+    import TerminalCore
+    
+    // For BRI terminals
+    let briDevice = TerminalDevice.bri(
+      id: "TERMINAL_ID",
+      ipAddress: "192.168.1.100"
+    )
+    
+    // For Cashup terminals
+    let cashupDevice = TerminalDevice.cashup(
+      id: "TERMINAL_ID",
+      ipAddress: "192.168.1.101"
+    )
+    
+    // For NTT terminals
+    let nttDevice = TerminalDevice.ntt(
+      id: "TERMINAL_ID",
+      ipAddress: "192.168.1.102"
+    )
+    
+    TerminalC2C.shared.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
+    ```
+    
+    <Note>
+    Provider-specific methods are available in the iOS SDK without requiring additional dependencies. You can use `TerminalDevice.bri()`, `TerminalDevice.cashup()`, or `TerminalDevice.ntt()` directly.
+    </Note>
+  </Tab>
+  
+  <Tab title="Multiple EDC Devices">
+    For apps handling multiple EDC devices, configure each terminal and specify per transaction:
+    
+    ```swift
+    import TerminalC2C
+    import TerminalCore
+    
+    // Configure multiple terminal devices
+    let cashierTerminal = TerminalDevice.create(
+      id: "TID001",
+      ipAddress: "192.168.1.100",
+      provider: "BRI"
+    )
+    
+    let driveThruTerminal = TerminalDevice.create(
+      id: "TID002",
+      ipAddress: "192.168.1.101",
+      provider: "BRI"
+    )
+    
+    let selfServiceTerminal = TerminalDevice.ntt(
+      id: "TID003",
+      ipAddress: "192.168.1.102"
+    )
+    
+    // Use specific terminal per transaction
+    let payment = Payment(
+      orderID: "ORDER_123",
+      amount: 10000.0,
+      paymentMethod: PaymentMethod.fromValue("card")
+    )
+    
+    // Specify terminal device per request
+    Task {
+      do {
+        let result = try await TerminalC2C.shared.createPayment(
+          payment: payment,
+          terminalDevice: cashierTerminal // Use specific terminal
+        )
+        print("Payment successful: \(result.status)")
+      } catch {
+        print("Payment failed: \(error.localizedDescription)")
+      }
+    }
+    ```
+    
+    <Info>
+    This approach allows dynamic terminal selection based on business logic, location, or user interaction without setting a global default.
+    </Info>
+  </Tab>
+  </Tabs>
+  
+  <Tip>
+  You can also specify a device per request instead of setting a default device.
+  </Tip>
+
+## Supported Payment Methods by Provider
+
+<Tabs>
+<Tab title="BRI Terminals">
+
+When using BRI terminal configuration:
+
+| Payment Method | Description | String Value |
+|---|---|---|
+| **Insert Card** | Chip card transactions | `"purchase"` |
+| **Contactless** | Tap-to-pay transactions | `"contactless"` |
+| **QRIS** | QR code payments | `"qris"` |
+| **Brizzi** | E-money card payments | `"brizzi"` |
+
+<Note>
+BRI terminals support both physical card payments and digital payment methods popular in Indonesia.
+</Note>
+
+</Tab>
+
+<Tab title="Cashup Terminals">
+
+When using Cashup terminal configuration:
+
+| Payment Method | Description | String Value |
+|---|---|---|
+| **Card** | Standard card transactions | `"CARD"` |
+| **QRIS** | QR code payments | `"QRIS"` |
+
+<Note>
+Cashup terminals focus on essential payment methods with card and QRIS support.
+</Note>
+
+</Tab>
+
+<Tab title="NTT Terminals">
+
+When using NTT terminal configuration for Thailand market:
+
+| Payment Method | Description | String Value |
+|---|---|---|
+| **Card** | Credit/debit card transactions | `"CARD"` |
+| **MultiIPP** | Installment payments | `"MULTIIPP"` |
+| **Alipay+** | Alipay transactions | `"ALIPAY+"` |
+| **WeChat Pay** | WeChat payments | `"WECHATPAYCIL"` |
+| **TrueMoney** | TrueMoney wallet | `"TRUEMONEY"` |
+| **LINE Pay** | LINE Pay wallet | `"LINEPAY"` |
+| **ShopeePay** | Shopee wallet | `"SHOPEE"` |
+| **ThaiQR** | Thai QR standard | `"THAIQRCODE"` |
+| **BBL QRCS** | Visa/Master QR | `"BBL QRCS"` |
+| **Atome** | Atome BNPL | `"ATOME"` |
+| **Sabuy Money** | Sabuy wallet | `"SABUYMONEY"` |
+| **Max Me** | Max Me wallet | `"MAXME"` |
+
+<Note>
+NTT terminals provide comprehensive payment method support for the Thai market, including local e-wallets and QR payment standards.
+</Note>
+
+</Tab>
+</Tabs>
+
+<Warning>
+Payment methods are specified as string values in the iOS SDK. Each provider supports different payment methods based on their terminal capabilities and regional requirements.
+</Warning>
+
+## API Usage
+
+### Create Payment
+
+Process a payment transaction using async/await:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+// Create payment data
+let payment = Payment(
+  orderID: "ORDER_123",
+  amount: 10000.0,
+  paymentMethod: PaymentMethod.fromValue("card") // or "ewallet", "qr"
+)
+
+// Execute payment
+Task {
+  do {
+    let result = try await TerminalC2C.shared.createPayment(payment)
+    print("Payment successful: \(result.status)")
+  } catch let error as TerminalException {
+    print("Payment failed: \(error.message)")
+  } catch {
+    print("Error: \(error.localizedDescription)")
+  }
+}
+```
+
+### Cancel Payment
+
+Cancel an ongoing payment transaction:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+// Create cancel data
+let cancel = Cancel(
+  paymentMethod: PaymentMethod.fromValue("card"), // Optional
+  terminalReference: "123456" // Reference from previous transaction
+)
+
+Task {
+  do {
+    let result = try await TerminalC2C.shared.cancelPayment(cancel)
+    print("Cancellation successful: \(result.status)")
+  } catch let error as TerminalException {
+    print("Cancellation failed: \(error.message)")
+  }
+}
+```
+
+<Tip>
+You can create a `Cancel` object from a previous `TerminalResult` using `Cancel.fromResult(result)`.
+</Tip>
+
+### Print Receipt
+
+Trigger receipt printing on the terminal:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+// Create receipt data
+let receipt = Receipt(
+  paymentMethod: PaymentMethod.fromValue("card"), // Optional
+  terminalReference: "123456" // Reference from previous transaction
+)
+
+Task {
+  do {
+    let result = try await TerminalC2C.shared.printReceipt(receipt)
+    print("Receipt print command sent: \(result.status)")
+  } catch let error as TerminalException {
+    print("Receipt print failed: \(error.message)")
+  }
+}
+```
+
+### Perform Settlement
+
+Initiate a settlement (batch close) process:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+// Create settlement data
+let settlement = Settlement(
+  paymentMethod: PaymentMethod.fromValue("card") // Optional: nil for all payment methods
+)
+
+Task {
+  do {
+    let result = try await TerminalC2C.shared.performSettlement(settlement)
+    print("Settlement successful: \(result.status)")
+  } catch let error as TerminalException {
+    print("Settlement failed: \(error.message)")
+  }
+}
+```
+
+### Get Transaction History
+
+Retrieve transaction history from the terminal:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+// Create histories data with optional filters
+let histories = Histories(
+  commands: [CommandType.pay, CommandType.cancel], // Optional: filter by command types
+  statuses: [Status.success], // Optional: filter by statuses
+  from: "2024-01-01T00:00:00Z", // Optional: ISO 8601 format start date
+  to: "2024-01-31T23:59:59Z" // Optional: ISO 8601 format end date
+)
+
+Task {
+  do {
+    let history = try await TerminalC2C.shared.getHistory(histories)
+    print("Retrieved history: \(history)")
+    
+    for transaction in history.transactions {
+      print("Transaction: \(transaction.status)")
+    }
+  } catch let error as TerminalException {
+    print("Failed to retrieve history: \(error.message)")
+  }
+}
+```
+
+## Callback-Based API Usage
+
+For compatibility with older code or specific use cases, callback-based methods are also available:
+
+### Create Payment (Callback)
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let payment = Payment(
+  orderID: "ORDER_123",
+  amount: 10000.0,
+  paymentMethod: PaymentMethod.fromValue("card")
+)
+
+TerminalC2C.shared.createPaymentAsync(payment) { result in
+  switch result {
+  case .success(let paymentResult):
+    print("Payment successful: \(paymentResult.status)")
+  case .failure(let error):
+    if let terminalError = error as? TerminalException {
+      print("Terminal error: \(terminalError.message)")
+    } else {
+      print("Error: \(error.localizedDescription)")
+    }
+  }
+}
+```
+
+### Cancel Payment (Callback)
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let cancel = Cancel(
+  paymentMethod: PaymentMethod.fromValue("card"),
+  terminalReference: "123456"
+)
+
+TerminalC2C.shared.cancelPaymentAsync(cancel) { result in
+  switch result {
+  case .success(let cancelResult):
+    print("Cancellation successful: \(cancelResult.status)")
+  case .failure(let error):
+    print("Cancellation failed: \(error.localizedDescription)")
+  }
+}
+```
+
+### Print Receipt (Callback)
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let receipt = Receipt(
+  paymentMethod: PaymentMethod.fromValue("card"),
+  terminalReference: "123456"
+)
+
+TerminalC2C.shared.printReceiptAsync(receipt) { result in
+  switch result {
+  case .success(let receiptResult):
+    print("Receipt print command sent: \(receiptResult.status)")
+  case .failure(let error):
+    print("Receipt print failed: \(error.localizedDescription)")
+  }
+}
+```
+
+### Perform Settlement (Callback)
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let settlement = Settlement(
+  paymentMethod: PaymentMethod.fromValue("card")
+)
+
+TerminalC2C.shared.performSettlementAsync(settlement) { result in
+  switch result {
+  case .success(let settlementResult):
+    print("Settlement successful: \(settlementResult.status)")
+  case .failure(let error):
+    print("Settlement failed: \(error.localizedDescription)")
+  }
+}
+```
+
+### Get History (Callback)
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let histories = Histories(
+  commands: [CommandType.pay, CommandType.cancel],
+  statuses: [Status.success],
+  from: "2024-01-01T00:00:00Z",
+  to: "2024-01-31T23:59:59Z"
+)
+
+TerminalC2C.shared.getHistoryAsync(histories) { result in
+  switch result {
+  case .success(let historyResult):
+    print("Retrieved history: \(historyResult)")
+    for transaction in historyResult.transactions {
+      print("Transaction: \(transaction.status)")
+    }
+  case .failure(let error):
+    print("Failed to retrieve history: \(error.localizedDescription)")
+  }
+}
+```
+
+## Error Handling
+
+### TerminalException
+
+The SDK throws `TerminalException` for terminal-specific errors:
+
+```swift
+import TerminalC2C
+import TerminalCore
+
+let payment = Payment(
+  orderID: "ORDER_123",
+  amount: 10000.0,
+  paymentMethod: PaymentMethod.fromValue("card")
+)
+
+do {
+  let result = try await TerminalC2C.shared.createPayment(payment)
+} catch let error as TerminalException {
+  let apiError = error.error
+  switch apiError.code {
+  case "FAILED_TO_CONNECT":
+    print("Cannot connect to Terminal H2H")
+  case "AUTHENTICATION_FAILED":
+    print("Authentication failed")
+  case "TERMINAL_BUSY":
+    print("Terminal is busy")
+  default:
+    print("Error: \(apiError.message)")
+  }
+} catch {
+  print("Unexpected error: \(error.localizedDescription)")
+}
+
+### Error Structure
+
+```swift
+struct TerminalException: Error {
+  let httpStatus: Int
+  let error: ApiError
+}
+
+struct ApiError {
+  let code: String
+  let message: String
+}
+```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+<Accordion title="Cannot Connect to Terminal H2H">
+  **Problem**: SDK cannot reach the Terminal H2H service.
+  
+  **Solution**:
+  1. Verify Terminal H2H service is running locally
+  2. Check the port configuration (default: 8189)
+  3. Ensure the terminal device IP address is correct
+  4. Verify network connectivity between your app and gateway
+  
+  ```swift
+  // Check terminal device IP (using generic method)
+  let device = TerminalDevice.create(
+    id: "TERMINAL_ID",
+    ipAddress: "192.168.1.100", // Verify this IP
+    provider: "BRI" // or "CASHUP", "NTT"
+  )
+  
+  // Or using provider-specific method
+  // let device = TerminalDevice.bri(
+  //   id: "TERMINAL_ID",
+  //   ipAddress: "192.168.1.100"
+  // )
+  // let device = TerminalDevice.cashup(
+  //   id: "TERMINAL_ID",
+  //   ipAddress: "192.168.1.100"
+  // )
+  // let device = TerminalDevice.ntt(
+  //   id: "TERMINAL_ID",
+  //   ipAddress: "192.168.1.100"
+  // )
+  
+  TerminalC2C.shared.setTerminalDevice(device)
+  ```
+</Accordion>
+
+<Accordion title="No Terminal Device Provided">
+  **Problem**: Error indicating no terminal device is configured.
+  
+  **Solution**: Set a default terminal device before making requests:
+  
+  ```swift
+  // Set default device
+  TerminalC2C.shared.setTerminalDevice(terminalDevice)
+  
+  // Then make requests
+  let payment = Payment(
+    orderID: "ORDER_123",
+    amount: 10000.0,
+    paymentMethod: PaymentMethod.fromValue("card")
+  )
+  
+  Task {
+    let result = try await TerminalC2C.shared.createPayment(payment)
+  }
+  ```
+</Accordion>
+
+<Accordion title="Authentication Failed">
+  **Problem**: Requests fail with authentication errors.
+  
+  **Solutions**:
+  1. Verify TerminalApp is initialized with correct client key
+  2. Check terminal ID matches the configured device
+  3. Ensure client key has Terminal C2C permissions
+  
+  ```swift
+  // Re-initialize with correct client key
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: .production
+  )
+  ```
+</Accordion>
+
+<Accordion title="Network Errors">
+  **Problem**: Network-level errors when communicating with gateway.
+  
+  **Solutions**:
+  1. Check network connectivity
+  2. Verify firewall settings allow connections to gateway port
+  3. Ensure Terminal Gateway service is accessible
+  4. Check terminal device IP address is reachable
+  
+  <Tip>
+  Use network debugging tools to verify connectivity between your app and the Terminal Gateway service.
+  </Tip>
+</Accordion>
+
+<Accordion title="Async/Await Compatibility">
+  **Problem**: Issues with async/await syntax or compatibility.
+  
+  **Solutions**:
+  1. Ensure you're using iOS 15+ or macOS 12+ for native async/await support
+  2. Use callback-based methods if targeting older iOS versions
+  3. Wrap async calls in Task blocks
+  
+  ```swift
+  import TerminalC2C
+  import TerminalCore
+  
+  let payment = Payment(
+    orderID: "ORDER_123",
+    amount: 10000.0,
+    paymentMethod: PaymentMethod.fromValue("card")
+  )
+  
+  // For iOS 15+
+  Task {
+    let result = try await TerminalC2C.shared.createPayment(payment)
+  }
+  
+  // For older iOS versions, use callbacks
+  TerminalC2C.shared.createPaymentAsync(payment) { result in
+    // Handle result
+  }
+  ```
+</Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+### Error Handling
+
+Always implement comprehensive error handling:
+
+```swift
+func processPaymentSafely(orderID: String, amount: Double) async throws -> TerminalResult {
+  let payment = Payment(
+    orderID: orderID,
+    amount: amount,
+    paymentMethod: PaymentMethod.fromValue("card")
+  )
+    
+  do {
+    return try await TerminalC2C.shared.createPayment(payment)
+  } catch let error as TerminalException {
+    let apiError = error.error
+    switch apiError.code {
+    case "TERMINAL_BUSY":
+      // Retry after delay
+      try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
+      return try await processPaymentSafely(orderID: orderID, amount: amount)
+    case "FAILED_TO_CONNECT":
+      // Check connectivity and retry
+      throw error
+    default:
+      throw error
+    }
+  }
+}
+
+### Task Management
+
+Properly manage async tasks:
+
+```swift
+class PaymentViewController: UIViewController {
+  private var paymentTask: Task<Void, Never>?
+  
+  func processPayment() {
+    let payment = Payment(
+      orderID: "ORDER_123",
+      amount: 10000.0,
+      paymentMethod: PaymentMethod.fromValue("card")
+    )
+    
+    paymentTask = Task {
+      do {
+        let result = try await TerminalC2C.shared.createPayment(payment)
+        await MainActor.run {
+          // Update UI on main thread
+          self.updateUI(with: result)
+        }
+      } catch {
+        await MainActor.run {
+          // Handle error on main thread
+          self.showError(error)
+        }
+      }
+    }
+  }
+  
+  deinit {
+    paymentTask?.cancel()
+  }
+}
+```
+
+### Device Management
+
+Manage multiple terminal devices efficiently:
+
+```swift
+class TerminalManager {
+  private var devices: [String: TerminalDevice] = [:]
+  
+  func registerDevice(id: String, ip: String, provider: String) {
+    // Using generic create method
+    devices[id] = TerminalDevice.create(id: id, ipAddress: ip, provider: provider)
+    
+    // Or using provider-specific method
+    // devices[id] = TerminalDevice.bri(id: id, ipAddress: ip)
+    // devices[id] = TerminalDevice.cashup(id: id, ipAddress: ip)
+    // devices[id] = TerminalDevice.ntt(id: id, ipAddress: ip)
+  }
+  
+  func processPaymentOnDevice(deviceId: String, orderID: String, amount: Double) async throws -> TerminalResult {
+    guard let device = devices[deviceId] else {
+      throw NSError(domain: "TerminalManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Device not found"])
+    }
+    
+    let payment = Payment(
+      orderID: orderID,
+      amount: amount,
+      paymentMethod: PaymentMethod.fromValue("card")
+    )
+    
+    // Set device and make payment
+    TerminalC2C.shared.setTerminalDevice(device)
+    return try await TerminalC2C.shared.createPayment(payment)
+  }
+}
+```
+
+import FindingTerminalInformation from '/snippets/finding-terminal-information.mdx';
+
+<FindingTerminalInformation />

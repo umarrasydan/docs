@@ -1,0 +1,86 @@
+---
+title: "Introduction"
+description: "Integrate Xendit's Payment Terminal H2H for seamless in-person payment processing across multiple platforms"
+---
+
+# Terminal H2H
+
+Xendit's Terminal H2H (Host-to-Host) Gateway enables you to connect your applications to physical payment terminals through a centralized gateway service. This solution provides a bridge between your backend systems and terminal devices, handling command polling, device management, and transaction processing seamlessly across multiple terminal providers.
+
+## What you can do with Terminal H2H
+
+Terminal H2H Gateway provides everything you need to build comprehensive terminal management solutions:
+
+- **Centralized device management** across multiple terminal types and providers
+- **Automated command polling** from backend services to terminal devices
+- **Real-time connection monitoring** and error handling for all registered terminals
+- **Multi-provider support** including BRI, NTT, Cashup, and other terminal providers
+- **Concurrent operations** supporting multiple simultaneous transactions across different terminals
+- **Robust retry mechanisms** with configurable timeout and attempt settings
+
+<Info>
+Terminal H2H works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal H2H SDKs to interact with physical payment devices.
+</Info>
+
+## Choose your platform
+
+Get started with Terminal H2H by selecting your development platform:
+
+<CardGroup cols={2}>
+<Card title="Android (Kotlin)" icon="android" href="/sdk/h2h/android-sdk">
+  Native Android development with Kotlin SDK for Android applications
+</Card>
+
+<Card title="iOS (Swift)" icon="apple" href="/sdk/h2h/ios-sdk">
+  Native iOS development with Swift SDK for iOS applications
+</Card>
+</CardGroup>
+
+## Key capabilities
+
+<CardGroup cols={2}>
+<Card title="Multi-terminal management" icon="layers">
+  Centralized management of multiple terminal devices with automatic failover and load balancing
+</Card>
+
+<Card title="Automated polling" icon="refresh">
+  Continuous command polling from backend services with configurable intervals and retry logic
+</Card>
+
+<Card title="Real-time monitoring" icon="clock">
+  Live device status monitoring, connection state tracking, and error reporting
+</Card>
+
+<Card title="Provider abstraction" icon="code">
+  Unified API across different terminal providers with seamless switching and fallback capabilities
+</Card>
+</CardGroup>
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- A Xendit account with Terminal H2H Gateway access
+- A valid client key for your environment
+- Physical payment terminal devices from supported providers (BRI, NTT, Cashup)
+- Terminal device information (Terminal ID and IP address) for each device
+- Network connectivity between your application and terminal devices
+- Development environment set up for your chosen platform
+
+<Warning>
+Terminal H2H Gateway requires physical payment devices and proper network configuration. Contact the Xendit team to obtain compatible terminal devices, client keys, and configuration details.
+</Warning>
+
+## Next steps
+
+1. **Set up your development environment** for your chosen platform
+2. **Obtain your client key** and register your terminal devices
+3. **Configure terminal providers** based on your hardware setup
+4. **Follow the platform-specific guide** to integrate the gateway SDK
+5. **Test device connections** and monitor gateway service status
+6. **Implement error handling** for robust terminal management
+
+<Check>
+Ready to get started? Choose your platform above to begin the integration process.
+</Check>
+

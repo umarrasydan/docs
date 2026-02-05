@@ -1,0 +1,134 @@
+## Prerequisites
+
+- Terminal C2C SDK added to your app (Android or iOS)
+- Network connectivity to the terminal devices
+- Terminal device details: [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information)
+
+<Info>
+In C2C SDK mode, your app talks directly to the terminal devices using platform SDKs (no Gateway App required).
+</Info>
+
+## Steps
+
+<Steps>
+<Step title="Install and set up the C2C SDK">
+  Choose your platform and follow the C2C SDK docs:
+  
+  - [Android C2C SDK](/sdk/c2c/android-sdk)
+  - [iOS C2C SDK](/sdk/c2c/ios-sdk)
+
+  <Tabs>
+  <Tab title="Android (Kotlin)">
+    ```kotlin
+    import co.xendit.terminal.c2c.TerminalC2C
+    import co.xendit.terminal.core.TerminalApp
+
+    class App : Application() {
+      override fun onCreate() {
+        super.onCreate()
+
+        TerminalApp.initialize(
+          context = this,
+          clientKey = CLIENT_KEY,
+          mode = TerminalMode.PRODUCTION // or SANDBOX
+        )
+
+        TerminalC2C.addProvider(TerminalBRI)
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="iOS (Swift)">
+    ```swift
+    import TerminalC2C
+    import TerminalCore
+
+    func application(
+      _ application: UIApplication,
+      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+      TerminalApp.shared.initialize(
+        clientKey: CLIENT_KEY,
+        mode: .production // or .sandbox
+      )
+
+      TerminalC2C.shared.addProvider(provider: TerminalBRI.shared)
+      return true
+    }
+    ```
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Configure the terminal device in your app">
+  Configure each device using its [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information).
+  
+  <Tabs>
+  <Tab title="Android (Kotlin)">
+    ```kotlin
+    val terminalDevice = TerminalDevice.create(
+      id = "TID001",
+      ipAddress = "192.168.1.100",
+      provider = "BRI"
+    )
+
+    TerminalC2C.setTerminalDevice(terminalDevice)
+    ```
+  </Tab>
+
+  <Tab title="iOS (Swift)">
+    ```swift
+    let terminalDevice = TerminalDevice.create(
+      id: "TID001",
+      ipAddress: "192.168.1.100",
+      provider: "BRI"
+    )
+
+    TerminalC2C.shared.setTerminalDevice(terminalDevice)
+    ```
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Run a test transaction">
+  Use the SDK “Getting Started” steps for your platform to trigger a basic flow and confirm the device responds correctly.
+  
+  <Tabs>
+  <Tab title="Android (Kotlin)">
+    ```kotlin
+    val result = TerminalC2C.pay(
+      amount = 10000L,
+      currency = "IDR",
+      paymentMethod = "card"
+    )
+
+    if (result.isSuccess) {
+      println("Payment success: ${'$'}{result.getOrNull()}")
+    } else {
+      println("Payment failed: ${'$'}{result.exceptionOrNull()}")
+    }
+    ```
+  </Tab>
+
+  <Tab title="iOS (Swift)">
+    ```swift
+    do {
+      let result = try await TerminalC2C.shared.pay(
+        amount: 10000,
+        currency: "IDR",
+        paymentMethod: "card"
+      )
+      print("Payment success: \(result.status)")
+    } catch {
+      print("Payment failed: \(error.localizedDescription)")
+    }
+    ```
+  </Tab>
+  </Tabs>
+</Step>
+</Steps>
+
+<Check>
+If your test succeeds, your app is ready to communicate with the terminal using the C2C SDK.
+</Check>

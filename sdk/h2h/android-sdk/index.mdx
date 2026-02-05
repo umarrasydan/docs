@@ -1,11 +1,11 @@
 ---
 title: "Android SDK (Kotlin)"
-description: "Integrate Xendit's Payment Terminal Gateway into your Android applications with our comprehensive Kotlin SDK"
+description: "Integrate Xendit's Payment Terminal H2H into your Android applications with our comprehensive Kotlin SDK"
 ---
 
-# Terminal Gateway SDK for Android (Kotlin)
+# Terminal H2H SDK for Android (Kotlin)
 
-The Xendit's Payment Terminal Gateway Android SDK enables you to integrate secure payment processing into your Android applications. Connect to physical payment terminals and process transactions seamlessly using our Kotlin-based SDK.
+The Xendit's Payment Terminal H2H Android SDK enables you to integrate secure payment processing into your Android applications. Connect to physical payment terminals and process transactions seamlessly using our Kotlin-based SDK.
 
 <Info>
 This SDK works alongside the Terminal API to provide complete in-person payment functionality. You'll use the Terminal API to create payment sessions and this SDK to interact with physical payment devices.
@@ -14,9 +14,18 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.0.0 — 30-Jan-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+    - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
+    
+    <Warning>
+    **Breaking Change**: Class name changed from `TerminalGateway` to `TerminalH2H`. Update your imports and references accordingly.
+    </Warning>
+  </Accordion>
   <Accordion title="v0.7.0 — 5-Dec-2025">
     What's new:
-    - Fixed NTT payment method value mapping to ensure correct provider selection
+    - Fixed NTT payment method value maping to ensure correct provider selection
     - Updated BRI payment flow to validate transaction data before executing terminal actions
     - Added timeout configuration for card and QR transactions to auto-cancel and retry stalled requests
     - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
@@ -47,23 +56,13 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 The SDK follows semantic versioning. Breaking changes will bump the major version number.
 </Note>
 
-## Download
+import AndroidDownload from '/snippets/android-download.mdx';
 
-Download the Terminal Gateway Android SDK:
-
-<CardGroup cols={1}>
-<Card title="Android SDK (v0.7.0)" icon="android" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+Android-0.7.0.zip">
-  Download the complete Android SDK package including all dependencies and documentation
-
-  ```
-  SHA256: b660a154482a39ff8b4a7fccd8f5fdc95c04e76183dc378b60d2c5dd174aae65 
-  ```
-</Card>
-</CardGroup>
+<AndroidDownload />
 
 ## Installation
 
-Follow these steps to add the Terminal Gateway Android SDK to your project.
+Follow these steps to add the Terminal H2H Android SDK to your project.
 
 <Steps>
 <Step title="Extract the SDK">
@@ -129,35 +128,57 @@ Follow these steps to add the Terminal Gateway Android SDK to your project.
 </Step>
 
 <Step title="Add dependencies">
-  Add the required dependencies to your app module's `build.gradle` file:
+  Add the required dependencies to your `build.gradle.kts` or `build.gradle` file:
   
   <CodeGroup>
   ```kotlin build.gradle.kts
   dependencies {
+    // Terminal H2H SDK
+    implementation("co.xendit.terminal:h2h-android:<latest_version>")
+    
+    // Core Terminal SDK (required)
     implementation("co.xendit.terminal:core-android:<latest_version>")
-    implementation("co.xendit.terminal:gateway-android:<latest_version>")
+    
+    // Optional: Provider-specific dependencies for helper methods
+    // Indonesia - BRI terminals
     implementation("co.xendit.terminal:id-bri-android:<latest_version>")
-
-    // NTT (Thailand) - uncomment if needed
-    // implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+    
+    // Indonesia - Cashup terminals  
+    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+    
+    // Thailand - NTT terminals
+    implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
   }
   ```
   
   ```groovy build.gradle
   dependencies {
+    // Terminal H2H SDK
+    implementation 'co.xendit.terminal:h2h-android:<latest_version>'
+    
+    // Core Terminal SDK (required)
     implementation 'co.xendit.terminal:core-android:<latest_version>'
-    implementation 'co.xendit.terminal:gateway-android:<latest_version>'
+    
+    // Optional: Provider-specific dependencies for helper methods
+    // Indonesia - BRI terminals
     implementation 'co.xendit.terminal:id-bri-android:<latest_version>'
-
-    // NTT (Thailand) - uncomment if needed
-    // implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
+    
+    // Indonesia - Cashup terminals
+    implementation 'co.xendit.terminal:id-cashup-android:<latest_version>'
+    
+    // Thailand - NTT terminals
+    implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
   }
   ```
   </CodeGroup>
   
-  <Warning>
-  Only add the terminal provider dependencies you actually need. Each provider adds to your app's size.
-  </Warning>
+  <Note>
+  Provider-specific dependencies are optional and enable convenient helper methods for creating `TerminalDevice` instances. Include only the dependencies for providers you plan to use.
+  </Note>
+  
+  <Check>
+  Sync your project to download the dependencies.
+  </Check>
 </Step>
 </Steps>
 
@@ -175,7 +196,7 @@ Keep your client key secure and never commit it to version control. Use environm
 
 ### Step 1: Initialize the SDK
 
-Initialize the Terminal Gateway SDK in your Application class:
+Initialize the Terminal H2H SDK in your Application class:
 
 ```kotlin MyApp.kt
 class MyApp : Application() {
@@ -187,10 +208,6 @@ class MyApp : Application() {
       clientKey = TEST_CLIENT_KEY,
       mode = TerminalMode.INTEGRATION
     )
-
-    // Add terminal providers based on your needs
-    TerminalGateway.addProvider(TerminalBRI)
-    // TerminalGateway.addProvider(TerminalNTT)
   }
 }
 ```
@@ -199,12 +216,90 @@ class MyApp : Application() {
 Use `TerminalMode.INTEGRATION` for development and testing. Switch to `TerminalMode.LIVE` for production with a live client key.
 </Note>
 
-### Step 2: Register Terminal Devices
+### Step 2: Add Terminal Providers
+
+Add the specific terminal providers you need for your integration:
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```kotlin
+// Add BRI provider for Indonesian terminals
+TerminalH2H.addProvider(TerminalBRI)
+```
+
+**Required dependency:**
+```kotlin
+implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+```
+
+<Info>
+BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+</Info>
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```kotlin
+// Add NTT provider for Thai terminals
+TerminalH2H.addProvider(TerminalNTT)
+```
+
+**Required dependency:**
+```kotlin
+implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+```
+
+<Info>
+NTT provider supports multi-function terminals with card payments and QR code transactions.
+</Info>
+</Tab>
+
+<Tab title="Cashup Provider (Indonesia)">
+```kotlin
+// Add Cashup provider for Indonesian smart terminals
+TerminalH2H.addProvider(TerminalCashup)
+```
+
+**Required dependency:**
+```kotlin
+implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+```
+
+<Info>
+Cashup provider supports modern smart payment devices with cards, e-wallets, and QR code capabilities.
+</Info>
+</Tab>
+
+<Tab title="Multiple Providers">
+```kotlin
+// Add multiple providers for supporting different terminal types
+TerminalH2H.addProvider(TerminalBRI)
+TerminalH2H.addProvider(TerminalNTT)
+TerminalH2H.addProvider(TerminalCashup)
+```
+
+**Required dependencies:**
+```kotlin
+implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+```
+
+<Warning>
+Only add providers for terminal types you actually plan to use. Each provider adds to your app's size and initialization time.
+</Warning>
+</Tab>
+</Tabs>
+
+<Check>
+After adding providers, they will be available for use when registering terminal devices in the next step.
+</Check>
+
+### Step 3: Register Terminal Devices
 
 Register your terminal devices with the SDK:
 
 ```kotlin
-TerminalGateway.registerDevice(
+TerminalH2H.registerDevices(
   listOf(
     TerminalDevice(TERMINAL_ID_1, TERMINAL_IP_1),
     TerminalDevice(TERMINAL_ID_2, TERMINAL_IP_2)
@@ -212,11 +307,42 @@ TerminalGateway.registerDevice(
 )
 
 // Registration completed - devices are now available for use
-Log.i("TerminalGateway", "Devices registered successfully")
+Log.i("TerminalH2H", "Devices registered successfully")
 ```
 
 <Check>
 After successful registration, your terminal devices will be available for payment processing.
+</Check>
+
+### Step 4: Calling Terminal API
+
+With Terminal H2H SDK configured, you can now process payments using the Terminal API. The SDK handles communication with physical terminals through the local gateway service.
+
+```bash
+# Example: Create a payment session
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+  -u 'API_KEY:' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-key: unique-session-123' \
+  -d '{
+    "terminal_id": "TERMINAL_ID",
+    "amount": 10000,
+    "currency": "IDR",
+    "external_id": "payment-123",
+    "payment_method": "card"
+  }'
+```
+
+<Info>
+For complete API documentation including request/response formats, error handling, and advanced features, see the [Terminal API (H2H)](/api-reference/terminal-api/introduction) documentation.
+</Info>
+
+<Tip>
+The Terminal H2H SDK automatically manages the connection to your registered terminal devices and handles communication protocols for different providers.
+</Tip>
+
+<Check>
+You're now ready to process payments using the Terminal H2H SDK integrated with Terminal API.
 </Check>
 
 ## Configuration and Management
@@ -227,14 +353,14 @@ Configure the timeout for terminal operations:
 
 ```kotlin
 // Set timeout to 5 minutes (default)
-TerminalGateway.setOperationTimeout(minutes = 5)
+TerminalH2H.setOperationTimeout(minutes = 5)
 
 // Set custom timeout for longer operations
-TerminalGateway.setOperationTimeout(minutes = 10)
+TerminalH2H.setOperationTimeout(minutes = 10)
 
 // Set provider-specific timeouts
-TerminalGateway.setOperationTimeout(type = TimeoutType.CARD, minutes = 10)
-TerminalGateway.setOperationTimeout(type = TimeoutType.QR, minutes = 10)
+TerminalH2H.setOperationTimeout(type = TimeoutType.CARD, minutes = 10)
+TerminalH2H.setOperationTimeout(type = TimeoutType.QR, minutes = 10)
 ```
 
 <Note>
@@ -255,7 +381,7 @@ Manage and restart terminal service connections:
   
   ```kotlin
   // This restarts all connections
-  TerminalGateway.restart()
+  TerminalH2H.restart()
   ```
 </Tab>
 
@@ -264,7 +390,7 @@ Manage and restart terminal service connections:
   
   ```kotlin
   // This restarts the connection to a specific Terminal
-  TerminalGateway.restart(terminalID = TERMINAL_ID)
+  TerminalH2H.restart(terminalID = TERMINAL_ID)
   ```
 </Tab>
 </Tabs>
@@ -278,7 +404,7 @@ Observe terminal connection states in real-time:
   Use the `observeConnection` method with a coroutine scope:
   
   ```kotlin
-  TerminalGateway.observeConnection(
+  TerminalH2H.observeConnection(
     CoroutineScope(Dispatchers.IO),
     terminalDevice
   ) { state ->
@@ -341,10 +467,10 @@ Observe and handle errors across all terminal devices:
 
 ```kotlin
 // Global error monitoring
-TerminalGateway.observeError(
+TerminalH2H.observeError(
   CoroutineScope(Dispatchers.IO)
 ) { device, error ->
-  Log.e("TerminalGateway", "Error on ${device.id}: ${error.message}")
+  Log.e("TerminalH2H", "Error on ${device?.id}: ${error?.message}")
   
   when (error.code) {
     ErrorCode.TERMINAL_BUSY -> {
@@ -364,7 +490,7 @@ TerminalGateway.observeError(
 }
 
 // Device-specific error monitoring
-val errorFlow = TerminalGateway.errorState(terminalDevice)
+val errorFlow = TerminalH2H.errorState(terminalDevice)
 val deviceErrorFlow = terminalDevice.error
 ```
 
@@ -372,7 +498,7 @@ val deviceErrorFlow = terminalDevice.error
 
 ### Error Data Structure
 
-All errors returned by the Terminal Gateway SDK follow this structure:
+All errors returned by the Terminal H2H SDK follow this structure:
 
 ```kotlin
 data class TerminalError(
@@ -407,41 +533,41 @@ fun handleTerminalError(error: TerminalError?) {
   when (error?.code) {
     ErrorCode.AUTHENTICATION_FAILED -> {
       // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
-      Log.e("TerminalGateway", "Authentication failed: ${error.message}")
+      Log.e("TerminalH2H", "Authentication failed: ${error.message}")
       // Show user-friendly message and retry with correct credentials
     }
     
     ErrorCode.TERMINAL_BUSY -> {
       // Terminal is processing another transaction
-      Log.w("TerminalGateway", "Terminal busy: ${error.message}")
+      Log.w("TerminalH2H", "Terminal busy: ${error.message}")
       // Wait and retry after a delay
       retryAfterDelay(5000) // 5 seconds
     }
     
     ErrorCode.FAILED_TO_CONNECT, ErrorCode.NOT_CONNECTED -> {
       // Network connectivity issues
-      Log.e("TerminalGateway", "Connection failed: ${error.message}")
+      Log.e("TerminalH2H", "Connection failed: ${error.message}")
       // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
       checkNetworkConnectivity()
     }
     
     ErrorCode.KEY_INVALID, ErrorCode.INVALID_CREDENTIAL -> {
       // Credential issues
-      Log.e("TerminalGateway", "Invalid credentials: ${error.message}")
+      Log.e("TerminalH2H", "Invalid credentials: ${error.message}")
       // Rotate or refresh API credentials
       refreshCredentials()
     }
     
     ErrorCode.ENCRYPTION_FAILED -> {
       // Encryption key issues
-      Log.e("TerminalGateway", "Encryption failed: ${error.message}")
+      Log.e("TerminalH2H", "Encryption failed: ${error.message}")
       // Re-initialize SDK with correct encryption keys
       reinitializeSDK()
     }
     
     else -> {
       // Log and escalate unknown errors
-      Log.e("TerminalGateway", "Unknown error: ${error?.message}")
+      Log.e("TerminalH2H", "Unknown error: ${error?.message}")
       // Report to monitoring system
       reportError(error)
     }

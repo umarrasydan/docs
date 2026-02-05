@@ -1,0 +1,57 @@
+## Prerequisites
+
+- Gateway App installed and configured
+- Access to C2C API credentials and endpoints
+- Terminal device details: [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information)
+
+<Info>
+In C2C API mode, your system communicates with terminals via the Gateway App and REST endpoints. Set up the Gateway App first, then follow the API guide.
+</Info>
+
+## Steps
+
+<Steps>
+<Step title="Install and configure the Gateway App">
+  Follow the Gateway App setup guide:
+  
+  - [Gateway App Setup](/sdk/gateway/app-configuration)
+</Step>
+
+<Step title="Confirm terminal device information">
+  Collect the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information) for each device you’ll use.
+</Step>
+
+<Step title="Integrate using the C2C API">
+  Implement the REST API integration:
+  
+  - [C2C API Reference](/api-reference/c2c/introduction)
+
+  ```bash Create a terminal device
+  curl -X POST "https://gateway-app-host:8080/v1/devices" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer GATEWAY_API_KEY" \
+    -d '{
+      "id": "TID001",
+      "ip_address": "192.168.1.100",
+      "provider": "BRI"
+    }'
+  ```
+
+  ```bash Create a payment session via C2C API
+  curl -X POST "https://gateway-app-host:8080/v1/terminal/sessions" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer GATEWAY_API_KEY" \
+    -H "Idempotency-Key: unique-c2c-session-123" \
+    -d '{
+      "terminal_id": "TID001",
+      "amount": 10000,
+      "currency": "IDR",
+      "payment_method": "card"
+    }'
+  ```
+</Step>
+</Steps>
+
+<Check>
+You’re ready to send API requests through the Gateway App to the terminal devices you configured.
+</Check>
