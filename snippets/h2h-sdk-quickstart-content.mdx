@@ -43,38 +43,46 @@ Set up both your backend and mobile app environment.
 
   <Tabs>
   <Tab title="Android (Kotlin)">
-    ```kotlin
-    import co.xendit.terminal.h2h.TerminalH2H
+    <div id="h2h-android-provider-snippet">
+```kotlin
+import co.xendit.terminal.core.TerminalApp
+import co.xendit.terminal.h2h.TerminalH2H
 
-    class App : Application() {
-      override fun onCreate() {
-        super.onCreate()
-        TerminalH2H.initialize(
-          context = this,
-          clientKey = CLIENT_KEY,
-          mode = TerminalMode.PRODUCTION // or SANDBOX
-        )
-      }
-    }
-    ```
+class App : Application() {
+  override fun onCreate() {
+    super.onCreate()
+
+    TerminalApp.initialize(
+      application = this,
+      clientKey = CLIENT_KEY,
+      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION
+    )
+    TerminalH2H.addProvider(TerminalBRI)
+  }
+}
+```
+    </div>
   </Tab>
 
   <Tab title="iOS (Swift)">
-    ```swift
-    import TerminalH2H
-    import TerminalCore
+    <div id="h2h-ios-provider-snippet">
+```swift
+import TerminalH2H
+import TerminalCore
 
-    func application(
-      _ application: UIApplication,
-      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-      TerminalH2H.shared.initialize(
-        clientKey: CLIENT_KEY,
-        mode: .production // or .sandbox
-      )
-      return true
-    }
-    ```
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: .live // or .integration
+  )
+  TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+  return true
+}
+```
+    </div>
   </Tab>
   </Tabs>
 </Step>

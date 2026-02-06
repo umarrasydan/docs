@@ -9,6 +9,9 @@ import H2HQuickstartContent from '/snippets/h2h-quickstart-content.mdx';
 import H2HSDKQuickstartContent from '/snippets/h2h-sdk-quickstart-content.mdx';
 import C2CApiQuickstartContent from '/snippets/c2c-api-quickstart-content.mdx';
 import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
+import {C2CProviderSnippetInit} from '/components/C2CProviderSnippetInit.jsx';
+import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
+
 
 {/* Provider Selection - Level 1 */}
 <div id="provider-selection">
@@ -16,6 +19,9 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
     <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '16px', color: '#111827' }}>
       Choose Your Payment Provider(s)
     </h2>
+    <C2CProviderSnippetInit />
+    <H2HProviderSnippetInit />
+
     <p style={{ fontSize: '18px', color: '#6b7280', maxWidth: '600px', margin: '0' }}>
       Select one or more payment providers for your terminal integration
     </p>
@@ -46,6 +52,12 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
           } else {
             card.style.borderColor = '#e5e7eb';
             card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
+          }
+          if (window.updateH2HProviderSnippets) {
+            window.updateH2HProviderSnippets();
           }
         }}>
           <input type="checkbox" id="bri-checkbox" style={{
@@ -83,6 +95,12 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
           } else {
             card.style.borderColor = '#e5e7eb';
             card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
+          }
+          if (window.updateH2HProviderSnippets) {
+            window.updateH2HProviderSnippets();
           }
         }}>
           <input type="checkbox" id="cashup-checkbox" style={{
@@ -126,6 +144,12 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
             card.style.borderColor = '#e5e7eb';
             card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
           }
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
+          }
+          if (window.updateH2HProviderSnippets) {
+            window.updateH2HProviderSnippets();
+          }
         }}>
           <input type="checkbox" id="ntt-checkbox" style={{
             position: 'absolute',
@@ -167,6 +191,9 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
           } else {
             card.style.borderColor = '#e5e7eb';
             card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
           }
         }}>
           <input type="checkbox" id="atom-checkbox" style={{
@@ -210,6 +237,10 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
           return;
         }
 
+        if (window.updateC2CProviderSnippets) {
+          window.updateC2CProviderSnippets();
+        }
+
         document.getElementById('provider-selection').style.display = 'none';
         document.getElementById('integration-mode-selection').style.display = 'block';
         window.location.hash = 'integration-mode-selection';
@@ -233,29 +264,6 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
   </div>
 </div>
 
-<script type="text/javascript">
-{`
-  setTimeout(function() {
-    window.toggleProvider = function(provider) {
-      const checkbox = document.getElementById(provider + '-checkbox');
-      const card = document.getElementById('provider-' + provider);
-      
-      // Toggle checkbox
-      checkbox.checked = !checkbox.checked;
-      
-      // Update card styling
-      if (checkbox.checked) {
-        const color = provider === 'bri' ? '#0066cc' : provider === 'ntt' ? '#dc2626' : provider === 'cashup' ? '#059669' : '#7c3aed';
-        card.style.borderColor = color;
-        card.style.boxShadow = '0 4px 12px 0 ' + color + '40';
-      } else {
-        card.style.borderColor = '#e5e7eb';
-        card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-      }
-    };
-  }, 100);
-`}
-</script>
 
 {/* Integration Mode Selection - Level 2 */}
 <div id="integration-mode-selection" className="quickstart-content" style={{display: 'none'}}>
@@ -339,99 +347,143 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
     </div>
   </div>
 
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
-    {/* App Installation Option */}
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '16px',
-      padding: '24px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease'
-    }} onClick={() => {
-      // Check if only Cashup is selected
-      const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-      const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-      const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-      
-      const gatewayInfo = document.getElementById('gateway-app-info');
-      if (cashupSelected && !briSelected && !nttSelected) {
-        gatewayInfo.style.display = 'none';
-      } else {
-        gatewayInfo.style.display = '';
-      }
-      
-      document.getElementById('h2h-quickstart').style.display = 'none';
-      document.getElementById('h2h-app-content').style.display = 'block';
-      window.location.hash = 'h2h-app-content';
-    }}>
-      <div style={{ marginBottom: '16px' }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>App Installation</h4>
-        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Use our pre-built Terminal H2H app</p>
-      </div>
-      
-      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
-        <li>Quick setup with Terminal H2H app</li>
-        <li>No development required</li>
-        <li>Ready-to-use interface</li>
-        <li>Perfect for non-technical teams</li>
-      </ul>
-      
-      <button 
+  <div style={{
+    maxWidth: '1200px',
+    margin: '0 auto',
+    marginBottom: '32px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e5e7eb',
+    borderRadius: '16px',
+    padding: '24px',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+  }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          <th style={{
+            width: '50%',
+            padding: '16px 24px',
+            backgroundColor: '#ecfdf5',
+            borderBottom: '2px solid #d1fae5',
+            borderRight: '1px solid #d1fae5',
+            textAlign: 'left'
+          }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#047857', marginBottom: '4px' }}>Terminal Gateway App</div>
+            <div style={{ fontSize: '14px', color: '#0f766e' }}>Managed desktop/mobile companion</div>
+          </th>
+          <th style={{
+            width: '50%',
+            padding: '16px 24px',
+            backgroundColor: '#f9fafb',
+            borderBottom: '2px solid #e5e7eb',
+            textAlign: 'left'
+          }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#374151', marginBottom: '4px' }}>Terminal H2H SDK</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Embed H2H logic in your app</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+            Install Gateway App and connect terminals without building custom UI.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Bring H2H flows into your native Android or iOS application.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+            Xendit controls payment screens, receipts, and reconciliation workflows.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Your engineering team owns the UX, navigation, and error handling.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+            Minimal development effort—ideal for quick pilots or staffed counters.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Requires mobile engineers but unlocks tighter integration and branding control.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5' }}>
+            Works on Windows/macOS desktops or companion tablets managed by store teams.
+          </td>
+          <td style={{ padding: '16px 24px' }}>
+            Choose Android or iOS SDK packages for POS tablets, mobile associates, or kiosks.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
+      <button
+        onClick={() => {
+          const briSelected = document.getElementById('bri-checkbox')?.checked || false;
+          const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
+          const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+          const gatewayInfo = document.getElementById('gateway-app-info');
+
+          if (cashupSelected && !briSelected && !nttSelected) {
+            if (gatewayInfo) gatewayInfo.style.display = 'none';
+          } else {
+            if (gatewayInfo) gatewayInfo.style.display = '';
+          }
+
+          document.getElementById('h2h-quickstart').style.display = 'none';
+          document.getElementById('h2h-app-content').style.display = 'block';
+          window.location.hash = 'h2h-app-content';
+        }}
         style={{
-          width: '100%',
-          padding: '12px',
-          backgroundColor: '#10b981',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '16px',
+          backgroundColor: '#047857',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
+          borderRadius: '12px',
           fontWeight: '600',
-          cursor: 'pointer'
+          fontSize: '16px',
+          cursor: 'pointer',
+          boxShadow: '0 4px 12px 0 rgba(4, 120, 87, 0.35)'
         }}
       >
-        Use Terminal H2H App
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+        Continue with Terminal Gateway App
       </button>
-    </div>
 
-    {/* Embed SDK Option */}
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '16px',
-      padding: '24px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease'
-    }}>
-      <div style={{ marginBottom: '16px' }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>Embed SDK</h4>
-        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Integrate SDK into your own app</p>
-      </div>
-      
-      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
-        <li>Custom integration in your app</li>
-        <li>Full control over UI/UX</li>
-        <li>Android and iOS SDKs</li>
-        <li>Advanced customization options</li>
-      </ul>
-      
-      <button 
+      <button
         onClick={() => {
           document.getElementById('h2h-quickstart').style.display = 'none';
           document.getElementById('h2h-sdk-content').style.display = 'block';
           window.location.hash = 'h2h-sdk-content';
         }}
         style={{
-          width: '100%',
-          padding: '12px',
-          backgroundColor: '#6b7280',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '16px',
+          backgroundColor: '#4b5563',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
+          borderRadius: '12px',
           fontWeight: '600',
+          fontSize: '16px',
           cursor: 'pointer'
         }}
       >
-        Use H2H SDK
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        </svg>
+        Continue with H2H SDK
       </button>
     </div>
   </div>
@@ -552,36 +604,86 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
     </div>
   </div>
 
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
-    {/* API-based Option */}
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '16px',
-      padding: '24px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease'
-    }}>
-      <div style={{ marginBottom: '16px' }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>API-based</h4>
-        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Use Gateway App + REST API</p>
-      </div>
-      
-      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
-        <li id="c2c-gateway-app-li">Requires Gateway App installation</li>
-        <li>RESTful API integration</li>
-        <li>Centralized terminal management</li>
-        <li>Web-based configuration</li>
-      </ul>
-      
-      <button 
+  <div style={{
+    maxWidth: '1200px',
+    margin: '0 auto',
+    marginBottom: '32px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e5e7eb',
+    borderRadius: '16px',
+    padding: '24px',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+  }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          <th style={{
+            width: '50%',
+            padding: '16px 24px',
+            backgroundColor: '#f0f7ff',
+            borderBottom: '2px solid #bfdbfe',
+            borderRight: '1px solid #bfdbfe',
+            textAlign: 'left'
+          }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#1d4ed8', marginBottom: '4px' }}>Gateway App + REST API</div>
+            <div style={{ fontSize: '14px', color: '#1e40af' }}>Central command & control</div>
+          </th>
+          <th style={{
+            width: '50%',
+            padding: '16px 24px',
+            backgroundColor: '#f9fafb',
+            borderBottom: '2px solid #e5e7eb',
+            textAlign: 'left'
+          }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#374151', marginBottom: '4px' }}>C2C SDK</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Direct device control</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+            Deploy Gateway App to register terminals, manage keys, and route commands securely.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Embed the SDK in Android or iOS to talk to terminals over local network from your POS.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+            Integrate via REST to trigger PAY, CANCEL, and settlement commands with webhook callbacks.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Call SDK methods directly to initiate transactions and receive terminal events instantly.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+            Best for multi-store fleets where IT teams oversee terminals from a central console.
+          </td>
+          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            Ideal for proprietary POS or kiosk software that needs offline resilience and custom UX.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe' }}>
+            Works with web POS or thick clients that call secured backend services.
+          </td>
+          <td style={{ padding: '16px 24px' }}>
+            Requires mobile engineers but unlocks granular device telemetry and fallback logic.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
+      <button
         onClick={() => {
-          // Hide Gateway App Setup when only Cashup is selected
           const briSelected = document.getElementById('bri-checkbox')?.checked || false;
           const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
           const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
           const gatewaySetup = document.getElementById('c2c-gateway-app-setup');
-          
+
           if (gatewaySetup) {
             gatewaySetup.style.display = (cashupSelected && !briSelected && !nttSelected) ? 'none' : 'block';
           }
@@ -591,59 +693,55 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
           window.location.hash = 'c2c-api-content';
         }}
         style={{
-          width: '100%',
-          padding: '12px',
-          backgroundColor: '#6b7280',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '16px',
+          backgroundColor: '#1d4ed8',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
+          borderRadius: '12px',
           fontWeight: '600',
-          cursor: 'pointer'
+          fontSize: '16px',
+          cursor: 'pointer',
+          boxShadow: '0 4px 12px 0 rgba(29, 78, 216, 0.35)'
         }}
       >
-        Use API Integration
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+        Continue with Gateway App + REST API
       </button>
-    </div>
 
-    {/* SDK-based Option */}
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '16px',
-      padding: '24px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease'
-    }}>
-      <div style={{ marginBottom: '16px' }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: '600' }}>SDK-based</h4>
-        <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>Direct terminal communication</p>
-      </div>
-      
-      <ul style={{ margin: '0 0 20px 0', padding: '0 0 0 20px', fontSize: '14px', color: '#374151' }}>
-        <li>Direct device communication</li>
-        <li>Android and iOS SDKs</li>
-        <li>Custom terminal flows</li>
-        <li>Maximum flexibility</li>
-      </ul>
-      
-      <button 
+      <button
         onClick={() => {
           document.getElementById('c2c-quickstart').style.display = 'none';
           document.getElementById('c2c-sdk-content').style.display = 'block';
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
+          }
           window.location.hash = 'c2c-sdk-content';
         }}
         style={{
-          width: '100%',
-          padding: '12px',
-          backgroundColor: '#374151',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '16px',
+          backgroundColor: '#4b5563',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
+          borderRadius: '12px',
           fontWeight: '600',
+          fontSize: '16px',
           cursor: 'pointer'
         }}
       >
-        Use C2C SDK
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        </svg>
+        Continue with C2C SDK
       </button>
     </div>
   </div>
@@ -724,7 +822,7 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
     <Accordion title="Terminal does not prompt for payment">
       - Ensure the terminal is registered in the Gateway App with the exact terminal ID (TID).
       - Confirm the device shows Connected/Ready status in the Gateway App UI.
-      - Recheck LAN connectivity and firewall rules that might block terminal traffic.
+      - Recheck network connectivity and firewall rules that might block terminal traffic.
     </Accordion>
   </AccordionGroup>
 

@@ -165,8 +165,8 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
   import co.xendit.terminal.core.TerminalApp
   
   // In your Application class or Activity
-  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
-  // or TerminalMode.SANDBOX for testing
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
+  // or TerminalMode.INTEGRATION for testing
   ```
   
   <Warning>
@@ -541,6 +541,27 @@ try {
 For non-coroutine environments, use `TerminalC2C.createPaymentAsync(payment, callback)`.
 </Tip>
 
+### Simulation Testing
+
+Use simulation mode to validate your integration without connecting to a physical terminal.
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+
+// Optional: toggle simulation globally for all subsequent requests
+TerminalC2C.isSimulation = true
+
+// Or pass the flag per payment request
+val result = TerminalC2C.createPayment(
+  payment = payment,
+  isSimulation = true
+)
+```
+
+<Info>
+Disable simulation (`TerminalC2C.isSimulation = false` and `isSimulation = false`) before running against real hardware. Use the special simulation amounts (400508 decline, 400509 unavailable, 400711 cancel) documented in the quickstart to trigger test scenarios.
+</Info>
+
 ### Cancel Payment
 
 Cancel an ongoing payment transaction:
@@ -862,7 +883,7 @@ data class ApiError(
   
   ```kotlin
   // Re-initialize with correct client key
-  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
   ```
 </Accordion>
 

@@ -71,7 +71,7 @@ The Terminal C2C SDK consolidates device orchestration, networking, and payment 
   ```kotlin
   override fun onCreate() {
       super.onCreate()
-      TerminalApp.initialize(this, CLIENT_KEY, TerminalMode.SANDBOX)
+      TerminalApp.initialize(this, CLIENT_KEY, TerminalMode.INTEGRATION)
       TerminalC2C.addProvider(TerminalBRI)
       // Add additional providers as needed
       // TerminalC2C.addProvider(TerminalCashup)

@@ -195,8 +195,8 @@ dependencies {
     implementation("co.xendit.terminal:id-bri-android:<latest_version>")
 }
 
-// Initialize Terminal App
-TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
 
 // Configure BRI terminal device
 val briDevice = TerminalDevice.bri(
@@ -230,8 +230,8 @@ dependencies {
     implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
 }
 
-// Initialize Terminal App
-TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
 
 // Configure NTT terminal device
 val nttDevice = TerminalDevice.ntt(
@@ -265,8 +265,8 @@ dependencies {
     implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
 }
 
-// Initialize Terminal App
-TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.PRODUCTION)
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
 
 // Configure Cashup terminal device
 val cashupDevice = TerminalDevice.cashup(
@@ -315,7 +315,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for BRI
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration
+            mode: .integration // switch to .live for production
         )
         
         // Configure BRI provider
@@ -363,7 +363,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for NTT
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration
+            mode: .integration // switch to .live for production
         )
         
         // Configure NTT provider
@@ -411,7 +411,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for Cashup
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration
+            mode: .integration // switch to .live for production
         )
         
         // Configure Cashup provider
@@ -449,10 +449,10 @@ TerminalSDK.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for BRI
+// Initialize Terminal C2C for BRI (use .integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .production
+    mode: .live // use .integration for testing
 )
 
 // Configure BRI terminal device
@@ -484,10 +484,10 @@ TerminalC2C.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for NTT
+// Initialize Terminal C2C for NTT (use .integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .production
+    mode: .live // use .integration for testing
 )
 
 // Configure NTT terminal device
@@ -519,10 +519,10 @@ TerminalC2C.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for Cashup
+// Initialize Terminal C2C for Cashup (use .integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .production
+    mode: .live // use .integration for testing
 )
 
 // Configure Cashup terminal device

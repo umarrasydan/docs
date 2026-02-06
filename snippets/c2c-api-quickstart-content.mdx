@@ -26,28 +26,35 @@ In C2C API mode, your system communicates with terminals via the Gateway App and
   
   - [C2C API Reference](/api-reference/c2c/introduction)
 
-  ```bash Create a terminal device
-  curl -X POST "https://gateway-app-host:8080/v1/devices" \
+  ```bash Create a payment request
+  curl -X POST "http://{GATEWAY_IP}:8189/commands/pay" \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer GATEWAY_API_KEY" \
+    -H "X-API-KEY: CLIENT_API_KEY" \
+    -H "provider: BRI" \
+    -H "simulation: true" \
     -d '{
-      "id": "TID001",
-      "ip_address": "192.168.1.100",
-      "provider": "BRI"
+      "terminal_id": "10362517",
+      "order_id": "ORDER123",
+      "request_amount": 10000,
+      "payment_method": "QRIS"
     }'
   ```
 
-  ```bash Create a payment session via C2C API
-  curl -X POST "https://gateway-app-host:8080/v1/terminal/sessions" \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer GATEWAY_API_KEY" \
-    -H "Idempotency-Key: unique-c2c-session-123" \
-    -d '{
-      "terminal_id": "TID001",
-      "amount": 10000,
-      "currency": "IDR",
-      "payment_method": "card"
-    }'
+  <Info>
+  Using `simulation: true` returns mock responses so you can test without a physical device. Remove the header when exercising real hardware; the value defaults to `false`.
+  </Info>
+
+  ```json Successful response
+  {
+    "order_id": "ORDER123",
+    "terminal_id": "10362517",
+    "terminal_reference": "1750407594445|1750407594",
+    "payment_method": "QRIS",
+    "amount": 10000,
+    "currency": "IDR",
+    "transaction_date": "2025-06-20T15:19:54+07:00",
+    "status": "SUCCESS"
+  }
   ```
 </Step>
 </Steps>

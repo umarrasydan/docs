@@ -57,37 +57,39 @@ description: 'One-sentence summary for SEO and search'
 **Use existing patterns from the codebase** - check [.cursor/rules/mintlify.mdc](.cursor/rules/mintlify.mdc) for full reference:
 
 ```mdx
-<!-- Multi-path instructions -->
+```mdx
+{/* Multi-path instructions */}
 <Tabs>
   <Tab title="Option 1">Content</Tab>
   <Tab title="Option 2">Content</Tab>
 </Tabs>
 
-<!-- Sequential procedures -->
+{/* Sequential procedures */}
 <Steps>
   <Step title="Action">Description with code examples</Step>
 </Steps>
 
-<!-- Multiple languages -->
+{/* Multiple languages */}
 <CodeGroup>
-```bash cURL
+```bash
 curl example
 ```
-```javascript Node.js
+```javascript
 fetch example
 ```
 </CodeGroup>
 
-<!-- Contextual alerts -->
+{/* Contextual alerts */}
 <Info>Neutral information</Info>
 <Tip>Best practices</Tip>
 <Warning>Critical cautions</Warning>
 <Check>Success confirmations</Check>
 
-<!-- Always wrap images -->
+{/* Always wrap images */}
 <Frame>
   <img src="/images/path.png" alt="Descriptive alt text" />
 </Frame>
+```
 ```
 
 ### API Documentation Pattern
@@ -95,7 +97,7 @@ For Terminal API (H2H) endpoints, use the OpenAPI-generated structure. Example f
 
 ```mdx
 <RequestExample>
-```bash cURL
+```bash
 curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   -u 'API_KEY:' \
   -H 'Idempotency-key: unique-key-123'

@@ -69,7 +69,7 @@ func application(
 ) -> Bool {
   TerminalApp.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .production // or .sandbox for testing
+    mode: .live // or .integration for testing
   )
   
   return true
@@ -339,6 +339,34 @@ Task {
   }
 }
 ```
+
+### Simulation Testing
+
+Enable simulation mode to exercise payment flows without a physical terminal.
+
+```swift
+import TerminalC2C
+
+// Optional: enable simulation globally
+TerminalC2C.shared.isSimulation = true
+
+// Or pass the flag per request when creating a payment
+Task {
+  do {
+    let result = try await TerminalC2C.shared.createPayment(
+      payment,
+      isSimulation: true
+    )
+    print("Simulated payment: \(result.status)")
+  } catch {
+    print("Simulation failed: \(error.localizedDescription)")
+  }
+}
+```
+
+<Info>
+Reset the simulation flag (`TerminalC2C.shared.isSimulation = false`) and omit the `isSimulation` parameter when moving to physical terminals. Combine simulation mode with the special test amounts (400508 decline, 400509 unavailable, 400711 cancel) to validate error handling before go-live.
+</Info>
 
 ### Cancel Payment
 
@@ -685,7 +713,7 @@ struct ApiError {
   // Re-initialize with correct client key
   TerminalApp.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .production
+    mode: .live // use .integration for test environments
   )
   ```
 </Accordion>
