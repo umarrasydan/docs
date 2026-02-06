@@ -88,7 +88,7 @@
             ]
           },
           {
-            "group": "Terminal Gateway",
+            "group": "Terminal App",
             "pages": [
               "sdk/gateway/introduction",
               "sdk/gateway/app-configuration"
