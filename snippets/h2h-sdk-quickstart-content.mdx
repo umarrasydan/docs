@@ -35,12 +35,45 @@ Set up both your backend and mobile app environment.
   ```
 </Step>
 
-<Step title="Initialize the H2H SDK in your app">
+<Step title="Add provider dependencies">
   Choose your platform and initialize the SDK:
   
   - [H2H iOS SDK](/sdk/h2h/ios-sdk)
   - [H2H Android SDK](/sdk/h2h/android-sdk)
 
+  Include the provider-specific artifacts before initializing the SDK. Select the providers above to populate the correct entries.
+
+  <Tabs>
+  <Tab title="Android (Gradle)">
+    <div id="h2h-android-dependency-snippet">
+```groovy
+dependencies {
+  // Terminal H2H SDK
+  implementation("co.xendit.terminal:h2h-android:<latest_version>")
+
+  // Core Terminal SDK (required)
+  implementation("co.xendit.terminal:core-android:<latest_version>")
+
+  implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+}
+```
+    </div>
+  </Tab>
+
+  <Tab title="iOS (Frameworks)">
+    <div id="h2h-ios-dependency-snippet">
+```text
+# Add these provider frameworks using Xcode (General > Frameworks, Libraries, and Embedded Content).
+# See /sdk/h2h/ios-sdk#installation for installation steps.
+
+- Add TerminalBRI.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation.
+```
+    </div>
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Initialize the H2H SDK in your app">
   <Tabs>
   <Tab title="Android (Kotlin)">
     <div id="h2h-android-provider-snippet">

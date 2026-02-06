@@ -13,16 +13,22 @@ export const H2HProviderSnippetInit = () => {
                 key: 'bri',
                 androidCall: 'TerminalBRI',
                 iosCall: 'TerminalBRI.shared',
+                androidDependency: 'implementation("co.xendit.terminal:id-bri-android:<latest_version>")',
+                iosDependency: 'Add TerminalBRI.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation.',
             },
             cashup: {
                 key: 'cashup',
                 androidCall: 'TerminalCashup',
                 iosCall: 'TerminalCashup.shared',
+                androidDependency: 'implementation("co.xendit.terminal:id-cashup-android:<latest_version>")',
+                iosDependency: 'Add TerminalCashup.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation. Contact Xendit for access.',
             },
             ntt: {
                 key: 'ntt',
                 androidCall: 'TerminalNTT',
                 iosCall: 'TerminalNTT.shared',
+                androidDependency: 'implementation("co.xendit.terminal:th-ntt-android:<latest_version>")',
+                iosDependency: 'Add TerminalNTT.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation. Contact Xendit for access.',
             },
         };
 
@@ -36,6 +42,30 @@ export const H2HProviderSnippetInit = () => {
         function buildIosProviderLines(selectedKeys) {
             const lines = selectedKeys.map((key) => `  TerminalH2H.shared.addProvider(provider: ${PROVIDER_CONFIG[key].iosCall})`);
             return lines.length ? lines.join('\n') : '  TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)';
+        }
+
+        function buildAndroidDependencyLines(selectedKeys) {
+            const providerKeys = selectedKeys.length ? selectedKeys : ['bri'];
+
+            return [
+                '  // Terminal H2H SDK',
+                '  implementation("co.xendit.terminal:h2h-android:<latest_version>")',
+                '',
+                '  // Core Terminal SDK (required)',
+                '  implementation("co.xendit.terminal:core-android:<latest_version>")',
+                '',
+                ...providerKeys.map((key) => `  ${PROVIDER_CONFIG[key].androidDependency}`),
+            ].join('\n');
+        }
+
+        function buildIosDependencyLines(selectedKeys) {
+            if (!selectedKeys.length) {
+                return '- Add TerminalBRI.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation.';
+            }
+
+            return selectedKeys
+                .map((key) => `- ${PROVIDER_CONFIG[key].iosDependency}`)
+                .join('\n');
         }
 
         function highlight(codeElement) {
@@ -58,12 +88,13 @@ export const H2HProviderSnippetInit = () => {
         const updateSnippets = () => {
             const androidProviderCode = document.querySelector('#h2h-android-provider-snippet pre code, #h2h-android-provider-snippet code');
             const iosProviderCode = document.querySelector('#h2h-ios-provider-snippet pre code, #h2h-ios-provider-snippet code');
+            const androidDependencyCode = document.querySelector('#h2h-android-dependency-snippet pre code, #h2h-android-dependency-snippet code');
+            const iosDependencyCode = document.querySelector('#h2h-ios-dependency-snippet pre code, #h2h-ios-dependency-snippet code');
 
-            if (!androidProviderCode || !iosProviderCode) {
+            if (!androidProviderCode || !iosProviderCode || !androidDependencyCode || !iosDependencyCode) {
                 window.setTimeout(updateSnippets, 100);
                 return;
             }
-
             const providerKeys = getSelectedProviderKeys();
             const effectiveKeys = providerKeys.length ? providerKeys : ['bri'];
 
@@ -71,8 +102,14 @@ export const H2HProviderSnippetInit = () => {
 
             iosProviderCode.textContent = `import TerminalH2H\nimport TerminalCore\n\nfunc application(\n  _ application: UIApplication,\n  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?\n) -> Bool {\n  TerminalApp.shared.initialize(\n    clientKey: CLIENT_KEY,\n    mode: .live // or .integration\n  )\n${buildIosProviderLines(effectiveKeys)}\n  return true\n}`;
 
+            androidDependencyCode.textContent = `dependencies {\n${buildAndroidDependencyLines(effectiveKeys)}\n}`;
+
+            iosDependencyCode.textContent = `# Add these provider frameworks using Xcode (General > Frameworks, Libraries, and Embedded Content).\n# See /sdk/h2h/ios-sdk#installation for installation steps.\n\n${buildIosDependencyLines(effectiveKeys)}`;
+
             highlight(androidProviderCode);
             highlight(iosProviderCode);
+            highlight(androidDependencyCode);
+            highlight(iosDependencyCode);
         };
 
         const handler = () => {
