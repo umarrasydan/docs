@@ -1,6 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+const useEffect = globalThis.React?.useEffect ?? ((effect) => {
+    if (typeof window !== 'undefined') {
+        effect();
+    }
+});
 
 
 export const C2CProviderSnippetInit = () => {
