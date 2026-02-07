@@ -17,6 +17,7 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+    - Added SHC provider support for Malaysian terminals
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
     
     <Warning>
@@ -148,6 +149,9 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     
     // Thailand - NTT terminals
     implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+
+    // Malaysia - SHC terminals
+    implementation("co.xendit.terminal:my-shc-android:<latest_version>")
   }
   ```
   
@@ -168,6 +172,9 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     
     // Thailand - NTT terminals
     implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
+
+    // Malaysia - SHC terminals
+    implementation 'co.xendit.terminal:my-shc-android:<latest_version>'
   }
   ```
   </CodeGroup>
@@ -269,12 +276,29 @@ Cashup provider supports modern smart payment devices with cards, e-wallets, and
 </Info>
 </Tab>
 
+<Tab title="SHC Provider (Malaysia)">
+```kotlin
+// Add SHC provider for Malaysian terminals
+TerminalH2H.addProvider(TerminalSHC)
+```
+
+**Required dependency:**
+```kotlin
+implementation("co.xendit.terminal:my-shc-android:<latest_version>")
+```
+
+<Info>
+SHC provider supports Share Commence terminals for the Malaysia market with card and QR payment capabilities.
+</Info>
+</Tab>
+
 <Tab title="Multiple Providers">
 ```kotlin
 // Add multiple providers for supporting different terminal types
 TerminalH2H.addProvider(TerminalBRI)
 TerminalH2H.addProvider(TerminalNTT)
 TerminalH2H.addProvider(TerminalCashup)
+TerminalH2H.addProvider(TerminalSHC)
 ```
 
 **Required dependencies:**
@@ -282,6 +306,7 @@ TerminalH2H.addProvider(TerminalCashup)
 implementation("co.xendit.terminal:id-bri-android:<latest_version>")
 implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
 implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+implementation("co.xendit.terminal:my-shc-android:<latest_version>")
 ```
 
 <Warning>

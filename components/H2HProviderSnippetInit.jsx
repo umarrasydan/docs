@@ -105,13 +105,45 @@ export const H2HProviderSnippetInit = () => {
             const providerKeys = getSelectedProviderKeys();
             const effectiveKeys = providerKeys.length ? providerKeys : ['bri'];
 
-            androidProviderCode.textContent = `import co.xendit.terminal.core.TerminalApp\nimport co.xendit.terminal.h2h.TerminalH2H\n\nclass App : Application() {\n  override fun onCreate() {\n    super.onCreate()\n\n    TerminalApp.initialize(\n      application = this,\n      clientKey = CLIENT_KEY,\n      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION\n    )\n${buildAndroidProviderLines(effectiveKeys)}\n  }\n}`;
+            androidProviderCode.textContent = `import co.xendit.terminal.core.TerminalApp
+import co.xendit.terminal.h2h.TerminalH2H
 
-            iosProviderCode.textContent = `import TerminalH2H\nimport TerminalCore\n\nfunc application(\n  _ application: UIApplication,\n  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?\n) -> Bool {\n  TerminalApp.shared.initialize(\n    clientKey: CLIENT_KEY,\n    mode: .live // or .integration\n  )\n${buildIosProviderLines(effectiveKeys)}\n  return true\n}`;
+class App : Application() {
+  override fun onCreate() {
+    super.onCreate()
 
-            androidDependencyCode.textContent = `dependencies {\n${buildAndroidDependencyLines(effectiveKeys)}\n}`;
+    TerminalApp.initialize(
+      application = this,
+      clientKey = CLIENT_KEY,
+      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION
+    )
+${buildAndroidProviderLines(effectiveKeys)}
+  }
+}`;
 
-            iosDependencyCode.textContent = `# Add these provider frameworks using Xcode (General > Frameworks, Libraries, and Embedded Content).\n# See /sdk/h2h/ios-sdk#installation for installation steps.\n\n${buildIosDependencyLines(effectiveKeys)}`;
+            iosProviderCode.textContent = `import TerminalH2H
+import TerminalCore
+
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // or TerminalMode.integration
+  )
+${buildIosProviderLines(effectiveKeys)}
+  return true
+}`;
+
+            androidDependencyCode.textContent = `dependencies {
+${buildAndroidDependencyLines(effectiveKeys)}
+}`;
+
+            iosDependencyCode.textContent = `# Add these provider frameworks using Xcode (General > Frameworks, Libraries, and Embedded Content).
+# See /sdk/h2h/ios-sdk#installation for installation steps.
+
+${buildIosDependencyLines(effectiveKeys)}`;
 
             highlight(androidProviderCode);
             highlight(iosProviderCode);

@@ -80,7 +80,7 @@ func application(
 ) -> Bool {
   TerminalApp.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // or .integration
+    mode: TerminalMode.live // or TerminalMode.integration
   )
   TerminalC2C.shared.addProvider(provider: TerminalBRI.shared)
   return true

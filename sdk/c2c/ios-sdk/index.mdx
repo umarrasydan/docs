@@ -17,6 +17,7 @@ This SDK uses a singleton pattern with the `TerminalC2C` object to communicate w
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+    - Added SHC provider support for Malaysian terminals
     - Added multiple-provider support enabling apps to handle different terminal types simultaneously
     - Enhanced TerminalDevice configuration with provider-specific methods
     - Improved terminal selection for apps managing multiple EDC devices
@@ -48,6 +49,7 @@ import IOSInstallation from '/snippets/ios-installation.mdx';
 - BRI framework: Enables `TerminalDevice.bri()` method for BRI terminals
 - NTT framework: Enables `TerminalDevice.ntt()` method for NTT terminals  
 - Cashup framework: Enables `TerminalDevice.cashup()` method for Cashup provider
+- SHC framework: Enables `TerminalDevice.shc()` method for SHC provider
 - Not required if using the generic `TerminalDevice.create()` method
 </Note>
 
@@ -69,7 +71,7 @@ func application(
 ) -> Bool {
   TerminalApp.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // or .integration for testing
+    mode: TerminalMode.live // or TerminalMode.integration for testing
   )
   
   return true
@@ -116,12 +118,24 @@ Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
   </Info>
 </Tab>
 
+<Tab title="SHC Malaysia">
+  ```swift
+  // Add SHC provider for Malaysian terminals
+  TerminalC2C.shared.addProvider(provider: TerminalSHC.shared)
+  ```
+  
+  <Info>
+  SHC provider supports Share Commence terminals with card and QR payment capabilities for the Malaysia market.
+  </Info>
+</Tab>
+
 <Tab title="Multiple Providers">
   ```swift
   // Add multiple providers
   TerminalC2C.shared.addProvider(provider: TerminalBRI.shared)
   TerminalC2C.shared.addProvider(provider: TerminalNTT.shared)
   TerminalC2C.shared.addProvider(provider: TerminalCashup.shared)
+  TerminalC2C.shared.addProvider(provider: TerminalSHC.shared)
   ```
   
   <Tip>
@@ -181,11 +195,17 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
       ipAddress: "192.168.1.102"
     )
     
+    // For SHC terminals
+    let shcDevice = TerminalDevice.shc(
+      id: "TERMINAL_ID",
+      ipAddress: "192.168.1.103"
+    )
+    
     TerminalC2C.shared.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
     ```
     
     <Note>
-    Provider-specific methods are available in the iOS SDK without requiring additional dependencies. You can use `TerminalDevice.bri()`, `TerminalDevice.cashup()`, or `TerminalDevice.ntt()` directly.
+    Provider-specific methods are available in the iOS SDK without requiring additional dependencies. You can use `TerminalDevice.bri()`, `TerminalDevice.cashup()`, `TerminalDevice.shc()`, or `TerminalDevice.ntt()` directly.
     </Note>
   </Tab>
   
@@ -301,6 +321,21 @@ When using NTT terminal configuration for Thailand market:
 
 <Note>
 NTT terminals provide comprehensive payment method support for the Thai market, including local e-wallets and QR payment standards.
+</Note>
+
+</Tab>
+
+<Tab title="SHC Terminals">
+
+When using SHC terminal configuration for the Malaysia market:
+
+| Payment Method | Description | String Value |
+|---|---|---|
+| **Card** | Credit/debit card transactions | "CARD" |
+| **DuitNow QR** | Malaysian QR payments | "DUITNOW" |
+
+<Note>
+SHC terminals focus on core card acceptance and DuitNow QR support for Malaysia deployments.
 </Note>
 
 </Tab>
@@ -491,9 +526,9 @@ let payment = Payment(
 
 TerminalC2C.shared.createPaymentAsync(payment) { result in
   switch result {
-  case .success(let paymentResult):
+  case Result.success(let paymentResult):
     print("Payment successful: \(paymentResult.status)")
-  case .failure(let error):
+  case Result.failure(let error):
     if let terminalError = error as? TerminalException {
       print("Terminal error: \(terminalError.message)")
     } else {
@@ -516,9 +551,9 @@ let cancel = Cancel(
 
 TerminalC2C.shared.cancelPaymentAsync(cancel) { result in
   switch result {
-  case .success(let cancelResult):
+  case Result.success(let cancelResult):
     print("Cancellation successful: \(cancelResult.status)")
-  case .failure(let error):
+  case Result.failure(let error):
     print("Cancellation failed: \(error.localizedDescription)")
   }
 }
@@ -537,9 +572,9 @@ let receipt = Receipt(
 
 TerminalC2C.shared.printReceiptAsync(receipt) { result in
   switch result {
-  case .success(let receiptResult):
+  case Result.success(let receiptResult):
     print("Receipt print command sent: \(receiptResult.status)")
-  case .failure(let error):
+  case Result.failure(let error):
     print("Receipt print failed: \(error.localizedDescription)")
   }
 }
@@ -557,9 +592,9 @@ let settlement = Settlement(
 
 TerminalC2C.shared.performSettlementAsync(settlement) { result in
   switch result {
-  case .success(let settlementResult):
+  case Result.success(let settlementResult):
     print("Settlement successful: \(settlementResult.status)")
-  case .failure(let error):
+  case Result.failure(let error):
     print("Settlement failed: \(error.localizedDescription)")
   }
 }
@@ -580,12 +615,12 @@ let histories = Histories(
 
 TerminalC2C.shared.getHistoryAsync(histories) { result in
   switch result {
-  case .success(let historyResult):
+  case Result.success(let historyResult):
     print("Retrieved history: \(historyResult)")
     for transaction in historyResult.transactions {
       print("Transaction: \(transaction.status)")
     }
-  case .failure(let error):
+  case Result.failure(let error):
     print("Failed to retrieve history: \(error.localizedDescription)")
   }
 }
@@ -713,7 +748,11 @@ struct ApiError {
   // Re-initialize with correct client key
   TerminalApp.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // use .integration for test environments
+    mode: TerminalMode.live // use TerminalMode.integration for test environments
+  )
+
+  TerminalC2C.shared.initialize(
+    clientKey: CLIENT_KEY,
   )
   ```
 </Accordion>

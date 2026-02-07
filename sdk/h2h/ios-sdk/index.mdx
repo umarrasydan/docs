@@ -17,6 +17,7 @@ This SDK works alongside the Terminal API to provide a complete in-person paymen
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+    - Added SHC provider support for Malaysian terminals
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
     
     <Warning>
@@ -143,12 +144,24 @@ Cashup provider supports modern smart payment devices with cards, e-wallets, and
 </Info>
 </Tab>
 
+<Tab title="SHC Provider (Malaysia)">
+```swift
+// Add SHC provider for Malaysian terminals
+TerminalH2H.shared.addProvider(provider: TerminalSHC.shared)
+```
+
+<Info>
+SHC provider supports Share Commence terminals for the Malaysia market with card and QR payment capabilities.
+</Info>
+</Tab>
+
 <Tab title="Multiple Providers">
 ```swift
 // Add multiple providers for supporting different terminal types
 TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
 TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
 TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
+TerminalH2H.shared.addProvider(provider: TerminalSHC.shared)
 ```
 
 <Warning>
@@ -315,42 +328,44 @@ Implement comprehensive error handling for robust payment processing:
 
 ```swift
 func handleTerminalError(_ error: TerminalError?) {
-    switch error?.code {
-    case .authenticationFailed:
-        // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
-        print("Authentication failed: \(error?.message ?? "")")
-        // Show user-friendly message and retry with correct credentials
+  guard let error = error else { return }
+
+  switch error.code {
+  case ErrorCode.authenticationFailed:
+    // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
+    print("Authentication failed: \(error.message)")
+    // Show user-friendly message and retry with correct credentials
         
-    case .terminalBusy:
-        // Terminal is processing another transaction
-        print("Terminal busy: \(error?.message ?? "")")
-        // Wait and retry after a delay
-        retryAfterDelay(5.0) // 5 seconds
+  case ErrorCode.terminalBusy:
+    // Terminal is processing another transaction
+    print("Terminal busy: \(error.message)")
+    // Wait and retry after a delay
+    retryAfterDelay(5.0) // 5 seconds
         
-    case .failedToConnect, .notConnected:
-        // Network connectivity issues
-        print("Connection failed: \(error?.message ?? "")")
-        // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
-        checkNetworkConnectivity()
+  case ErrorCode.failedToConnect, ErrorCode.notConnected:
+    // Network connectivity issues
+    print("Connection failed: \(error.message)")
+    // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
+    checkNetworkConnectivity()
         
-    case .keyInvalid, .invalidCredential:
-        // Credential issues
-        print("Invalid credentials: \(error?.message ?? "")")
-        // Rotate or refresh API credentials
-        refreshCredentials()
+  case ErrorCode.keyInvalid, ErrorCode.invalidCredential:
+    // Credential issues
+    print("Invalid credentials: \(error.message)")
+    // Rotate or refresh API credentials
+    refreshCredentials()
         
-    case .encryptionFailed:
-        // Encryption key issues
-        print("Encryption failed: \(error?.message ?? "")")
-        // Re-initialize SDK with correct encryption keys
-        reinitializeSDK()
+  case ErrorCode.encryptionFailed:
+    // Encryption key issues
+    print("Encryption failed: \(error.message)")
+    // Re-initialize SDK with correct encryption keys
+    reinitializeSDK()
         
-    default:
-        // Log and escalate unknown errors
-        print("Unknown error: \(error?.message ?? "")")
-        // Report to monitoring system
-        reportError(error)
-    }
+  default:
+    // Log and escalate unknown errors
+    print("Unknown error: \(error.message)")
+    // Report to monitoring system
+    reportError(error)
+  }
 }
 ```
 
@@ -402,11 +417,11 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
   // Example: Query payment session status
   let paymentSession = terminalApi.getPaymentSession(sessionId)
   switch paymentSession.status {
-  case .completed:
+  case PaymentStatus.completed:
       // Process successful payment
-  case .failed:
+  case PaymentStatus.failed:
       // Handle failed payment
-  case .pending:
+  case PaymentStatus.pending:
       // Payment still in progress
   }
   ```

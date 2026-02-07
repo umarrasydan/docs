@@ -315,7 +315,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for BRI
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration // switch to .live for production
+            mode: TerminalMode.integration // switch to TerminalMode.live for production
         )
         
         // Configure BRI provider
@@ -332,11 +332,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // Monitor connection state
 TerminalSDK.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("BRI terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("BRI terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to BRI terminal")
     }
 }
@@ -363,7 +363,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for NTT
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration // switch to .live for production
+            mode: TerminalMode.integration // switch to TerminalMode.live for production
         )
         
         // Configure NTT provider
@@ -380,11 +380,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // Monitor connection state
 TerminalSDK.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("NTT terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("NTT terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to NTT terminal")
     }
 }
@@ -411,7 +411,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize Terminal SDK for Cashup
         TerminalSDK.initialize(
             clientKey: CLIENT_KEY,
-            mode: .integration // switch to .live for production
+            mode: TerminalMode.integration // switch to TerminalMode.live for production
         )
         
         // Configure Cashup provider
@@ -428,11 +428,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // Monitor connection state
 TerminalSDK.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("Cashup terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("Cashup terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to Cashup terminal")
     }
 }
@@ -449,10 +449,10 @@ TerminalSDK.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for BRI (use .integration for testing)
+// Initialize Terminal C2C for BRI (use TerminalMode.integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // use .integration for testing
+    mode: TerminalMode.live // use TerminalMode.integration for testing
 )
 
 // Configure BRI terminal device
@@ -467,11 +467,11 @@ TerminalC2C.shared.setTerminalDevice(briDevice)
 // Monitor connection state
 TerminalC2C.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("BRI terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("BRI terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to BRI terminal")
     }
 }
@@ -484,10 +484,10 @@ TerminalC2C.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for NTT (use .integration for testing)
+// Initialize Terminal C2C for NTT (use TerminalMode.integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // use .integration for testing
+    mode: TerminalMode.live // use TerminalMode.integration for testing
 )
 
 // Configure NTT terminal device
@@ -502,11 +502,11 @@ TerminalC2C.shared.setTerminalDevice(nttDevice)
 // Monitor connection state
 TerminalC2C.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("NTT terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("NTT terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to NTT terminal")
     }
 }
@@ -519,10 +519,10 @@ TerminalC2C.shared.observeConnectionState { state in
 
 import TerminalGateway
 
-// Initialize Terminal C2C for Cashup (use .integration for testing)
+// Initialize Terminal C2C for Cashup (use TerminalMode.integration for testing)
 TerminalC2C.shared.initialize(
     clientKey: CLIENT_KEY,
-    mode: .live // use .integration for testing
+    mode: TerminalMode.live // use TerminalMode.integration for testing
 )
 
 // Configure Cashup terminal device
@@ -537,11 +537,11 @@ TerminalC2C.shared.setTerminalDevice(cashupDevice)
 // Monitor connection state
 TerminalC2C.shared.observeConnectionState { state in
     switch state {
-    case .connected:
+    case ConnectionState.connected:
         print("Cashup terminal connected")
-    case .disconnected:
+    case ConnectionState.disconnected:
         print("Cashup terminal disconnected")
-    case .connecting:
+    case ConnectionState.connecting:
         print("Connecting to Cashup terminal")
     }
 }
@@ -595,12 +595,12 @@ func handleTerminalError(_ error: TerminalError?) {
     guard let error = error else { return }
     
     switch error.code {
-    case .authenticationFailed:
+    case ErrorCode.authenticationFailed:
         // Verify API key and terminal ID
         print("Authentication failed: \(error.message)")
         showAuthenticationErrorDialog()
         
-    case .terminalBusy:
+    case ErrorCode.terminalBusy:
         // Terminal is processing another transaction
         print("Terminal busy: \(error.message)")
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
@@ -608,12 +608,12 @@ func handleTerminalError(_ error: TerminalError?) {
             retryLastOperation()
         }
         
-    case .failedToConnect, .notConnected:
+    case ErrorCode.failedToConnect, ErrorCode.notConnected:
         // Network connectivity issues
         print("Connection failed: \(error.message)")
         checkNetworkConnectivity()
         
-    case .keyInvalid, .invalidCredential:
+    case ErrorCode.keyInvalid, ErrorCode.invalidCredential:
         // Credential issues
         print("Invalid credentials: \(error.message)")
         refreshCredentials()

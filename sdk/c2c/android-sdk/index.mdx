@@ -17,6 +17,7 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+    - Added SHC provider support for Malaysian terminals
     - Added multiple-provider support enabling apps to handle different terminal types simultaneously
     - Enhanced TerminalDevice configuration with provider-specific methods
     - Improved terminal selection for apps managing multiple EDC devices
@@ -119,6 +120,9 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
     
     // Thailand - NTT terminals
     implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+
+    // Malaysia - SHC terminals
+    implementation("co.xendit.terminal:my-shc-android:<latest_version>")
   }
   ```
   
@@ -139,6 +143,9 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
     
     // Thailand - NTT terminals
     implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
+
+    // Malaysia - SHC terminals
+    implementation 'co.xendit.terminal:my-shc-android:<latest_version>'
   }
   ```
   </CodeGroup>
@@ -223,6 +230,22 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     Cashup provider offers simplified integration with essential payment methods.
     </Info>
   </Tab>
+
+  <Tab title="SHC Malaysia">
+    ```kotlin
+    // Add SHC provider for Malaysian terminals
+    TerminalC2C.addProvider(TerminalSHC)
+    ```
+    
+    **Required dependency:**
+    ```kotlin build.gradle.kts
+    implementation("co.xendit.terminal:my-shc-android:<latest_version>")
+    ```
+    
+    <Info>
+    SHC provider supports Share Commence terminals tailored for Malaysia with card and QR flows.
+    </Info>
+  </Tab>
   
   <Tab title="Multiple Providers">
     ```kotlin
@@ -230,6 +253,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     TerminalC2C.addProvider(TerminalBRI)
     TerminalC2C.addProvider(TerminalNTT)
     TerminalC2C.addProvider(TerminalCashup)
+    TerminalC2C.addProvider(TerminalSHC)
     ```
     
     <Tip>
@@ -308,6 +332,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     TerminalC2C.addProvider(TerminalBRI)
     TerminalC2C.addProvider(TerminalNTT)
     TerminalC2C.addProvider(TerminalCashup)
+    TerminalC2C.addProvider(TerminalSHC)
     ```
     
     **Required dependencies:**
@@ -316,6 +341,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
       implementation 'co.xendit.terminal:id-bri-android:latest'
       implementation 'co.xendit.terminal:th-ntt-android:latest'
       implementation 'co.xendit.terminal:id-cashup-android:latest'
+      implementation 'co.xendit.terminal:my-shc-android:latest'
       // ... other dependencies
     }
     ```
@@ -379,6 +405,12 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
       ipAddress = "192.168.1.102"
     )
     
+    // For SHC terminals (requires my-shc-android dependency)
+    val shcDevice = TerminalDevice.shc(
+      id = "TERMINAL_ID",
+      ipAddress = "192.168.1.103"
+    )
+    
     // Set as default device for TerminalC2C
     TerminalC2C.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
     ```
@@ -388,6 +420,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     - `TerminalDevice.bri()` requires `co.xendit.terminal:id-bri-android`
     - `TerminalDevice.cashup()` requires `co.xendit.terminal:id-cashup-android`  
     - `TerminalDevice.ntt()` requires `co.xendit.terminal:th-ntt-android`
+    - `TerminalDevice.shc()` requires `co.xendit.terminal:my-shc-android`
     </Note>
   </Tab>
   

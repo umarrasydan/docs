@@ -143,17 +143,59 @@ export const C2CProviderSnippetInit = () => {
             const effectiveKeys = providerKeys.length ? providerKeys : ['bri'];
             const deviceLines = buildDeviceLines(effectiveKeys);
 
-            androidProviderCode.textContent = `import co.xendit.terminal.c2c.TerminalC2C\nimport co.xendit.terminal.core.TerminalApp\n\nclass App : Application() {\n  override fun onCreate() {\n    super.onCreate()\n\n    TerminalApp.initialize(\n      context = this,\n      clientKey = CLIENT_KEY,\n      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION\n    )\n${buildAndroidProviderLines(effectiveKeys)}\n  }\n}`;
+            androidProviderCode.textContent = `import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.TerminalApp
 
-            iosProviderCode.textContent = `import TerminalC2C\nimport TerminalCore\n\nfunc application(\n  _ application: UIApplication,\n  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?\n) -> Bool {\n  TerminalApp.shared.initialize(\n    clientKey: CLIENT_KEY,\n    mode: .live // or .integration\n  )\n${buildIosProviderLines(effectiveKeys)}\n  return true\n}`;
+class App : Application() {
+  override fun onCreate() {
+    super.onCreate()
 
-            androidDeviceCode.textContent = `val terminalDevice = TerminalDevice.create(\n  id = "TID001",\n  ipAddress = "192.168.1.100",\n${deviceLines.android}\n)\n\nTerminalC2C.setTerminalDevice(terminalDevice)`;
+    TerminalApp.initialize(
+      context = this,
+      clientKey = CLIENT_KEY,
+      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION
+    )
+${buildAndroidProviderLines(effectiveKeys)}
+  }
+}`;
 
-            iosDeviceCode.textContent = `let terminalDevice = TerminalDevice.create(\n  id: "TID001",\n  ipAddress: "192.168.1.100",\n${deviceLines.ios}\n)\n\nTerminalC2C.shared.setTerminalDevice(terminalDevice)`;
+            iosProviderCode.textContent = `import TerminalC2C
+import TerminalCore
 
-            androidDependencyCode.textContent = `dependencies {\n${buildAndroidDependencyLines(effectiveKeys)}\n}`;
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // or TerminalMode.integration
+  )
+${buildIosProviderLines(effectiveKeys)}
+  return true
+}`;
 
-            iosDependencyCode.textContent = `# Add these provider frameworks to your target\n${buildIosDependencyLines(effectiveKeys)}`;
+            androidDeviceCode.textContent = `val terminalDevice = TerminalDevice.create(
+  id = "TID001",
+  ipAddress = "192.168.1.100",
+${deviceLines.android}
+)
+
+TerminalC2C.setTerminalDevice(terminalDevice)`;
+
+            iosDeviceCode.textContent = `let terminalDevice = TerminalDevice.create(
+  id: "TID001",
+  ipAddress: "192.168.1.100",
+${deviceLines.ios}
+)
+
+TerminalC2C.shared.setTerminalDevice(terminalDevice)`;
+
+            androidDependencyCode.textContent = `dependencies {
+${buildAndroidDependencyLines(effectiveKeys)}
+}`;
+
+            iosDependencyCode.textContent = `# Add these provider frameworks to your target
+${buildIosDependencyLines(effectiveKeys)}`;
 
             highlight(androidProviderCode);
             highlight(iosProviderCode);
@@ -180,7 +222,4 @@ export const C2CProviderSnippetInit = () => {
     }, []);
 
     return null;
-}
-
-
-
+};
