@@ -167,6 +167,54 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       </div>
     </div>
 
+    <div style={{ marginBottom: '32px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Malaysia (MY)</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        {/* TerminalSHC Provider */}
+        <div id="provider-shc" className="provider-card" style={{
+          backgroundColor: '#ffffff',
+          border: '2px solid #e5e7eb',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }} onClick={() => {
+          const checkbox = document.getElementById('shc-checkbox');
+          const card = document.getElementById('provider-shc');
+          checkbox.checked = !checkbox.checked;
+          if (checkbox.checked) {
+            card.style.borderColor = '#2563eb';
+            card.style.boxShadow = '0 4px 12px 0 #2563eb40';
+          } else {
+            card.style.borderColor = '#e5e7eb';
+            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }
+          if (window.updateC2CProviderSnippets) {
+            window.updateC2CProviderSnippets();
+          }
+          if (window.updateH2HProviderSnippets) {
+            window.updateH2HProviderSnippets();
+          }
+        }}>
+          <input type="checkbox" id="shc-checkbox" style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            width: '20px',
+            height: '20px',
+            accentColor: '#2563eb'
+          }} />
+          
+          <div>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Share Commence</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div>
       <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Vietnam (VN)</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
@@ -221,10 +269,11 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
         const briSelected = document.getElementById('bri-checkbox')?.checked || false;
         const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
         const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
         const atomSelected = document.getElementById('atom-checkbox')?.checked || false;
 
         // If only Atom is selected, jump straight to the H2H app flow
-        if (atomSelected && !briSelected && !nttSelected && !cashupSelected) {
+        if (atomSelected && !briSelected && !nttSelected && !cashupSelected && !shcSelected) {
           document.getElementById('provider-selection').style.display = 'none';
           document.getElementById('integration-mode-selection').style.display = 'none';
           document.getElementById('h2h-quickstart').style.display = 'none';

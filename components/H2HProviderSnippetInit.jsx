@@ -30,6 +30,13 @@ export const H2HProviderSnippetInit = () => {
                 androidDependency: 'implementation("co.xendit.terminal:th-ntt-android:<latest_version>")',
                 iosDependency: 'Add TerminalNTT.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation. Contact Xendit for access.',
             },
+            shc: {
+                key: 'shc',
+                androidCall: 'TerminalSHC',
+                iosCall: 'TerminalSHC.shared',
+                androidDependency: 'implementation("co.xendit.terminal:my-shc-android:<latest_version>")',
+                iosDependency: 'Add TerminalSHC.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation. Contact Xendit for access.',
+            },
         };
 
         const SUPPORTED_KEYS = Object.keys(PROVIDER_CONFIG);
