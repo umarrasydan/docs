@@ -1,88 +1,62 @@
-<div style={{
-  maxWidth: '1200px',
-  margin: '0 auto',
-  padding: '24px',
-  backgroundColor: '#ffffff',
-  borderRadius: '12px',
-  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-  border: '1px solid #e5e7eb'
-}}>
-  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+<div className="quickstart-elevated">
+  <table className="quickstart-table">
     <thead>
       <tr>
-        <th style={{
-          width: '50%',
-          padding: '16px 24px',
-          backgroundColor: '#ecfdf5',
-          borderBottom: '2px solid #d1fae5',
-          borderRight: '1px solid #d1fae5',
-          textAlign: 'left'
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', color: '#047857', marginBottom: '4px' }}>Host-to-Host (H2H)</div>
-          <div style={{ fontSize: '14px', color: '#0f766e' }}>Recommended for most merchants</div>
+        <th className="quickstart-table-heading green" style={{ width: '50%' }}>
+          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>Host-to-Host (H2H)</div>
+          <div style={{ fontSize: '14px' }}>Recommended for most merchants</div>
         </th>
-        <th style={{
-          width: '50%',
-          padding: '16px 24px',
-          backgroundColor: '#f9fafb',
-          borderBottom: '2px solid #e5e7eb',
-          textAlign: 'left'
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', color: '#374151', marginBottom: '4px' }}>Client-to-Client (C2C)</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>For bespoke kiosk experiences</div>
+        <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
+          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>Client-to-Client (C2C)</div>
+          <div style={{ fontSize: '14px' }}>For bespoke kiosk experiences</div>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+        <td className="quickstart-table-cell green">
           Managed orchestration with minimal custom code.
         </td>
-        <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+        <td className="quickstart-table-cell">
           Full control of command flows, retries, and device telemetry.
         </td>
       </tr>
       <tr>
-        <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+        <td className="quickstart-table-cell green">
           Uses Terminal API sessions for payments, callbacks, and reconciliation.
         </td>
-        <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+        <td className="quickstart-table-cell">
           Sends PAY/CANCEL/RECEIPT/SETTLEMENT commands directly from your app.
         </td>
       </tr>
       <tr>
-        <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+        <td className="quickstart-table-cell green">
           Xendit manages device orchestration and infrastructure.
         </td>
-        <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+        <td className="quickstart-table-cell">
           Your team owns device connectivity, error handling, and security.
         </td>
       </tr>
       <tr>
-        <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+        <td className="quickstart-table-cell green">
           Rapid deployments for staffed checkout counters and mobile associates.
         </td>
-        <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+        <td className="quickstart-table-cell">
           Ideal for unattended kiosks, experiential retail, or custom hardware setups.
         </td>
       </tr>
       <tr>
-        <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5' }}>
+        <td className="quickstart-table-cell green">
           Works best when you need consistent UI with minimal engineering overhead.
         </td>
-        <td style={{ padding: '16px 24px' }}>
+        <td className="quickstart-table-cell">
           Best when you require fine-grained control over peripherals and offline logic.
         </td>
       </tr>
     </tbody>
   </table>
 
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px',
-    marginTop: '32px'
-  }}>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '32px' }}>
     <button
       onClick={() => {
         const integrationMode = document.getElementById('integration-mode-selection');

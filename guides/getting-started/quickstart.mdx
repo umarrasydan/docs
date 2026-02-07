@@ -12,62 +12,58 @@ import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
 import {C2CProviderSnippetInit} from '/components/C2CProviderSnippetInit.jsx';
 import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
 
-
 {/* Provider Selection - Level 1 */}
 <div id="provider-selection">
   <div style={{ textAlign: 'left', marginBottom: '48px' }}>
-    <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '16px', color: '#111827' }}>
+    <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '16px' }}>
       Choose Your Payment Provider(s)
     </h2>
     <C2CProviderSnippetInit />
     <H2HProviderSnippetInit />
 
-    <p style={{ fontSize: '18px', color: '#6b7280', maxWidth: '600px', margin: '0' }}>
+    <p style={{ fontSize: '18px', maxWidth: '600px', margin: '0' }}>
       Select one or more payment providers for your terminal integration
     </p>
   </div>
 
   <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
     <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Indonesia (ID)</h3>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600' }}>Indonesia (ID)</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {/* BRI Provider */}
-        <div id="provider-bri" className="provider-card" style={{
-          backgroundColor: '#ffffff',
-          border: '2px solid #e5e7eb',
-          borderRadius: '16px',
-          padding: '24px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          position: 'relative'
-        }} onClick={() => {
-          const checkbox = document.getElementById('bri-checkbox');
-          const card = document.getElementById('provider-bri');
-          checkbox.checked = !checkbox.checked;
-          if (checkbox.checked) {
-            card.style.borderColor = '#0066cc';
-            card.style.boxShadow = '0 4px 12px 0 #0066cc40';
-          } else {
-            card.style.borderColor = '#e5e7eb';
-            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-          }
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-          if (window.updateH2HProviderSnippets) {
-            window.updateH2HProviderSnippets();
-          }
-        }}>
-          <input type="checkbox" id="bri-checkbox" style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            width: '20px',
-            height: '20px',
-            accentColor: '#0066cc'
-          }} />
+        <div
+          id="provider-bri"
+          className="provider-card quickstart-card"
+          data-accent="#10b981"
+          data-shadow="rgba(16, 185, 129, 0.32)"
+          onClick={() => {
+            const checkbox = document.getElementById('bri-checkbox');
+            const card = document.getElementById('provider-bri');
+            const accent = card.dataset.accent;
+            const shadow = card.dataset.shadow;
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+              card.classList.add('selected');
+              if (accent) {
+                card.style.setProperty('--terminal-card-accent', accent);
+              }
+              if (shadow) {
+                card.style.setProperty('--terminal-card-accent-shadow', shadow);
+              }
+            } else {
+              card.classList.remove('selected');
+              card.style.removeProperty('--terminal-card-accent');
+              card.style.removeProperty('--terminal-card-accent-shadow');
+            }
+            if (window.updateC2CProviderSnippets) {
+              window.updateC2CProviderSnippets();
+            }
+            if (window.updateH2HProviderSnippets) {
+              window.updateH2HProviderSnippets();
+            }
+          }}
+        >
+          <input type="checkbox" id="bri-checkbox" style={{ accentColor: '#10b981' }} />
           
           <div>
             <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>BRI</h4>
@@ -75,42 +71,39 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
         </div>
 
         {/* Cashup Provider */}
-        <div id="provider-cashup" className="provider-card" style={{
-          backgroundColor: '#ffffff',
-          border: '2px solid #e5e7eb',
-          borderRadius: '16px',
-          padding: '24px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          position: 'relative'
-        }} onClick={() => {
-          const checkbox = document.getElementById('cashup-checkbox');
-          const card = document.getElementById('provider-cashup');
-          checkbox.checked = !checkbox.checked;
-          if (checkbox.checked) {
-            card.style.borderColor = '#059669';
-            card.style.boxShadow = '0 4px 12px 0 #05966940';
-          } else {
-            card.style.borderColor = '#e5e7eb';
-            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-          }
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-          if (window.updateH2HProviderSnippets) {
-            window.updateH2HProviderSnippets();
-          }
-        }}>
-          <input type="checkbox" id="cashup-checkbox" style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            width: '20px',
-            height: '20px',
-            accentColor: '#059669'
-          }} />
+        <div
+          id="provider-cashup"
+          className="provider-card quickstart-card"
+          data-accent="#10b981"
+          data-shadow="rgba(16, 185, 129, 0.32)"
+          onClick={() => {
+            const checkbox = document.getElementById('cashup-checkbox');
+            const card = document.getElementById('provider-cashup');
+            const accent = card.dataset.accent;
+            const shadow = card.dataset.shadow;
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+              card.classList.add('selected');
+              if (accent) {
+                card.style.setProperty('--terminal-card-accent', accent);
+              }
+              if (shadow) {
+                card.style.setProperty('--terminal-card-accent-shadow', shadow);
+              }
+            } else {
+              card.classList.remove('selected');
+              card.style.removeProperty('--terminal-card-accent');
+              card.style.removeProperty('--terminal-card-accent-shadow');
+            }
+            if (window.updateC2CProviderSnippets) {
+              window.updateC2CProviderSnippets();
+            }
+            if (window.updateH2HProviderSnippets) {
+              window.updateH2HProviderSnippets();
+            }
+          }}
+        >
+          <input type="checkbox" id="cashup-checkbox" style={{ accentColor: '#10b981' }} />
           
           <div>
             <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Cashup</h4>
@@ -120,45 +113,42 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </div>
 
     <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Thailand (TH)</h3>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600' }}>Thailand (TH)</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {/* NTT Provider */}
-        <div id="provider-ntt" className="provider-card" style={{
-          backgroundColor: '#ffffff',
-          border: '2px solid #e5e7eb',
-          borderRadius: '16px',
-          padding: '24px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          position: 'relative'
-        }} onClick={() => {
-          const checkbox = document.getElementById('ntt-checkbox');
-          const card = document.getElementById('provider-ntt');
-          checkbox.checked = !checkbox.checked;
-          if (checkbox.checked) {
-            card.style.borderColor = '#dc2626';
-            card.style.boxShadow = '0 4px 12px 0 #dc262640';
-          } else {
-            card.style.borderColor = '#e5e7eb';
-            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-          }
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-          if (window.updateH2HProviderSnippets) {
-            window.updateH2HProviderSnippets();
-          }
-        }}>
-          <input type="checkbox" id="ntt-checkbox" style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            width: '20px',
-            height: '20px',
-            accentColor: '#dc2626'
-          }} />
+        <div
+          id="provider-ntt"
+          className="provider-card quickstart-card"
+          data-accent="#10b981"
+          data-shadow="rgba(16, 185, 129, 0.32)"
+          onClick={() => {
+            const checkbox = document.getElementById('ntt-checkbox');
+            const card = document.getElementById('provider-ntt');
+            const accent = card.dataset.accent;
+            const shadow = card.dataset.shadow;
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+              card.classList.add('selected');
+              if (accent) {
+                card.style.setProperty('--terminal-card-accent', accent);
+              }
+              if (shadow) {
+                card.style.setProperty('--terminal-card-accent-shadow', shadow);
+              }
+            } else {
+              card.classList.remove('selected');
+              card.style.removeProperty('--terminal-card-accent');
+              card.style.removeProperty('--terminal-card-accent-shadow');
+            }
+            if (window.updateC2CProviderSnippets) {
+              window.updateC2CProviderSnippets();
+            }
+            if (window.updateH2HProviderSnippets) {
+              window.updateH2HProviderSnippets();
+            }
+          }}
+        >
+          <input type="checkbox" id="ntt-checkbox" style={{ accentColor: '#10b981' }} />
           
           <div>
             <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>NTT</h4>
@@ -168,90 +158,84 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </div>
 
     <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Malaysia (MY)</h3>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600' }}>Malaysia (MY)</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {/* SHC Provider */}
-        <div id="provider-shc" className="provider-card" style={{
-          backgroundColor: '#ffffff',
-          border: '2px solid #e5e7eb',
-          borderRadius: '16px',
-          padding: '24px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          position: 'relative'
-        }} onClick={() => {
-          const checkbox = document.getElementById('shc-checkbox');
-          const card = document.getElementById('provider-shc');
-          checkbox.checked = !checkbox.checked;
-          if (checkbox.checked) {
-            card.style.borderColor = '#059669';
-            card.style.boxShadow = '0 4px 12px 0 #05966940';
-          } else {
-            card.style.borderColor = '#e5e7eb';
-            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-          }
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-          if (window.updateH2HProviderSnippets) {
-            window.updateH2HProviderSnippets();
-          }
-        }}>
-          <input type="checkbox" id="shc-checkbox" style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            width: '20px',
-            height: '20px',
-            accentColor: '#059669'
-          }} />
+        <div
+          id="provider-shc"
+          className="provider-card quickstart-card"
+          data-accent="#10b981"
+          data-shadow="rgba(16, 185, 129, 0.32)"
+          onClick={() => {
+            const checkbox = document.getElementById('shc-checkbox');
+            const card = document.getElementById('provider-shc');
+            const accent = card.dataset.accent;
+            const shadow = card.dataset.shadow;
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+              card.classList.add('selected');
+              if (accent) {
+                card.style.setProperty('--terminal-card-accent', accent);
+              }
+              if (shadow) {
+                card.style.setProperty('--terminal-card-accent-shadow', shadow);
+              }
+            } else {
+              card.classList.remove('selected');
+              card.style.removeProperty('--terminal-card-accent');
+              card.style.removeProperty('--terminal-card-accent-shadow');
+            }
+            if (window.updateC2CProviderSnippets) {
+              window.updateC2CProviderSnippets();
+            }
+            if (window.updateH2HProviderSnippets) {
+              window.updateH2HProviderSnippets();
+            }
+          }}
+        >
+          <input type="checkbox" id="shc-checkbox" style={{ accentColor: '#10b981' }} />
           
           <div>
-            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Share Commence</h4>
+            <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Share commerce</h4>
           </div>
         </div>
       </div>
     </div>
 
     <div>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600', color: '#111827' }}>Vietnam (VN)</h3>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '22px', fontWeight: '600' }}>Vietnam (VN)</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {/* Atom Provider */}
-        <div id="provider-atom" className="provider-card" style={{
-          backgroundColor: '#ffffff',
-          border: '2px solid #e5e7eb',
-          borderRadius: '16px',
-          padding: '24px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          position: 'relative'
-        }} onClick={() => {
-          const checkbox = document.getElementById('atom-checkbox');
-          const card = document.getElementById('provider-atom');
-          checkbox.checked = !checkbox.checked;
-          if (checkbox.checked) {
-            card.style.borderColor = '#7c3aed';
-            card.style.boxShadow = '0 4px 12px 0 #7c3aed40';
-          } else {
-            card.style.borderColor = '#e5e7eb';
-            card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-          }
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-        }}>
-          <input type="checkbox" id="atom-checkbox" style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            width: '20px',
-            height: '20px',
-            accentColor: '#7c3aed'
-          }} />
+        <div
+          id="provider-atom"
+          className="provider-card quickstart-card"
+          data-accent="#10b981"
+          data-shadow="rgba(16, 185, 129, 0.32)"
+          onClick={() => {
+            const checkbox = document.getElementById('atom-checkbox');
+            const card = document.getElementById('provider-atom');
+            const accent = card.dataset.accent;
+            const shadow = card.dataset.shadow;
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+              card.classList.add('selected');
+              if (accent) {
+                card.style.setProperty('--terminal-card-accent', accent);
+              }
+              if (shadow) {
+                card.style.setProperty('--terminal-card-accent-shadow', shadow);
+              }
+            } else {
+              card.classList.remove('selected');
+              card.style.removeProperty('--terminal-card-accent');
+              card.style.removeProperty('--terminal-card-accent-shadow');
+            }
+            if (window.updateC2CProviderSnippets) {
+              window.updateC2CProviderSnippets();
+            }
+          }}
+        >
+          <input type="checkbox" id="atom-checkbox" style={{ accentColor: '#10b981' }} />
           
           <div>
             <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Atom</h4>
@@ -318,24 +302,13 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
 <div id="integration-mode-selection" className="quickstart-content" style={{display: 'none'}}>
   <div style={{ marginBottom: '48px' }}>
     <button 
+      className="quickstart-back-button"
       onClick={() => {
         document.getElementById('integration-mode-selection').style.display = 'none';
         document.getElementById('provider-selection').style.display = 'block';
         window.location.hash = '';
       }}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 16px',
-        backgroundColor: '#f3f4f6',
-        color: '#374151',
-        border: 'none',
-        borderRadius: '8px',
-        fontWeight: '500',
-        cursor: 'pointer',
-        marginBottom: '24px'
-      }}
+      style={{ marginBottom: '24px' }}
     >
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
         <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -343,10 +316,10 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       Back to Provider Selection
     </button>
     
-    <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '16px', color: '#111827' }}>
+    <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '16px' }}>
       Choose Your Integration Mode
     </h2>
-    <p style={{ fontSize: '16px', color: '#6b7280', maxWidth: '600px', margin: '0' }}>
+    <p style={{ fontSize: '16px', maxWidth: '600px', margin: '0' }}>
       Select the integration approach that best fits your technical requirements
     </p>
   </div>
@@ -357,22 +330,11 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
 <div id="h2h-quickstart" className="quickstart-content" style={{display: 'none'}}>
   <div style={{ marginBottom: '24px' }}>
     <button 
+      className="quickstart-back-button"
       onClick={() => {
         document.getElementById('h2h-quickstart').style.display = 'none';
         document.getElementById('integration-mode-selection').style.display = 'block';
         window.location.hash = 'integration-mode-selection';
-      }}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 16px',
-        backgroundColor: '#f3f4f6',
-        color: '#374151',
-        border: 'none',
-        borderRadius: '8px',
-        fontWeight: '500',
-        cursor: 'pointer'
       }}
     >
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -383,7 +345,7 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </div>
   
   <div className="selection-banner h2h-banner">
-    <svg style={{ width: '24px', height: '24px', color: '#10b981' }} fill="currentColor" viewBox="0 0 20 20">
+    <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 20 20">
       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
     </svg>
     <div>
@@ -396,72 +358,50 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </div>
   </div>
 
-  <div style={{
-    maxWidth: '1200px',
-    margin: '0 auto',
-    marginBottom: '32px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e5e7eb',
-    borderRadius: '16px',
-    padding: '24px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-  }}>
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <div className="quickstart-elevated">
+    <table className="quickstart-table">
       <thead>
         <tr>
-          <th style={{
-            width: '50%',
-            padding: '16px 24px',
-            backgroundColor: '#ecfdf5',
-            borderBottom: '2px solid #d1fae5',
-            borderRight: '1px solid #d1fae5',
-            textAlign: 'left'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#047857', marginBottom: '4px' }}>Terminal Gateway App</div>
-            <div style={{ fontSize: '14px', color: '#0f766e' }}>Managed desktop/mobile companion</div>
+          <th className="quickstart-table-heading green" style={{ width: '50%' }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>Terminal Gateway App</div>
+            <div style={{ fontSize: '14px' }}>Managed desktop/mobile companion</div>
           </th>
-          <th style={{
-            width: '50%',
-            padding: '16px 24px',
-            backgroundColor: '#f9fafb',
-            borderBottom: '2px solid #e5e7eb',
-            textAlign: 'left'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#374151', marginBottom: '4px' }}>Terminal H2H SDK</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Embed H2H logic in your app</div>
+          <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>Terminal H2H SDK</div>
+            <div style={{ fontSize: '14px' }}>Embed H2H logic in your app</div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+          <td className="quickstart-table-cell green">
             Install Gateway App and connect terminals without building custom UI.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Bring H2H flows into your native Android or iOS application.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+          <td className="quickstart-table-cell green">
             Xendit controls payment screens, receipts, and reconciliation workflows.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Your engineering team owns the UX, navigation, and error handling.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5', borderBottom: '1px solid #ecfdf5' }}>
+          <td className="quickstart-table-cell green">
             Minimal development effort—ideal for quick pilots or staffed counters.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Requires mobile engineers but unlocks tighter integration and branding control.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #ecfdf5' }}>
+          <td className="quickstart-table-cell green">
             Works on Windows/macOS desktops or companion tablets managed by store teams.
           </td>
-          <td style={{ padding: '16px 24px' }}>
+          <td className="quickstart-table-cell">
             Choose Android or iOS SDK packages for POS tablets, mobile associates, or kiosks.
           </td>
         </tr>
@@ -547,24 +487,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </Info>
 
     <div style={{ marginBottom: '24px' }}>
-      <a href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" style={{
-        display: 'block',
-        padding: '20px 24px',
-        backgroundColor: '#ffffff',
-        border: '2px solid #e5e7eb',
-        borderRadius: '12px',
-        textDecoration: 'none',
-        color: 'inherit',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-      }}>
+      <a href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" className="quickstart-link-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ fontSize: '24px' }}>💻</div>
           <div>
-            <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+            <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
               Gateway App Setup
             </div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            <div style={{ fontSize: '14px' }}>
               Complete Gateway App installation and configuration guide
             </div>
           </div>
@@ -584,24 +514,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </Info>
 
   <div style={{ marginBottom: '24px' }}>
-    <a href="/sdk/h2h/introduction" style={{
-      display: 'block',
-      padding: '20px 24px',
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all 0.2s ease',
-      cursor: 'pointer'
-    }}>
+    <a href="/sdk/h2h/introduction" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ fontSize: '24px' }}>📚</div>
         <div>
-          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
             Terminal H2H Documentation
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div style={{ fontSize: '14px' }}>
             Complete Terminal H2H SDK guide with platform-specific implementations
           </div>
         </div>
@@ -615,22 +535,11 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
 <div id="c2c-quickstart" className="quickstart-content" style={{display: 'none'}}>
   <div style={{ marginBottom: '24px' }}>
     <button 
+      className="quickstart-back-button"
       onClick={() => {
         document.getElementById('c2c-quickstart').style.display = 'none';
         document.getElementById('integration-mode-selection').style.display = 'block';
         window.location.hash = 'integration-mode-selection';
-      }}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 16px',
-        backgroundColor: '#f3f4f6',
-        color: '#374151',
-        border: 'none',
-        borderRadius: '8px',
-        fontWeight: '500',
-        cursor: 'pointer'
       }}
     >
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -641,7 +550,7 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </div>
   
   <div className="selection-banner c2c-banner">
-    <svg style={{ width: '24px', height: '24px', color: '#6b7280' }} fill="currentColor" viewBox="0 0 20 20">
+    <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 20 20">
       <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
     </svg>
     <div>
@@ -654,72 +563,50 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </div>
   </div>
 
-  <div style={{
-    maxWidth: '1200px',
-    margin: '0 auto',
-    marginBottom: '32px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e5e7eb',
-    borderRadius: '16px',
-    padding: '24px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-  }}>
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <div className="quickstart-elevated">
+    <table className="quickstart-table">
       <thead>
         <tr>
-          <th style={{
-            width: '50%',
-            padding: '16px 24px',
-            backgroundColor: '#f0f7ff',
-            borderBottom: '2px solid #bfdbfe',
-            borderRight: '1px solid #bfdbfe',
-            textAlign: 'left'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#1d4ed8', marginBottom: '4px' }}>Gateway App + REST API</div>
-            <div style={{ fontSize: '14px', color: '#1e40af' }}>Central command & control</div>
+          <th className="quickstart-table-heading blue" style={{ width: '50%' }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>Gateway App + REST API</div>
+            <div style={{ fontSize: '14px' }}>Central command & control</div>
           </th>
-          <th style={{
-            width: '50%',
-            padding: '16px 24px',
-            backgroundColor: '#f9fafb',
-            borderBottom: '2px solid #e5e7eb',
-            textAlign: 'left'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#374151', marginBottom: '4px' }}>C2C SDK</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Direct device control</div>
+          <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
+            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '4px' }}>C2C SDK</div>
+            <div style={{ fontSize: '14px' }}>Direct device control</div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+          <td className="quickstart-table-cell blue">
             Deploy Gateway App to register terminals, manage keys, and route commands securely.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Embed the SDK in Android or iOS to talk to terminals over local network from your POS.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+          <td className="quickstart-table-cell blue">
             Integrate via REST to trigger PAY, CANCEL, and settlement commands with webhook callbacks.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Call SDK methods directly to initiate transactions and receive terminal events instantly.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe', borderBottom: '1px solid #e0f2fe' }}>
+          <td className="quickstart-table-cell blue">
             Best for multi-store fleets where IT teams oversee terminals from a central console.
           </td>
-          <td style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+          <td className="quickstart-table-cell">
             Ideal for proprietary POS or kiosk software that needs offline resilience and custom UX.
           </td>
         </tr>
         <tr>
-          <td style={{ padding: '16px 24px', borderRight: '1px solid #e0f2fe' }}>
+          <td className="quickstart-table-cell blue">
             Works with web POS or thick clients that call secured backend services.
           </td>
-          <td style={{ padding: '16px 24px' }}>
+          <td className="quickstart-table-cell">
             Requires mobile engineers but unlocks granular device telemetry and fallback logic.
           </td>
         </tr>
@@ -805,24 +692,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </Info>
 
   <div style={{ marginBottom: '24px' }}>
-    <a id="c2c-gateway-app-setup" href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" style={{
-      display: 'block',
-      padding: '20px 24px',
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all 0.2s ease',
-      cursor: 'pointer'
-    }}>
+    <a id="c2c-gateway-app-setup" href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ fontSize: '24px' }}>💻</div>
         <div>
-          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
             Gateway App Setup
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div style={{ fontSize: '14px' }}>
             Install and configure the Gateway App
           </div>
         </div>
@@ -831,24 +708,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </div>
 
   <div style={{ marginBottom: '24px' }}>
-    <a href="/api-reference/c2c/introduction" style={{
-      display: 'block',
-      padding: '20px 24px',
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all 0.2s ease',
-      cursor: 'pointer'
-    }}>
+    <a href="/api-reference/c2c/introduction" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ fontSize: '24px' }}>📖</div>
         <div>
-          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
             C2C API Reference
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div style={{ fontSize: '14px' }}>
             Complete C2C API documentation and endpoints
           </div>
         </div>
@@ -906,24 +773,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </Info>
 
   <div style={{ marginBottom: '24px' }}>
-    <a href="/sdk/c2c/android-sdk" style={{
-      display: 'block',
-      padding: '20px 24px',
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all 0.2s ease',
-      cursor: 'pointer'
-    }}>
+    <a href="/sdk/c2c/android-sdk" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ fontSize: '24px' }}>🤖</div>
         <div>
-          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
             Android C2C SDK
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div style={{ fontSize: '14px' }}>
             Complete Android C2C SDK integration guide
           </div>
         </div>
@@ -932,24 +789,14 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </div>
 
   <div style={{ marginBottom: '24px' }}>
-    <a href="/sdk/c2c/ios-sdk" style={{
-      display: 'block',
-      padding: '20px 24px',
-      backgroundColor: '#ffffff',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all 0.2s ease',
-      cursor: 'pointer'
-    }}>
+    <a href="/sdk/c2c/ios-sdk" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ fontSize: '24px' }}>🍎</div>
         <div>
-          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: '#111827' }}>
+          <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
             iOS C2C SDK
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div style={{ fontSize: '14px' }}>
             Complete iOS C2C SDK integration guide
           </div>
         </div>

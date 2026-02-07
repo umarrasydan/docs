@@ -1,3 +1,192 @@
+:root {
+    --terminal-card-surface: #ffffff;
+    --terminal-card-border: #e5e7eb;
+    --terminal-card-shadow: 0 20px 45px -20px rgba(15, 23, 42, 0.2);
+    --terminal-neutral-surface: #f3f4f6;
+    --terminal-link-border: #e5e7eb;
+    --terminal-table-green-bg: #ecfdf5;
+    --terminal-table-green-border: #d1fae5;
+    --terminal-table-blue-bg: #eef6ff;
+    --terminal-table-blue-border: #c7d2fe;
+    --terminal-table-neutral-bg: #f9fafb;
+    --terminal-table-neutral-border: #e5e7eb;
+}
+
+html[data-theme='dark'],
+body[data-theme='dark'],
+[data-theme='dark'] {
+    --terminal-card-surface: rgba(15, 23, 42, 0.72);
+    --terminal-card-border: rgba(148, 163, 184, 0.4);
+    --terminal-card-shadow: 0 28px 56px -24px rgba(15, 23, 42, 0.65);
+    --terminal-neutral-surface: rgba(148, 163, 184, 0.16);
+    --terminal-link-border: rgba(148, 163, 184, 0.45);
+    --terminal-table-green-bg: rgba(16, 185, 129, 0.16);
+    --terminal-table-green-border: rgba(52, 211, 153, 0.4);
+    --terminal-table-blue-bg: rgba(59, 130, 246, 0.18);
+    --terminal-table-blue-border: rgba(96, 165, 250, 0.45);
+    --terminal-table-neutral-bg: rgba(148, 163, 184, 0.12);
+    --terminal-table-neutral-border: rgba(148, 163, 184, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --terminal-card-surface: rgba(15, 23, 42, 0.72);
+        --terminal-card-border: rgba(148, 163, 184, 0.4);
+        --terminal-card-shadow: 0 28px 56px -24px rgba(15, 23, 42, 0.65);
+        --terminal-neutral-surface: rgba(148, 163, 184, 0.16);
+        --terminal-link-border: rgba(148, 163, 184, 0.45);
+        --terminal-table-green-bg: rgba(16, 185, 129, 0.16);
+        --terminal-table-green-border: rgba(52, 211, 153, 0.4);
+        --terminal-table-blue-bg: rgba(59, 130, 246, 0.18);
+        --terminal-table-blue-border: rgba(96, 165, 250, 0.45);
+        --terminal-table-neutral-bg: rgba(148, 163, 184, 0.12);
+        --terminal-table-neutral-border: rgba(148, 163, 184, 0.35);
+    }
+}
+
+/* Quickstart surfaces */
+
+.quickstart-card {
+    --terminal-card-accent: #10b981;
+    --terminal-card-accent-shadow: rgba(16, 185, 129, 0.32);
+    position: relative;
+    background: var(--terminal-card-surface);
+    border: 2px solid var(--terminal-card-border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: var(--terminal-card-shadow);
+}
+
+.quickstart-card:hover {
+    transform: translateY(-2px);
+}
+
+.quickstart-card.selected {
+    border-color: var(--terminal-card-accent);
+    box-shadow: 0 18px 36px -18px var(--terminal-card-accent-shadow);
+}
+
+.quickstart-card input[type='checkbox'] {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+}
+
+.quickstart-elevated {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-bottom: 32px;
+    background: var(--terminal-card-surface);
+    border: 1px solid var(--terminal-card-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--terminal-card-shadow);
+}
+
+.quickstart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.quickstart-table-heading {
+    padding: 16px 24px;
+    text-align: left;
+}
+
+.quickstart-table-heading.neutral {
+    background: var(--terminal-table-neutral-bg);
+    border-bottom: 2px solid var(--terminal-table-neutral-border);
+}
+
+.quickstart-table-heading.green {
+    background: var(--terminal-table-green-bg);
+    border-bottom: 2px solid var(--terminal-table-green-border);
+    border-right: 1px solid var(--terminal-table-green-border);
+}
+
+.quickstart-table-heading.blue {
+    background: var(--terminal-table-blue-bg);
+    border-bottom: 2px solid var(--terminal-table-blue-border);
+    border-right: 1px solid var(--terminal-table-blue-border);
+}
+
+.quickstart-table-cell {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--terminal-table-neutral-border);
+}
+
+.quickstart-table-cell.green {
+    border-right: 1px solid var(--terminal-table-green-border);
+    border-bottom: 1px solid var(--terminal-table-green-border);
+}
+
+.quickstart-table-cell.blue {
+    border-right: 1px solid var(--terminal-table-blue-border);
+    border-bottom: 1px solid var(--terminal-table-blue-border);
+}
+
+.quickstart-table-cell:last-child {
+    border-right: none;
+}
+
+.quickstart-link-card {
+    display: block;
+    padding: 20px 24px;
+    background: var(--terminal-card-surface);
+    border: 2px solid var(--terminal-link-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.quickstart-link-card:hover {
+    border-color: rgba(37, 99, 235, 0.6);
+    transform: translateY(-2px);
+}
+
+.quickstart-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--terminal-neutral-surface);
+    color: inherit;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.quickstart-back-button:hover {
+    transform: translateY(-1px);
+}
+
+.selection-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--terminal-neutral-surface);
+    border: 1px solid var(--terminal-card-border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.selection-banner.h2h-banner svg {
+    color: #047857;
+}
+
+.selection-banner.c2c-banner svg {
+    color: #1d4ed8;
+}
+
 /* Quickstart wizard visibility controls */
 
 @keyframes fadeIn {
@@ -21,26 +210,4 @@
 #c2c-api-content[style*="display: block"],
 #c2c-sdk-content[style*="display: block"] {
     animation: fadeIn 0.5s ease-in;
-}
-
-.selection-banner {
-    padding: 16px 24px;
-    margin-bottom: 32px;
-    border-radius: 12px;
-    border: 2px solid;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.h2h-banner {
-    border-color: #10b981;
-    background-color: #ecfdf5;
-    color: #065f46;
-}
-
-.c2c-banner {
-    border-color: #6b7280;
-    background-color: #f9fafb;
-    color: #374151;
 }
