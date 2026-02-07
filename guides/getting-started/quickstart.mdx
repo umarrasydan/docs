@@ -186,8 +186,8 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
           const card = document.getElementById('provider-shc');
           checkbox.checked = !checkbox.checked;
           if (checkbox.checked) {
-            card.style.borderColor = '#2563eb';
-            card.style.boxShadow = '0 4px 12px 0 #2563eb40';
+            card.style.borderColor = '#059669';
+            card.style.boxShadow = '0 4px 12px 0 #05966940';
           } else {
             card.style.borderColor = '#e5e7eb';
             card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
@@ -205,11 +205,12 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
             right: '16px',
             width: '20px',
             height: '20px',
-            accentColor: '#2563eb'
+            accentColor: '#059669'
           }} />
           
           <div>
             <h4 style={{ margin: '0', fontSize: '18px', fontWeight: '600' }}>Share Commence</h4>
+            <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#6b7280' }}>TerminalSHC (Malaysia)</p>
           </div>
         </div>
       </div>
@@ -474,9 +475,10 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
           const briSelected = document.getElementById('bri-checkbox')?.checked || false;
           const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
           const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+          const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
           const gatewayInfo = document.getElementById('gateway-app-info');
 
-          if (cashupSelected && !briSelected && !nttSelected) {
+          if ((cashupSelected || shcSelected) && !briSelected && !nttSelected) {
             if (gatewayInfo) gatewayInfo.style.display = 'none';
           } else {
             if (gatewayInfo) gatewayInfo.style.display = '';
@@ -731,10 +733,11 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
           const briSelected = document.getElementById('bri-checkbox')?.checked || false;
           const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
           const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+          const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
           const gatewaySetup = document.getElementById('c2c-gateway-app-setup');
 
           if (gatewaySetup) {
-            gatewaySetup.style.display = (cashupSelected && !briSelected && !nttSelected) ? 'none' : 'block';
+            gatewaySetup.style.display = ((cashupSelected || shcSelected) && !briSelected && !nttSelected) ? 'none' : 'block';
           }
 
           document.getElementById('c2c-quickstart').style.display = 'none';

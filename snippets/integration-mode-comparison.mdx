@@ -94,11 +94,12 @@
         const briSelected = document.getElementById('bri-checkbox')?.checked || false;
         const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
         const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
 
         if (integrationMode) integrationMode.style.display = 'none';
         if (c2c) c2c.style.display = 'none';
 
-        if (cashupSelected && !briSelected && !nttSelected) {
+        if ((cashupSelected||shcSelected) && !briSelected && !nttSelected) {
           if (gatewayInfo) gatewayInfo.style.display = 'none';
           if (h2hApp) h2hApp.style.display = 'block';
           if (h2h) h2h.style.display = 'none';
@@ -143,11 +144,12 @@
         const briSelected = document.getElementById('bri-checkbox')?.checked || false;
         const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
         const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
+        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
 
         if (integrationMode) integrationMode.style.display = 'none';
         if (h2h) h2h.style.display = 'none';
 
-        if (cashupSelected && !briSelected && !nttSelected) {
+        if ((cashupSelected||shcSelected) && !briSelected && !nttSelected) {
           if (gatewaySetupList) gatewaySetupList.style.display = 'none';
         } else {
           if (gatewaySetupList) gatewaySetupList.style.display = 'block';
