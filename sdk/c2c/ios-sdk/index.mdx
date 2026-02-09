@@ -46,11 +46,11 @@ import IOSInstallation from '/snippets/ios-installation.mdx';
 **Optional provider frameworks** - Contact Xendit support for access to:
 
 **Terminal Device Methods:**
-- BRI framework: Enables `TerminalDevice.bri()` method for BRI terminals
-- NTT framework: Enables `TerminalDevice.ntt()` method for NTT terminals  
-- Cashup framework: Enables `TerminalDevice.cashup()` method for Cashup provider
-- SHC framework: Enables `TerminalDevice.shc()` method for SHC provider
-- Not required if using the generic `TerminalDevice.create()` method
+- BRI framework: Enables `TerminalDevice.companion.bri()` method for BRI terminals
+- NTT framework: Enables `TerminalDevice.companion.ntt()` method for NTT terminals  
+- Cashup framework: Enables `TerminalDevice.companion.cashup()` method for Cashup provider
+- SHC framework: Enables `TerminalDevice.companion.shc()` method for SHC provider
+- Not required if using the generic `TerminalDevice.companion.create()` method
 </Note>
 
 ## Getting Started
@@ -145,7 +145,7 @@ Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
 </Tabs>
 
 <Note>
-Provider frameworks are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific frameworks. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
+Provider frameworks are optional. You can use the generic `TerminalDevice.companion.create()` method without adding provider-specific frameworks. Provider frameworks enable access to specialized helper methods like `TerminalDevice.companion.bri()`, `TerminalDevice.companion.ntt()`, and `TerminalDevice.companion.cashup()`.
 </Note>
 
 ### Step 3: Configure Terminal Device
@@ -160,7 +160,7 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
     import TerminalCore
     
     // Configure the default terminal device
-    let terminalDevice = TerminalDevice.create(
+    let terminalDevice = TerminalDevice.companion.create(
       id: "TERMINAL_ID",
       ipAddress: "192.168.1.100",
       provider: "BRI" // or "CASHUP", "NTT"
@@ -176,27 +176,28 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
     ```swift
     import TerminalC2C
     import TerminalCore
+    import TerminalBRI // Import provider modules needed for helper methods
     
     // For BRI terminals
-    let briDevice = TerminalDevice.bri(
+    let briDevice = TerminalDevice.companion.bri(
       id: "TERMINAL_ID",
       ipAddress: "192.168.1.100"
     )
     
     // For Cashup terminals
-    let cashupDevice = TerminalDevice.cashup(
+    let cashupDevice = TerminalDevice.companion.cashup(
       id: "TERMINAL_ID",
       ipAddress: "192.168.1.101"
     )
     
     // For NTT terminals
-    let nttDevice = TerminalDevice.ntt(
+    let nttDevice = TerminalDevice.companion.ntt(
       id: "TERMINAL_ID",
       ipAddress: "192.168.1.102"
     )
     
     // For SHC terminals
-    let shcDevice = TerminalDevice.shc(
+    let shcDevice = TerminalDevice.companion.shc(
       id: "TERMINAL_ID",
       ipAddress: "192.168.1.103"
     )
@@ -205,7 +206,7 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
     ```
     
     <Note>
-    Provider-specific methods are available in the iOS SDK without requiring additional dependencies. You can use `TerminalDevice.bri()`, `TerminalDevice.cashup()`, `TerminalDevice.shc()`, or `TerminalDevice.ntt()` directly.
+    Provider-specific methods are available in the iOS SDK without requiring additional dependencies. You can use `TerminalDevice.companion.bri()`, `TerminalDevice.companion.cashup()`, `TerminalDevice.companion.shc()`, or `TerminalDevice.companion.ntt()` directly.
     </Note>
   </Tab>
   
@@ -215,21 +216,22 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
     ```swift
     import TerminalC2C
     import TerminalCore
+    import TerminalBRI
     
     // Configure multiple terminal devices
-    let cashierTerminal = TerminalDevice.create(
+    let cashierTerminal = TerminalDevice.companion.create(
       id: "TID001",
       ipAddress: "192.168.1.100",
       provider: "BRI"
     )
     
-    let driveThruTerminal = TerminalDevice.create(
+    let driveThruTerminal = TerminalDevice.companion.create(
       id: "TID002",
       ipAddress: "192.168.1.101",
       provider: "BRI"
     )
     
-    let selfServiceTerminal = TerminalDevice.ntt(
+    let selfServiceTerminal = TerminalDevice.companion.ntt(
       id: "TID003",
       ipAddress: "192.168.1.102"
     )
@@ -238,7 +240,7 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.create
     let payment = Payment(
       orderID: "ORDER_123",
       amount: 10000.0,
-      paymentMethod: PaymentMethod.fromValue("card")
+      paymentMethod: BRIPaymentMethod.contactless
     )
     
     // Specify terminal device per request
@@ -342,7 +344,7 @@ SHC terminals focus on core card acceptance and DuitNow QR support for Malaysia 
 </Tabs>
 
 <Warning>
-Payment methods are specified as string values in the iOS SDK. Each provider supports different payment methods based on their terminal capabilities and regional requirements.
+Use provider-specific payment method enums (for example `BRIPaymentMethod.contactless`) to avoid string mismatches. Each enum case maps to the underlying string identifier expected by the terminal.
 </Warning>
 
 ## API Usage
@@ -354,12 +356,13 @@ Process a payment transaction using async/await:
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 // Create payment data
 let payment = Payment(
   orderID: "ORDER_123",
   amount: 10000.0,
-  paymentMethod: PaymentMethod.fromValue("card") // or "ewallet", "qr"
+  paymentMethod: BRIPaymentMethod.contactless
 )
 
 // Execute payment
@@ -410,10 +413,11 @@ Cancel an ongoing payment transaction:
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 // Create cancel data
 let cancel = Cancel(
-  paymentMethod: PaymentMethod.fromValue("card"), // Optional
+  paymentMethod: BRIPaymentMethod.contactless, // Optional
   terminalReference: "123456" // Reference from previous transaction
 )
 
@@ -438,10 +442,11 @@ Trigger receipt printing on the terminal:
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 // Create receipt data
 let receipt = Receipt(
-  paymentMethod: PaymentMethod.fromValue("card"), // Optional
+  paymentMethod: BRIPaymentMethod.contactless, // Optional
   terminalReference: "123456" // Reference from previous transaction
 )
 
@@ -462,10 +467,11 @@ Initiate a settlement (batch close) process:
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 // Create settlement data
 let settlement = Settlement(
-  paymentMethod: PaymentMethod.fromValue("card") // Optional: nil for all payment methods
+  paymentMethod: BRIPaymentMethod.contactless // Optional: pass nil for all payment methods
 )
 
 Task {
@@ -517,11 +523,12 @@ For compatibility with older code or specific use cases, callback-based methods 
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 let payment = Payment(
   orderID: "ORDER_123",
   amount: 10000.0,
-  paymentMethod: PaymentMethod.fromValue("card")
+  paymentMethod: BRIPaymentMethod.contactless
 )
 
 TerminalC2C.shared.createPaymentAsync(payment) { result in
@@ -543,9 +550,10 @@ TerminalC2C.shared.createPaymentAsync(payment) { result in
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 let cancel = Cancel(
-  paymentMethod: PaymentMethod.fromValue("card"),
+  paymentMethod: BRIPaymentMethod.contactless,
   terminalReference: "123456"
 )
 
@@ -564,9 +572,10 @@ TerminalC2C.shared.cancelPaymentAsync(cancel) { result in
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 let receipt = Receipt(
-  paymentMethod: PaymentMethod.fromValue("card"),
+  paymentMethod: BRIPaymentMethod.contactless,
   terminalReference: "123456"
 )
 
@@ -585,9 +594,10 @@ TerminalC2C.shared.printReceiptAsync(receipt) { result in
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 let settlement = Settlement(
-  paymentMethod: PaymentMethod.fromValue("card")
+  paymentMethod: BRIPaymentMethod.contactless
 )
 
 TerminalC2C.shared.performSettlementAsync(settlement) { result in
@@ -635,11 +645,12 @@ The SDK throws `TerminalException` for terminal-specific errors:
 ```swift
 import TerminalC2C
 import TerminalCore
+import TerminalBRI
 
 let payment = Payment(
   orderID: "ORDER_123",
   amount: 10000.0,
-  paymentMethod: PaymentMethod.fromValue("card")
+  paymentMethod: BRIPaymentMethod.contactless
 )
 
 do {
@@ -690,22 +701,22 @@ struct ApiError {
   
   ```swift
   // Check terminal device IP (using generic method)
-  let device = TerminalDevice.create(
+  let device = TerminalDevice.companion.create(
     id: "TERMINAL_ID",
     ipAddress: "192.168.1.100", // Verify this IP
     provider: "BRI" // or "CASHUP", "NTT"
   )
   
   // Or using provider-specific method
-  // let device = TerminalDevice.bri(
+  // let device = TerminalDevice.companion.bri(
   //   id: "TERMINAL_ID",
   //   ipAddress: "192.168.1.100"
   // )
-  // let device = TerminalDevice.cashup(
+  // let device = TerminalDevice.companion.cashup(
   //   id: "TERMINAL_ID",
   //   ipAddress: "192.168.1.100"
   // )
-  // let device = TerminalDevice.ntt(
+  // let device = TerminalDevice.companion.ntt(
   //   id: "TERMINAL_ID",
   //   ipAddress: "192.168.1.100"
   // )
@@ -727,7 +738,7 @@ struct ApiError {
   let payment = Payment(
     orderID: "ORDER_123",
     amount: 10000.0,
-    paymentMethod: PaymentMethod.fromValue("card")
+    paymentMethod: BRIPaymentMethod.contactless
   )
   
   Task {
@@ -782,11 +793,12 @@ struct ApiError {
   ```swift
   import TerminalC2C
   import TerminalCore
+  import TerminalBRI
   
   let payment = Payment(
     orderID: "ORDER_123",
     amount: 10000.0,
-    paymentMethod: PaymentMethod.fromValue("card")
+    paymentMethod: BRIPaymentMethod.contactless
   )
   
   // For iOS 15+
@@ -813,7 +825,7 @@ func processPaymentSafely(orderID: String, amount: Double) async throws -> Termi
   let payment = Payment(
     orderID: orderID,
     amount: amount,
-    paymentMethod: PaymentMethod.fromValue("card")
+    paymentMethod: BRIPaymentMethod.contactless
   )
     
   do {
@@ -846,7 +858,7 @@ class PaymentViewController: UIViewController {
     let payment = Payment(
       orderID: "ORDER_123",
       amount: 10000.0,
-      paymentMethod: PaymentMethod.fromValue("card")
+      paymentMethod: BRIPaymentMethod.contactless
     )
     
     paymentTask = Task {
@@ -881,12 +893,12 @@ class TerminalManager {
   
   func registerDevice(id: String, ip: String, provider: String) {
     // Using generic create method
-    devices[id] = TerminalDevice.create(id: id, ipAddress: ip, provider: provider)
+    devices[id] = TerminalDevice.companion.create(id: id, ipAddress: ip, provider: provider)
     
     // Or using provider-specific method
-    // devices[id] = TerminalDevice.bri(id: id, ipAddress: ip)
-    // devices[id] = TerminalDevice.cashup(id: id, ipAddress: ip)
-    // devices[id] = TerminalDevice.ntt(id: id, ipAddress: ip)
+    // devices[id] = TerminalDevice.companion.bri(id: id, ipAddress: ip)
+    // devices[id] = TerminalDevice.companion.cashup(id: id, ipAddress: ip)
+    // devices[id] = TerminalDevice.companion.ntt(id: id, ipAddress: ip)
   }
   
   func processPaymentOnDevice(deviceId: String, orderID: String, amount: Double) async throws -> TerminalResult {
@@ -897,7 +909,7 @@ class TerminalManager {
     let payment = Payment(
       orderID: orderID,
       amount: amount,
-      paymentMethod: PaymentMethod.fromValue("card")
+      paymentMethod: BRIPaymentMethod.contactless
     )
     
     // Set device and make payment

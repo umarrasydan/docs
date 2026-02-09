@@ -112,7 +112,7 @@ TerminalC2C.setTerminalDevice(terminalDevice)
   <Tab title="iOS (Swift)">
     <div id="c2c-ios-device-snippet">
 ```swift
-let terminalDevice = TerminalDevice.create(
+let terminalDevice = TerminalDevice.companion.create(
   id: "TID001",
   ipAddress: "192.168.1.100",
   provider: "BRI"
@@ -162,12 +162,13 @@ TerminalC2C.shared.setTerminalDevice(terminalDevice)
     ```swift
     import TerminalC2C
     import TerminalCore
+    import TerminalBRI
 
     // Create payment data
     let payment = Payment(
       orderID: "ORDER_123",
       amount: 10000.0,
-      paymentMethod: PaymentMethod.fromValue("card") // or "ewallet", "qr"
+      paymentMethod: BRIPaymentMethod.contactless
     )
 
     // Execute payment

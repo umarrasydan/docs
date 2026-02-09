@@ -456,7 +456,7 @@ TerminalC2C.shared.initialize(
 )
 
 // Configure BRI terminal device
-let briDevice = TerminalDevice.bri(
+let briDevice = TerminalDevice.companion.bri(
     id: "BRI_TERMINAL_001",
     ipAddress: "192.168.1.100"
 )
@@ -491,7 +491,7 @@ TerminalC2C.shared.initialize(
 )
 
 // Configure NTT terminal device
-let nttDevice = TerminalDevice.ntt(
+let nttDevice = TerminalDevice.companion.ntt(
     id: "NTT_TERMINAL_001",
     ipAddress: "192.168.1.100"
 )
@@ -526,7 +526,7 @@ TerminalC2C.shared.initialize(
 )
 
 // Configure Cashup terminal device
-let cashupDevice = TerminalDevice.cashup(
+let cashupDevice = TerminalDevice.companion.cashup(
     id: "CASHUP_TERMINAL_001",
     ipAddress: "192.168.1.100"
 )

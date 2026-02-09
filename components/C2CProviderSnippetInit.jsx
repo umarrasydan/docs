@@ -186,7 +186,7 @@ ${deviceLines.android}
 
 TerminalC2C.setTerminalDevice(terminalDevice)`;
 
-            iosDeviceCode.textContent = `let terminalDevice = TerminalDevice.create(
+            iosDeviceCode.textContent = `let terminalDevice = TerminalDevice.companion.create(
   id: "TID001",
   ipAddress: "192.168.1.100",
 ${deviceLines.ios}
