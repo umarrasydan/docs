@@ -10,6 +10,12 @@
     --terminal-table-blue-border: #c7d2fe;
     --terminal-table-neutral-bg: #f9fafb;
     --terminal-table-neutral-border: #e5e7eb;
+    --terminal-primary: #1662EE;
+    --terminal-primary-light: #e0edff;
+    --terminal-primary-border: #bdd4fc;
+    --terminal-primary-shadow: rgba(22, 98, 238, 0.25);
+    --terminal-text-secondary: #6b7280;
+    --terminal-text-primary: #111827;
 }
 
 html[data-theme='dark'],
@@ -26,6 +32,11 @@ body[data-theme='dark'],
     --terminal-table-blue-border: rgba(96, 165, 250, 0.45);
     --terminal-table-neutral-bg: rgba(148, 163, 184, 0.12);
     --terminal-table-neutral-border: rgba(148, 163, 184, 0.35);
+    --terminal-primary-light: rgba(22, 98, 238, 0.15);
+    --terminal-primary-border: rgba(22, 98, 238, 0.45);
+    --terminal-primary-shadow: rgba(22, 98, 238, 0.3);
+    --terminal-text-secondary: #94a3b8;
+    --terminal-text-primary: #f1f5f9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -41,41 +52,282 @@ body[data-theme='dark'],
         --terminal-table-blue-border: rgba(96, 165, 250, 0.45);
         --terminal-table-neutral-bg: rgba(148, 163, 184, 0.12);
         --terminal-table-neutral-border: rgba(148, 163, 184, 0.35);
+        --terminal-primary-light: rgba(22, 98, 238, 0.15);
+        --terminal-primary-border: rgba(22, 98, 238, 0.45);
+        --terminal-primary-shadow: rgba(22, 98, 238, 0.3);
+        --terminal-text-secondary: #94a3b8;
+        --terminal-text-primary: #f1f5f9;
     }
 }
 
-/* Quickstart surfaces */
+/* ──────────────────────────────────────────────
+   Wizard: Provider selection cards
+   ────────────────────────────────────────────── */
+
+.provider-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.provider-card .provider-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--terminal-neutral-surface);
+    font-size: 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: background 0.2s ease;
+}
+
+.provider-card .provider-icon img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.provider-card.selected .provider-icon {
+    background: var(--terminal-primary-light);
+}
+
+.provider-card .provider-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.provider-card .provider-name {
+    margin: 0;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--terminal-text-primary);
+}
+
+.provider-card .provider-desc {
+    margin: 2px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--terminal-text-secondary);
+}
 
 .quickstart-card {
-    --terminal-card-accent: #10b981;
-    --terminal-card-accent-shadow: rgba(16, 185, 129, 0.32);
+    --terminal-card-accent: var(--terminal-primary);
+    --terminal-card-accent-shadow: var(--terminal-primary-shadow);
     position: relative;
     background: var(--terminal-card-surface);
-    border: 2px solid var(--terminal-card-border);
-    border-radius: 16px;
-    padding: 24px;
+    border: 1.5px solid var(--terminal-card-border);
+    border-radius: 12px;
+    padding: 16px 20px;
     text-align: left;
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-    box-shadow: var(--terminal-card-shadow);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background 0.2s ease;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
 }
 
 .quickstart-card:hover {
-    transform: translateY(-2px);
+    border-color: var(--terminal-primary-border);
+    box-shadow: 0 4px 12px -4px var(--terminal-primary-shadow);
+    transform: translateY(-1px);
 }
 
 .quickstart-card.selected {
-    border-color: var(--terminal-card-accent);
-    box-shadow: 0 18px 36px -18px var(--terminal-card-accent-shadow);
+    border-color: var(--terminal-primary);
+    background: var(--terminal-primary-light);
+    box-shadow: 0 4px 16px -4px var(--terminal-primary-shadow);
 }
 
 .quickstart-card input[type='checkbox'] {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 20px;
-    height: 20px;
+    top: 14px;
+    right: 14px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--terminal-primary);
+    cursor: pointer;
 }
+
+/* ──────────────────────────────────────────────
+   Wizard: Country section headers
+   ────────────────────────────────────────────── */
+
+.country-section {
+    margin-bottom: 28px;
+}
+
+.country-section:last-child {
+    margin-bottom: 0;
+}
+
+.country-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--terminal-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.country-header .country-flag {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* ──────────────────────────────────────────────
+   Wizard: Continue / action buttons
+   ────────────────────────────────────────────── */
+
+.wizard-button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--terminal-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 2px 8px -2px var(--terminal-primary-shadow);
+}
+
+.wizard-button-primary:hover {
+    background: #1255d4;
+    box-shadow: 0 4px 16px -4px var(--terminal-primary-shadow);
+    transform: translateY(-1px);
+}
+
+.wizard-button-primary:active {
+    transform: translateY(0);
+}
+
+.wizard-button-primary.green {
+    background: #047857;
+    box-shadow: 0 2px 8px -2px rgba(4, 120, 87, 0.35);
+}
+
+.wizard-button-primary.green:hover {
+    background: #065f46;
+    box-shadow: 0 4px 16px -4px rgba(4, 120, 87, 0.35);
+}
+
+.wizard-button-primary.blue {
+    background: #1d4ed8;
+    box-shadow: 0 2px 8px -2px rgba(29, 78, 216, 0.35);
+}
+
+.wizard-button-primary.blue:hover {
+    background: #1e40af;
+    box-shadow: 0 4px 16px -4px rgba(29, 78, 216, 0.35);
+}
+
+.wizard-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--terminal-neutral-surface);
+    color: var(--terminal-text-primary);
+    border: 1.5px solid var(--terminal-card-border);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.wizard-button-secondary:hover {
+    border-color: var(--terminal-primary-border);
+    background: var(--terminal-primary-light);
+    transform: translateY(-1px);
+}
+
+.wizard-button-secondary:active {
+    transform: translateY(0);
+}
+
+/* ──────────────────────────────────────────────
+   Wizard: Step progress indicator
+   ────────────────────────────────────────────── */
+
+.wizard-step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 32px;
+    padding: 0;
+    list-style: none;
+}
+
+.wizard-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--terminal-text-secondary);
+}
+
+.wizard-step.active {
+    color: var(--terminal-primary);
+    font-weight: 600;
+}
+
+.wizard-step.completed {
+    color: var(--terminal-primary);
+}
+
+.wizard-step-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--terminal-neutral-surface);
+    border: 1.5px solid var(--terminal-card-border);
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.wizard-step.active .wizard-step-dot {
+    background: var(--terminal-primary);
+    border-color: var(--terminal-primary);
+    color: #ffffff;
+}
+
+.wizard-step.completed .wizard-step-dot {
+    background: var(--terminal-primary);
+    border-color: var(--terminal-primary);
+    color: #ffffff;
+}
+
+.wizard-step-divider {
+    flex: 0 0 32px;
+    height: 1.5px;
+    margin: 0 8px;
+    background: var(--terminal-card-border);
+    border-radius: 1px;
+}
+
+.wizard-step.completed + .wizard-step-divider {
+    background: var(--terminal-primary);
+}
+
+/* ──────────────────────────────────────────────
+   Quickstart surfaces (tables, elevated, etc.)
+   ────────────────────────────────────────────── */
 
 .quickstart-elevated {
     max-width: 1200px;
@@ -136,18 +388,19 @@ body[data-theme='dark'],
 
 .quickstart-link-card {
     display: block;
-    padding: 20px 24px;
+    padding: 16px 20px;
     background: var(--terminal-card-surface);
-    border: 2px solid var(--terminal-link-border);
-    border-radius: 12px;
+    border: 1.5px solid var(--terminal-link-border);
+    border-radius: 10px;
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .quickstart-link-card:hover {
-    border-color: rgba(37, 99, 235, 0.6);
-    transform: translateY(-2px);
+    border-color: var(--terminal-primary-border);
+    box-shadow: 0 4px 12px -4px var(--terminal-primary-shadow);
+    transform: translateY(-1px);
 }
 
 .quickstart-back-button {
@@ -157,14 +410,16 @@ body[data-theme='dark'],
     padding: 8px 16px;
     background: var(--terminal-neutral-surface);
     color: inherit;
-    border: none;
+    border: 1px solid var(--terminal-card-border);
     border-radius: 8px;
     font-weight: 500;
+    font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
 .quickstart-back-button:hover {
+    border-color: var(--terminal-primary-border);
     transform: translateY(-1px);
 }
 
@@ -187,12 +442,14 @@ body[data-theme='dark'],
     color: #1d4ed8;
 }
 
-/* Quickstart wizard visibility controls */
+/* ──────────────────────────────────────────────
+   Wizard visibility controls
+   ────────────────────────────────────────────── */
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(12px);
     }
 
     to {
@@ -209,5 +466,15 @@ body[data-theme='dark'],
 #h2h-sdk-content[style*="display: block"],
 #c2c-api-content[style*="display: block"],
 #c2c-sdk-content[style*="display: block"] {
-    animation: fadeIn 0.5s ease-in;
+    animation: fadeIn 0.35s ease-out;
+}
+
+/* ──────────────────────────────────────────────
+   Provider grid responsive
+   ────────────────────────────────────────────── */
+
+.provider-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
 }

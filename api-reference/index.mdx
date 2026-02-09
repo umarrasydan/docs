@@ -27,8 +27,8 @@ Terminal API (H2H) is the recommended starting point for most merchants because 
     <p>Client-to-Client (C2C) gives you direct control over commands sent to each terminal, letting you design bespoke experiences at the cost of greater operational ownership.</p>
     <ul>
       <li>Ideal for specialized hardware setups, kiosks, or offline-first workflows.</li>
-      <li>Requires the Terminal Gateway App; BRI and NTT providers are not available without it.</li>
-      <li>Exposes RESTful endpoints only—no SDKs for this API track.</li>
+      <li>BRI and NTT providers require the Gateway App or C2C SDK as a pre-install. Other providers can use the C2C API directly.</li>
+      <li>Use the Terminal C2C API directly, or optionally use the <a href="/sdk/c2c/introduction">Terminal C2C SDK</a> as a convenience wrapper.</li>
       <li>Requires custom handling of device states, receipt delivery, and failure recovery.</li>
       <li>Supports multi-country payment acceptance with minimal additional coding.</li>
     </ul>
@@ -44,6 +44,8 @@ Terminal API (H2H) is the recommended starting point for most merchants because 
 | --- | --- | --- |
 | Device management | Gateway App or H2H SDK handles pairing for you | Your app or service maintains device connections |
 | Session orchestration | Managed by Xendit with standardized callbacks | Fully custom—implement your own workflows |
+| SDK availability | H2H SDK (Android/iOS) for device connectivity | C2C SDK (Android/iOS) available as optional wrapper |
+| BRI/NTT requirement | Gateway App or H2H SDK required | Gateway App or C2C SDK required |
 | Time-to-market | Fast—fewer edge cases and pre-built flows | Longer—requires bespoke command handling |
 | Recommended for | Assisted checkout, staff POS, rapid pilots | Kiosks, unattended terminals, advanced custom flows |
 

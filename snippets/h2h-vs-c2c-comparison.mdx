@@ -4,28 +4,28 @@ Compare Host-to-Host (H2H) and Client-to-Client (C2C) modes to select the best a
 
 | Feature | **Host-to-Host (H2H)** ✅ **RECOMMENDED** | Client-to-Client (C2C) |
 |---------|-------------------------------------------|-------------------------|
-| **Deployment Model** | Centralized fleet management through Gateway app | Direct terminal-to-app communication |
+| **Deployment Model** | Centralized fleet management through Gateway App | Direct terminal-to-app communication over local network |
 | **Device Management** | Managed by Xendit Terminal Gateway | Self-managed by your application |
-| **Integration Complexity** | Simple REST API calls only | REST API + SDK integration required |
+| **API Model** | Managed payment sessions with callbacks | Direct device commands (pay, cancel, receipt, settlement) |
+| **SDK** | H2H SDK (Android/iOS) for device connectivity | C2C SDK (Android/iOS) available as optional convenience wrapper |
 | **Network Requirements** | Internet connectivity required | Local network or internet connectivity |
 | **Offline Support** | Limited (requires connection to Gateway) | Better offline capabilities |
-| **Security** | Managed by Xendit infrastructure | Your responsibility |
-| **Maintenance** | Minimal - handled by Gateway | Your responsibility |
+| **BRI/NTT Terminals** | Require Gateway App or H2H SDK | Require Gateway App or C2C SDK |
 | **Customization** | Standard workflows | Full control over payment flows |
-| **Time to Market** | Faster - standard implementation | Longer - custom development required |
-| **Best For** | Standard payment acceptance, quick deployment | Custom POS systems, specialized workflows |
+| **Time to Market** | Faster — standard implementation | Longer — custom development required |
+| **Best For** | Standard payment acceptance, quick deployment | Custom POS systems, kiosks, specialized workflows |
 
 <CardGroup cols={2}>
   <Card title="Choose H2H (Recommended)" icon="check" color="green" href="#prerequisites">
     **Fastest integration path**
-    
-    Simple REST API calls, minimal maintenance, and managed by Xendit infrastructure. Perfect for most use cases.
+
+    Managed payment sessions, standardized callbacks, and Xendit-handled device orchestration. Perfect for most use cases.
   </Card>
-  
+
   <Card title="Choose C2C" icon="gear" color="gray" href="/api-reference/c2c/introduction">
     **Custom integration**
-    
-    Full control over payment flows with direct terminal communication. Best for specialized workflows.
+
+    Full control over payment flows with direct terminal commands. C2C SDK is optional — you can call the API directly. Best for specialized workflows.
   </Card>
 </CardGroup>
 

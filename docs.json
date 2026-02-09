@@ -16,7 +16,8 @@
           {
             "group": "Getting started",
             "pages": [
-              "index"
+              "index",
+              "guides/getting-started/standalone-terminal"
             ]
           },
           {

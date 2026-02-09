@@ -5,10 +5,14 @@ description: "Integrate payment processing with physical terminals using the Ter
 
 # Terminal C2C SDK for iOS (Swift)
 
-The Terminal C2C SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals through the local gateway service using the `TerminalC2C` singleton object that handles HTTP communication with Terminal H2H.
+<Info>
+**The Terminal C2C SDK is a convenience wrapper** around the [Terminal C2C API](/api-reference/c2c/introduction). For providers other than BRI and NTT, you can call the Terminal C2C API directly without the SDK. BRI and NTT terminals require either the [Gateway App](/sdk/gateway/app-configuration) or the C2C SDK as a pre-install.
+</Info>
+
+The Terminal C2C SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals through the local Gateway service using the `TerminalC2C` singleton object that handles HTTP communication with the Terminal Gateway.
 
 <Info>
-This SDK uses a singleton pattern with the `TerminalC2C` object to communicate with the Terminal H2H service via HTTP requests. The SDK provides both async/await and callback-based APIs for payment processing.
+This SDK uses a singleton pattern with the `TerminalC2C` object to communicate with the Terminal Gateway service via HTTP requests. The SDK provides both async/await and callback-based APIs for payment processing.
 </Info>
 
 ## Version information
@@ -33,6 +37,7 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 Download the Terminal C2C iOS SDK:
 
 <CardGroup cols={1}>
+{/* TODO: Replace # with actual S3 download URL */}
 <Card title="iOS SDK (Latest Version)" icon="apple" href="#">
   Download the complete iOS SDK package including TerminalC2C.xcframework and documentation
 </Card>
@@ -648,7 +653,7 @@ do {
   let apiError = error.error
   switch apiError.code {
   case "FAILED_TO_CONNECT":
-    print("Cannot connect to Terminal H2H")
+    print("Cannot connect to Terminal Gateway")
   case "AUTHENTICATION_FAILED":
     print("Authentication failed")
   case "TERMINAL_BUSY":
@@ -679,11 +684,11 @@ struct ApiError {
 ### Common Issues and Solutions
 
 <AccordionGroup>
-<Accordion title="Cannot Connect to Terminal H2H">
-  **Problem**: SDK cannot reach the Terminal H2H service.
+<Accordion title="Cannot Connect to Terminal Gateway">
+  **Problem**: SDK cannot reach the Terminal Gateway service.
   
   **Solution**:
-  1. Verify Terminal H2H service is running locally
+  1. Verify Terminal Gateway service is running locally
   2. Check the port configuration (default: 8189)
   3. Ensure the terminal device IP address is correct
   4. Verify network connectivity between your app and gateway
