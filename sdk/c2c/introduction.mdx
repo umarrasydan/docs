@@ -5,6 +5,10 @@ description: "Integrate Xendit's Terminal C2C SDK for seamless in-person payment
 
 # Terminal C2C
 
+<Info>
+**The Terminal C2C SDK is a convenience wrapper** around the [Terminal C2C API](/api-reference/c2c/introduction). For providers other than BRI and NTT, you can call the Terminal C2C API directly without the SDK. BRI and NTT terminals require either the [Gateway App](/sdk/gateway/app-configuration) or the C2C SDK as a pre-install.
+</Info>
+
 Xendit's Terminal C2C SDK enables you to integrate secure payment processing directly into your applications. Connect to physical payment terminals and process transactions seamlessly across multiple platforms with our comprehensive Kotlin Multiplatform (KMP) compatible SDK.
 
 ## What you can do with Terminal C2C
@@ -18,7 +22,7 @@ Terminal C2C provides everything you need to build in-person payment experiences
 - **Connect to local gateway** for secure communication with payment terminals
 
 <Info>
-Terminal C2C works alongside the Terminal H2H to provide a complete in-person payment solution. You'll use Terminal C2C to interact with the local gateway service that communicates with physical payment devices.
+Terminal C2C works alongside the Terminal Gateway service (the local application that communicates with physical payment devices) to provide a complete in-person payment solution. The C2C SDK sends commands to the Gateway service running on your local network.
 </Info>
 
 ## Choose your platform
@@ -65,7 +69,7 @@ Before you begin, ensure you have:
 
 - A Xendit account with Terminal C2C access
 - A valid client key for your environment
-- Terminal H2H service running locally (default port 8189)
+- Terminal Gateway service running locally (default port 8189)
 - Physical payment terminal device information (Terminal ID and IP address) for supported providers (BRI, NTT, Cashup, SHC)
 - Development environment set up for your chosen platform
 

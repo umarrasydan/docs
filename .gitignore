@@ -1,1 +1,7 @@
 .github/copilot-instructions.md
+
+# Playwright CLI artifacts
+.playwright-cli/
+
+# Screenshots (temporary inspection files)
+screenshots/

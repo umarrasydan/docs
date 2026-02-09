@@ -1,0 +1,56 @@
+---
+title: 'Device-Only Setup'
+description: 'Accept in-person payments by entering amounts directly on the terminal device — no POS integration required'
+---
+
+## Overview
+
+For merchants who don't need POS integration, Xendit terminals can accept payments directly — just enter the amount on the device. This is ideal for simple retail setups, pop-up shops, or businesses that don't require automated transaction workflows.
+
+No API or SDK integration is needed. Transactions are recorded and can be viewed in your **Xendit Dashboard** for reconciliation.
+
+## How It Works
+
+```mermaid
+sequenceDiagram
+    participant Merchant as Merchant Staff
+    participant Terminal as Payment Terminal EDC
+    participant Customer as Customer
+    participant Xendit as Xendit Platform
+    participant Bank as Card Network/Bank
+
+    Merchant->>Terminal: 1. Manually enter payment amount
+    Terminal->>Customer: 2. Display payment prompt<br/>(amount to pay)
+
+    Customer->>Terminal: 3. Make payment on device
+    Terminal->>Bank: 4. Process payment
+    Bank-->>Terminal: Payment authorized
+
+    Terminal->>Merchant: 5. Display success
+    Terminal->>Customer: Print/display receipt
+
+    alt Real-time notification (some markets)
+        Bank->>Xendit: 6a. Immediate transaction notification
+        Note over Bank,Xendit: Transaction visible in<br/>Dashboard immediately
+    else Batch settlement (T+1 or later)
+        Note over Bank,Xendit: 6b. Transaction sent in batch<br/>(next business day or later)
+        Bank->>Xendit: Batch file with transactions
+        Note over Bank,Xendit: Transactions appear in Dashboard<br/>after batch processing
+    end
+
+    Note over Merchant,Xendit: Merchant can view and reconcile<br/>transactions in Xendit Dashboard
+```
+
+<Info>
+**Transaction visibility varies by market**: Some markets support real-time transaction notifications to Xendit, making transactions visible in your Dashboard immediately. Other markets use batch settlement files sent T+1 or later, meaning transactions appear in your Dashboard after the batch is processed. Contact your Xendit representative to understand the notification timing for your specific market.
+</Info>
+
+## When to Use Device-Only Mode
+
+- You don't have a POS system or custom software to integrate
+- You want to start accepting payments immediately without development work
+- Your staff manually enters transaction amounts at the point of sale
+
+## Settlement
+
+Funds are settled into your **Xendit Balance** within **T+1 day** after the transaction settlement is completed on the device. You can view all transactions in the **Xendit Dashboard**.

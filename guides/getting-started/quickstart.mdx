@@ -1,562 +1,379 @@
 ---
-title: "Quickstart"
+title: "Quick Start"
 mode: "wide"
-description: "Set up your development environment and process your first in-person payment in under 10 minutes"
+description: "Choose your integration path and process your first in-person payment"
 ---
 
 import IntegrationModeComparison from '/snippets/integration-mode-comparison.mdx';
 import H2HQuickstartContent from '/snippets/h2h-quickstart-content.mdx';
-import H2HSDKQuickstartContent from '/snippets/h2h-sdk-quickstart-content.mdx';
 import C2CApiQuickstartContent from '/snippets/c2c-api-quickstart-content.mdx';
 import C2CSDKQuickstartContent from '/snippets/c2c-sdk-quickstart-content.mdx';
 import {C2CProviderSnippetInit} from '/components/C2CProviderSnippetInit.jsx';
 import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
+import {WizardInit} from '/components/WizardInit.jsx';
 
-{/* Provider Selection - Level 1 */}
-<div id="provider-selection">
-  <div style={{ textAlign: 'left', marginBottom: '48px' }}>
-    <h2 style={{ fontWeight: '700', marginBottom: '16px' }}>
-      Choose Your Payment Provider(s)
+{/* Initialise wizard functions and dynamic code-snippet updaters */}
+<WizardInit />
+<C2CProviderSnippetInit />
+<H2HProviderSnippetInit />
+
+{/* ═══════════════════════════════════════════════════
+    STEP 1 — Integration Type: Device-Only vs POS-Integrated
+    ═══════════════════════════════════════════════════ */}
+<div id="step1-type">
+  <div className="wizard-step-indicator">
+    <div className="wizard-step active">
+      <span className="wizard-step-dot">1</span>
+      <span>Integration type</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step">
+      <span className="wizard-step-dot">2</span>
+      <span>Integration path</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step">
+      <span className="wizard-step-dot">3</span>
+      <span>Get started</span>
+    </div>
+  </div>
+
+  <div style={{ marginBottom: '8px' }}>
+    <h2 style={{ fontWeight: '700', marginBottom: '8px', fontSize: '24px' }}>
+      How do you want to accept payments?
     </h2>
-    <C2CProviderSnippetInit />
-    <H2HProviderSnippetInit />
-
-    <p style={{ maxWidth: '600px', margin: '0' }}>
-      Select one or more payment providers for your terminal integration
+    <p style={{ maxWidth: '560px', margin: '0', color: 'var(--terminal-text-secondary)', fontSize: '15px' }}>
+      Choose whether you need to integrate your POS system with the terminal or use it as a standalone device.
     </p>
   </div>
 
-  <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-    <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontWeight: '600' }}>Indonesia (ID)</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {/* BRI Provider */}
-        <div
-          id="provider-bri"
-          className="provider-card quickstart-card"
-          data-accent="#10b981"
-          data-shadow="rgba(16, 185, 129, 0.32)"
-          onClick={() => {
-            const checkbox = document.getElementById('bri-checkbox');
-            const card = document.getElementById('provider-bri');
-            const accent = card.dataset.accent;
-            const shadow = card.dataset.shadow;
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-              card.classList.add('selected');
-              if (accent) {
-                card.style.setProperty('--terminal-card-accent', accent);
-              }
-              if (shadow) {
-                card.style.setProperty('--terminal-card-accent-shadow', shadow);
-              }
-            } else {
-              card.classList.remove('selected');
-              card.style.removeProperty('--terminal-card-accent');
-              card.style.removeProperty('--terminal-card-accent-shadow');
-            }
-            if (window.updateC2CProviderSnippets) {
-              window.updateC2CProviderSnippets();
-            }
-            if (window.updateH2HProviderSnippets) {
-              window.updateH2HProviderSnippets();
-            }
-          }}
-        >
-          <input type="checkbox" id="bri-checkbox" style={{ accentColor: '#10b981' }} />
-          
-          <div>
-            <h4 style={{ margin: '0', fontWeight: '600' }}>BRI</h4>
-          </div>
-        </div>
-
-        {/* Cashup Provider */}
-        <div
-          id="provider-cashup"
-          className="provider-card quickstart-card"
-          data-accent="#10b981"
-          data-shadow="rgba(16, 185, 129, 0.32)"
-          onClick={() => {
-            const checkbox = document.getElementById('cashup-checkbox');
-            const card = document.getElementById('provider-cashup');
-            const accent = card.dataset.accent;
-            const shadow = card.dataset.shadow;
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-              card.classList.add('selected');
-              if (accent) {
-                card.style.setProperty('--terminal-card-accent', accent);
-              }
-              if (shadow) {
-                card.style.setProperty('--terminal-card-accent-shadow', shadow);
-              }
-            } else {
-              card.classList.remove('selected');
-              card.style.removeProperty('--terminal-card-accent');
-              card.style.removeProperty('--terminal-card-accent-shadow');
-            }
-            if (window.updateC2CProviderSnippets) {
-              window.updateC2CProviderSnippets();
-            }
-            if (window.updateH2HProviderSnippets) {
-              window.updateH2HProviderSnippets();
-            }
-          }}
-        >
-          <input type="checkbox" id="cashup-checkbox" style={{ accentColor: '#10b981' }} />
-          
-          <div>
-            <h4 style={{ margin: '0', fontWeight: '600' }}>Cashup</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontWeight: '600' }}>Thailand (TH)</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {/* NTT Provider */}
-        <div
-          id="provider-ntt"
-          className="provider-card quickstart-card"
-          data-accent="#10b981"
-          data-shadow="rgba(16, 185, 129, 0.32)"
-          onClick={() => {
-            const checkbox = document.getElementById('ntt-checkbox');
-            const card = document.getElementById('provider-ntt');
-            const accent = card.dataset.accent;
-            const shadow = card.dataset.shadow;
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-              card.classList.add('selected');
-              if (accent) {
-                card.style.setProperty('--terminal-card-accent', accent);
-              }
-              if (shadow) {
-                card.style.setProperty('--terminal-card-accent-shadow', shadow);
-              }
-            } else {
-              card.classList.remove('selected');
-              card.style.removeProperty('--terminal-card-accent');
-              card.style.removeProperty('--terminal-card-accent-shadow');
-            }
-            if (window.updateC2CProviderSnippets) {
-              window.updateC2CProviderSnippets();
-            }
-            if (window.updateH2HProviderSnippets) {
-              window.updateH2HProviderSnippets();
-            }
-          }}
-        >
-          <input type="checkbox" id="ntt-checkbox" style={{ accentColor: '#10b981' }} />
-          
-          <div>
-            <h4 style={{ margin: '0', fontWeight: '600' }}>NTT</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ margin: '0 0 16px 0', fontWeight: '600' }}>Malaysia (MY)</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {/* SHC Provider */}
-        <div
-          id="provider-shc"
-          className="provider-card quickstart-card"
-          data-accent="#10b981"
-          data-shadow="rgba(16, 185, 129, 0.32)"
-          onClick={() => {
-            const checkbox = document.getElementById('shc-checkbox');
-            const card = document.getElementById('provider-shc');
-            const accent = card.dataset.accent;
-            const shadow = card.dataset.shadow;
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-              card.classList.add('selected');
-              if (accent) {
-                card.style.setProperty('--terminal-card-accent', accent);
-              }
-              if (shadow) {
-                card.style.setProperty('--terminal-card-accent-shadow', shadow);
-              }
-            } else {
-              card.classList.remove('selected');
-              card.style.removeProperty('--terminal-card-accent');
-              card.style.removeProperty('--terminal-card-accent-shadow');
-            }
-            if (window.updateC2CProviderSnippets) {
-              window.updateC2CProviderSnippets();
-            }
-            if (window.updateH2HProviderSnippets) {
-              window.updateH2HProviderSnippets();
-            }
-          }}
-        >
-          <input type="checkbox" id="shc-checkbox" style={{ accentColor: '#10b981' }} />
-          
-          <div>
-            <h4 style={{ margin: '0', fontWeight: '600' }}>Share commerce</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h3 style={{ margin: '0 0 16px 0', fontWeight: '600' }}>Vietnam (VN)</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {/* Atom Provider */}
-        <div
-          id="provider-atom"
-          className="provider-card quickstart-card"
-          data-accent="#10b981"
-          data-shadow="rgba(16, 185, 129, 0.32)"
-          onClick={() => {
-            const checkbox = document.getElementById('atom-checkbox');
-            const card = document.getElementById('provider-atom');
-            const accent = card.dataset.accent;
-            const shadow = card.dataset.shadow;
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-              card.classList.add('selected');
-              if (accent) {
-                card.style.setProperty('--terminal-card-accent', accent);
-              }
-              if (shadow) {
-                card.style.setProperty('--terminal-card-accent-shadow', shadow);
-              }
-            } else {
-              card.classList.remove('selected');
-              card.style.removeProperty('--terminal-card-accent');
-              card.style.removeProperty('--terminal-card-accent-shadow');
-            }
-            if (window.updateC2CProviderSnippets) {
-              window.updateC2CProviderSnippets();
-            }
-          }}
-        >
-          <input type="checkbox" id="atom-checkbox" style={{ accentColor: '#10b981' }} />
-          
-          <div>
-            <h4 style={{ margin: '0', fontWeight: '600' }}>Atom</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Continue Button */}
-  <div style={{ textAlign: 'center', marginTop: '48px' }}>
-    <button 
-      id="continue-button"
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '700px', marginTop: '24px' }}>
+    <div
+      className="quickstart-card"
+      style={{ padding: '24px' }}
       onClick={() => {
-        const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-        const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-        const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
-        const atomSelected = document.getElementById('atom-checkbox')?.checked || false;
-
-        // If only Atom is selected, jump straight to the H2H app flow
-        if (atomSelected && !briSelected && !nttSelected && !cashupSelected && !shcSelected) {
-          document.getElementById('provider-selection').style.display = 'none';
-          document.getElementById('integration-mode-selection').style.display = 'none';
-          document.getElementById('h2h-quickstart').style.display = 'none';
-          const gatewayInfo = document.getElementById('gateway-app-info');
-          if (gatewayInfo) {
-            gatewayInfo.style.display = '';
-          }
-          document.getElementById('h2h-app-content').style.display = 'block';
-          window.location.hash = 'h2h-app-content';
-          return;
-        }
-
-        if (window.updateC2CProviderSnippets) {
-          window.updateC2CProviderSnippets();
-        }
-
-        document.getElementById('provider-selection').style.display = 'none';
-        document.getElementById('integration-mode-selection').style.display = 'block';
-        window.location.hash = 'integration-mode-selection';
-      }}
-      style={{
-        display: 'inline-block',
-        padding: '16px 32px',
-        backgroundColor: '#10b981',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '12px',
-        fontWeight: '600',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        boxShadow: '0 4px 12px 0 rgba(16, 185, 129, 0.3)'
+        document.getElementById('step1-type').style.display = 'none';
+        document.getElementById('step1-standalone').style.display = 'block';
+        window.location.hash = 'step1-standalone';
       }}
     >
-      Continue with Selected Provider(s)
-    </button>
+      <div style={{ fontSize: '28px', marginBottom: '12px' }}>📱</div>
+      <div style={{ fontWeight: '700', fontSize: '17px', marginBottom: '6px' }}>Device-Only Setup</div>
+      <div style={{ color: 'var(--terminal-text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
+        Enter amounts manually on the device. No API or SDK integration needed.
+      </div>
+    </div>
+
+    <div
+      className="quickstart-card"
+      style={{ padding: '24px' }}
+      onClick={() => {
+        document.getElementById('step1-type').style.display = 'none';
+        document.getElementById('step2-path').style.display = 'block';
+        window.location.hash = 'step2-path';
+      }}
+    >
+      <div style={{ fontSize: '28px', marginBottom: '12px' }}>🔗</div>
+      <div style={{ fontWeight: '700', fontSize: '17px', marginBottom: '6px' }}>POS-Integrated</div>
+      <div style={{ color: 'var(--terminal-text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
+        Connect your POS, kiosk, or custom software to the terminal via API or SDK.
+      </div>
+    </div>
   </div>
 </div>
 
+{/* Device-only info */}
+<div id="step1-standalone" className="quickstart-content" style={{display: 'none'}}>
+  <button
+    className="quickstart-back-button"
+    onClick={() => {
+      document.getElementById('step1-standalone').style.display = 'none';
+      document.getElementById('step1-type').style.display = 'block';
+      window.location.hash = '';
+    }}
+    style={{ marginBottom: '20px' }}
+  >
+    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>
+    Back
+  </button>
 
-{/* Integration Mode Selection - Level 2 */}
-<div id="integration-mode-selection" className="quickstart-content" style={{display: 'none'}}>
-  <div style={{ marginBottom: '48px' }}>
-    <button 
+  <h2 style={{ fontWeight: '700', marginBottom: '12px', fontSize: '24px' }}>Device-Only Setup</h2>
+  <p style={{ maxWidth: '600px', color: 'var(--terminal-text-secondary)', fontSize: '15px', lineHeight: '1.6' }}>
+    For merchants without a POS integration, payments can be accepted directly on the terminal by manually entering amounts. No API or SDK setup is required. Transactions are visible in your Xendit Dashboard.
+  </p>
+
+  <div style={{ marginTop: '20px' }}>
+    <a href="/guides/getting-started/standalone-terminal" className="quickstart-link-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div>📖</div>
+        <div>
+          <div style={{ fontWeight: '600', marginBottom: '4px' }}>Device-Only Setup Guide</div>
+          <div>Learn how to use the terminal without any integration</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+{/* ═══════════════════════════════════════════════════
+    STEP 2 — Integration Path: H2H vs C2C
+    ═══════════════════════════════════════════════════ */}
+<div id="step2-path" className="quickstart-content" style={{display: 'none'}}>
+  <div className="wizard-step-indicator">
+    <div className="wizard-step completed">
+      <span className="wizard-step-dot"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></span>
+      <span>Integration type</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step active">
+      <span className="wizard-step-dot">2</span>
+      <span>Integration path</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step">
+      <span className="wizard-step-dot">3</span>
+      <span>Get started</span>
+    </div>
+  </div>
+
+  <div style={{ marginBottom: '32px' }}>
+    <button
       className="quickstart-back-button"
       onClick={() => {
-        document.getElementById('integration-mode-selection').style.display = 'none';
-        document.getElementById('provider-selection').style.display = 'block';
+        document.getElementById('step2-path').style.display = 'none';
+        document.getElementById('step1-type').style.display = 'block';
         window.location.hash = '';
       }}
-      style={{ marginBottom: '24px' }}
+      style={{ marginBottom: '20px' }}
     >
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
-      </svg>
-      Back to Provider Selection
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>
+      Back
     </button>
-    
-    <h2 style={{ fontWeight: '700', marginBottom: '16px' }}>
-      Choose Your Integration Mode
+
+    <h2 style={{ fontWeight: '700', marginBottom: '8px', fontSize: '24px' }}>
+      Choose your integration path
     </h2>
-    <p style={{ maxWidth: '600px', margin: '0' }}>
-      Select the integration approach that best fits your technical requirements
+    <p style={{ maxWidth: '560px', margin: '0', color: 'var(--terminal-text-secondary)', fontSize: '15px' }}>
+      Select the integration approach that best fits your technical requirements.
     </p>
   </div>
 
   <IntegrationModeComparison />
 </div>
 
-<div id="h2h-quickstart" className="quickstart-content" style={{display: 'none'}}>
+{/* ═══════════════════════════════════════════════════
+    STEP 3 — Provider Selection (shared by both paths)
+    ═══════════════════════════════════════════════════ */}
+<div id="step3-providers" className="quickstart-content" style={{display: 'none'}}>
+  <div className="wizard-step-indicator">
+    <div className="wizard-step completed">
+      <span className="wizard-step-dot"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></span>
+      <span>Integration type</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step completed">
+      <span className="wizard-step-dot"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></span>
+      <span>Integration path</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step active">
+      <span className="wizard-step-dot">3</span>
+      <span>Get started</span>
+    </div>
+  </div>
+
   <div style={{ marginBottom: '24px' }}>
-    <button 
+    <button
       className="quickstart-back-button"
       onClick={() => {
-        document.getElementById('h2h-quickstart').style.display = 'none';
-        document.getElementById('integration-mode-selection').style.display = 'block';
-        window.location.hash = 'integration-mode-selection';
+        document.getElementById('step3-providers').style.display = 'none';
+        document.getElementById('step2-path').style.display = 'block';
+        window.location.hash = 'step2-path';
       }}
     >
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
-      </svg>
-      Back to Integration Mode
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>
+      Back to integration path
     </button>
   </div>
-  
-  <div className="selection-banner h2h-banner">
+
+  {/* Path banners — JS toggles the matching one */}
+  <div id="path-banner-h2h" className="selection-banner h2h-banner" style={{display: 'none'}}>
     <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 20 20">
       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
     </svg>
     <div>
-      <h3 style={{ margin: '0', fontWeight: '600' }}>
-        Great choice! You selected Host-to-Host (H2H)
-      </h3>
-      <p style={{ margin: '0', opacity: '0.8' }}>
-        Choose your implementation approach
-      </p>
+      <h3 style={{ margin: '0', fontWeight: '600' }}>Host-to-Host (H2H) — Terminal API</h3>
+      <p style={{ margin: '0', opacity: '0.8' }}>Your backend calls Xendit's cloud API via HTTP</p>
     </div>
   </div>
 
-  <div className="quickstart-elevated">
-    <table className="quickstart-table">
-      <thead>
-        <tr>
-          <th className="quickstart-table-heading green" style={{ width: '50%' }}>
-            <div style={{ fontWeight: '700', marginBottom: '4px' }}>Terminal Gateway App</div>
-            <div>Managed desktop/mobile companion</div>
-          </th>
-          <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
-            <div style={{ fontWeight: '700', marginBottom: '4px' }}>Terminal H2H SDK</div>
-            <div>Embed H2H logic in your app</div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td className="quickstart-table-cell green">
-            Install Gateway App and connect terminals without building custom UI.
-          </td>
-          <td className="quickstart-table-cell">
-            Bring H2H flows into your native Android or iOS application.
-          </td>
-        </tr>
-        <tr>
-          <td className="quickstart-table-cell green">
-            Xendit controls payment screens, receipts, and reconciliation workflows.
-          </td>
-          <td className="quickstart-table-cell">
-            Your engineering team owns the UX, navigation, and error handling.
-          </td>
-        </tr>
-        <tr>
-          <td className="quickstart-table-cell green">
-            Minimal development effort—ideal for quick pilots or staffed counters.
-          </td>
-          <td className="quickstart-table-cell">
-            Requires mobile engineers but unlocks tighter integration and branding control.
-          </td>
-        </tr>
-        <tr>
-          <td className="quickstart-table-cell green">
-            Works on Windows/macOS desktops or companion tablets managed by store teams.
-          </td>
-          <td className="quickstart-table-cell">
-            Choose Android or iOS SDK packages for POS tablets, mobile associates, or kiosks.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
-      <button
-        onClick={() => {
-          const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-          const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-          const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-          const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
-          const gatewayInfo = document.getElementById('gateway-app-info');
-
-          if ((cashupSelected || shcSelected) && !briSelected && !nttSelected) {
-            if (gatewayInfo) gatewayInfo.style.display = 'none';
-          } else {
-            if (gatewayInfo) gatewayInfo.style.display = '';
-          }
-
-          document.getElementById('h2h-quickstart').style.display = 'none';
-          document.getElementById('h2h-app-content').style.display = 'block';
-          window.location.hash = 'h2h-app-content';
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          padding: '16px',
-          backgroundColor: '#047857',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '12px',
-          fontWeight: '600',
-          cursor: 'pointer',
-          boxShadow: '0 4px 12px 0 rgba(4, 120, 87, 0.35)'
-        }}
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-        Continue with Terminal Gateway App
-      </button>
-
-      <button
-        onClick={() => {
-          document.getElementById('h2h-quickstart').style.display = 'none';
-          document.getElementById('h2h-sdk-content').style.display = 'block';
-          window.location.hash = 'h2h-sdk-content';
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          padding: '16px',
-          backgroundColor: '#4b5563',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '12px',
-          fontWeight: '600',
-          cursor: 'pointer'
-        }}
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-        </svg>
-        Continue with H2H SDK
-      </button>
+  <div id="path-banner-c2c" className="selection-banner c2c-banner" style={{display: 'none'}}>
+    <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+    </svg>
+    <div>
+      <h3 style={{ margin: '0', fontWeight: '600' }}>Client-to-Client (C2C)</h3>
+      <p style={{ margin: '0', opacity: '0.8' }}>Your POS communicates directly with terminals over the local network</p>
     </div>
   </div>
-</div>
 
-{/* H2H App Installation Content */}
-<div id="h2h-app-content" className="quickstart-content" style={{display: 'none'}}>
-  <div id="gateway-app-info">
-    <Info>
-    For H2H app installation and configuration, please refer to the Gateway App documentation.
-    </Info>
+  <div style={{ marginBottom: '8px' }}>
+    <h3 style={{ fontWeight: '700', marginBottom: '8px', fontSize: '20px' }}>
+      Select your payment provider(s)
+    </h3>
+    <p style={{ maxWidth: '520px', margin: '0', color: 'var(--terminal-text-secondary)', fontSize: '15px' }}>
+      Choose the terminal providers you plan to integrate. You can select more than one.
+    </p>
+  </div>
 
-    <div style={{ marginBottom: '24px' }}>
-      <a href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" className="quickstart-link-card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div>💻</div>
-          <div>
-              <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-              Gateway App Setup
-            </div>
-              <div>
-              Complete Gateway App installation and configuration guide
-            </div>
+  <div style={{ maxWidth: '900px' }}>
+    {/* Indonesia */}
+    <div className="country-section">
+      <h3 className="country-header"><span className="country-flag">🇮🇩</span> Indonesia</h3>
+      <div className="provider-grid">
+        <div id="provider-bri" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('bri'); }}>
+          <div className="provider-icon"><img src="/images/providers/bri.png" alt="BRI" /></div>
+          <div className="provider-info">
+            <div className="provider-name">BRI</div>
+            <div className="provider-desc">Bank Rakyat Indonesia terminals</div>
           </div>
+          <input type="checkbox" id="bri-checkbox" />
         </div>
-      </a>
-    </div>
-  </div>
 
-  <H2HQuickstartContent />
-
-</div>
-
-{/* H2H SDK Integration Content */}
-<div id="h2h-sdk-content" className="quickstart-content" style={{display: 'none'}}>
-  <Info>
-  For Terminal H2H SDK integration, please refer to the comprehensive Terminal H2H documentation.
-  </Info>
-
-  <div style={{ marginBottom: '24px' }}>
-    <a href="/sdk/h2h/introduction" className="quickstart-link-card">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div>📚</div>
-        <div>
-          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-            Terminal H2H Documentation
+        <div id="provider-cashup" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('cashup'); }}>
+          <div className="provider-icon"><img src="/images/providers/cashup.png" alt="Cashup" /></div>
+          <div className="provider-info">
+            <div className="provider-name">Cashup</div>
+            <div className="provider-desc">Multi-brand payment terminals</div>
           </div>
-          <div>
-            Complete Terminal H2H SDK guide with platform-specific implementations
-          </div>
+          <input type="checkbox" id="cashup-checkbox" />
         </div>
       </div>
-    </a>
+    </div>
+
+    {/* Thailand */}
+    <div className="country-section">
+      <h3 className="country-header"><span className="country-flag">🇹🇭</span> Thailand</h3>
+      <div className="provider-grid">
+        <div id="provider-ntt" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('ntt'); }}>
+          <div className="provider-icon"><img src="/images/providers/ntt-data.svg" alt="NTT DATA" /></div>
+          <div className="provider-info">
+            <div className="provider-name">NTT</div>
+            <div className="provider-desc">NTT DATA payment terminals</div>
+          </div>
+          <input type="checkbox" id="ntt-checkbox" />
+        </div>
+      </div>
+    </div>
+
+    {/* Malaysia */}
+    <div className="country-section">
+      <h3 className="country-header"><span className="country-flag">🇲🇾</span> Malaysia</h3>
+      <div className="provider-grid">
+        <div id="provider-shc" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('shc'); }}>
+          <div className="provider-icon"><img src="/images/providers/share-commerce.webp" alt="Share Commerce" /></div>
+          <div className="provider-info">
+            <div className="provider-name">Share Commerce</div>
+            <div className="provider-desc">Retail payment terminals</div>
+          </div>
+          <input type="checkbox" id="shc-checkbox" />
+        </div>
+      </div>
+    </div>
+
+    {/* Vietnam — hidden for C2C (Atom is H2H-only) */}
+    <div id="provider-atom-section" className="country-section">
+      <h3 className="country-header"><span className="country-flag">🇻🇳</span> Vietnam</h3>
+      <div className="provider-grid">
+        <div id="provider-atom" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('atom'); }}>
+          <div className="provider-icon"><img src="/images/providers/atom.svg" alt="Atom" /></div>
+          <div className="provider-info">
+            <div className="provider-name">Atom</div>
+            <div className="provider-desc">Payment terminals for Vietnam</div>
+          </div>
+          <input type="checkbox" id="atom-checkbox" />
+        </div>
+      </div>
+    </div>
   </div>
 
-  <H2HSDKQuickstartContent />
-</div>
-
-<div id="c2c-quickstart" className="quickstart-content" style={{display: 'none'}}>
-  <div style={{ marginBottom: '24px' }}>
-    <button 
-      className="quickstart-back-button"
+  {/* Continue */}
+  <div style={{ marginTop: '36px' }}>
+    <button
+      className="wizard-button-primary"
       onClick={() => {
-        document.getElementById('c2c-quickstart').style.display = 'none';
-        document.getElementById('integration-mode-selection').style.display = 'block';
-        window.location.hash = 'integration-mode-selection';
+        const path = window._wizardPath;
+        if (window.updateC2CProviderSnippets) window.updateC2CProviderSnippets();
+        if (window.updateH2HProviderSnippets) window.updateH2HProviderSnippets();
+
+        document.getElementById('step3-providers').style.display = 'none';
+
+        if (path === 'h2h') {
+          document.getElementById('step3-h2h-content').style.display = 'block';
+          window.location.hash = 'step3-h2h-content';
+        } else {
+          document.getElementById('step3-c2c-fork').style.display = 'block';
+          window.location.hash = 'step3-c2c-fork';
+        }
       }}
     >
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
       </svg>
-      Back to Integration Mode
+      Continue with selected provider(s)
     </button>
   </div>
-  
+</div>
+
+{/* ═══════════════════════════════════════════════════
+    STEP 3 — H2H: Terminal API Quickstart
+    ═══════════════════════════════════════════════════ */}
+<div id="step3-h2h-content" className="quickstart-content" style={{display: 'none'}}>
+  <H2HQuickstartContent />
+</div>
+
+{/* ═══════════════════════════════════════════════════
+    STEP 3 — C2C Fork: Terminal C2C API vs Terminal C2C SDK
+    ═══════════════════════════════════════════════════ */}
+<div id="step3-c2c-fork" className="quickstart-content" style={{display: 'none'}}>
+  <div className="wizard-step-indicator">
+    <div className="wizard-step completed">
+      <span className="wizard-step-dot"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></span>
+      <span>Integration type</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step completed">
+      <span className="wizard-step-dot"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></span>
+      <span>Integration path</span>
+    </div>
+    <div className="wizard-step-divider" />
+    <div className="wizard-step active">
+      <span className="wizard-step-dot">3</span>
+      <span>Get started</span>
+    </div>
+  </div>
+
+  <div style={{ marginBottom: '24px' }}>
+    <button
+      className="quickstart-back-button"
+      onClick={() => {
+        document.getElementById('step3-c2c-fork').style.display = 'none';
+        document.getElementById('step3-providers').style.display = 'block';
+        window.location.hash = 'step3-providers';
+      }}
+    >
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0L3.586 10l4.707-4.707a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>
+      Back to provider selection
+    </button>
+  </div>
+
   <div className="selection-banner c2c-banner">
     <svg style={{ width: '24px', height: '24px' }} fill="currentColor" viewBox="0 0 20 20">
       <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
     </svg>
     <div>
-      <h3 style={{ margin: '0', fontWeight: '600' }}>
-        You selected Client-to-Client (C2C)
-      </h3>
-      <p style={{ margin: '0', opacity: '0.8' }}>
-        Choose your terminal integration approach
-      </p>
+      <h3 style={{ margin: '0', fontWeight: '600' }}>Choose your C2C interface</h3>
+      <p style={{ margin: '0', opacity: '0.8' }}>Terminal C2C API (HTTP) or Terminal C2C SDK (native methods)</p>
     </div>
   </div>
 
@@ -565,43 +382,35 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       <thead>
         <tr>
           <th className="quickstart-table-heading blue" style={{ width: '50%' }}>
-            <div style={{ fontWeight: '700', marginBottom: '4px' }}>Gateway App + REST API</div>
-            <div>Central command & control</div>
+            <div style={{ fontWeight: '700', marginBottom: '4px' }}>Terminal C2C API</div>
+            <div>HTTP REST commands</div>
           </th>
           <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
-            <div style={{ fontWeight: '700', marginBottom: '4px' }}>C2C SDK</div>
-            <div>Direct device control</div>
+            <div style={{ fontWeight: '700', marginBottom: '4px' }}>Terminal C2C SDK</div>
+            <div>Native SDK method calls</div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td className="quickstart-table-cell blue">
-            Deploy Gateway App to register terminals, manage keys, and route commands securely.
+            Send REST commands (PAY, CANCEL, SETTLEMENT) to the Gateway App over the local network.
           </td>
           <td className="quickstart-table-cell">
-            Embed the SDK in Android or iOS to talk to terminals over local network from your POS.
+            Call native Android/iOS SDK methods to talk to terminals directly from your app.
           </td>
         </tr>
         <tr>
           <td className="quickstart-table-cell blue">
-            Integrate via REST to trigger PAY, CANCEL, and settlement commands with webhook callbacks.
+            Best for multi-store fleets, web POS, or thick-client systems that call backend services.
           </td>
           <td className="quickstart-table-cell">
-            Call SDK methods directly to initiate transactions and receive terminal events instantly.
+            Ideal for kiosks, custom POS apps, or deployments that need offline resilience and custom UX.
           </td>
         </tr>
         <tr>
           <td className="quickstart-table-cell blue">
-            Best for multi-store fleets where IT teams oversee terminals from a central console.
-          </td>
-          <td className="quickstart-table-cell">
-            Ideal for proprietary POS or kiosk software that needs offline resilience and custom UX.
-          </td>
-        </tr>
-        <tr>
-          <td className="quickstart-table-cell blue">
-            Works with web POS or thick clients that call secured backend services.
+            Works from any language or platform that can make HTTP requests.
           </td>
           <td className="quickstart-table-cell">
             Requires mobile engineers but unlocks granular device telemetry and fallback logic.
@@ -610,109 +419,54 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       </tbody>
     </table>
 
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '24px' }}>
       <button
+        className="wizard-button-primary blue"
         onClick={() => {
-          const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-          const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-          const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-          const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
-          const gatewaySetup = document.getElementById('c2c-gateway-app-setup');
-
-          if (gatewaySetup) {
-            gatewaySetup.style.display = ((cashupSelected || shcSelected) && !briSelected && !nttSelected) ? 'none' : 'block';
-          }
-
-          document.getElementById('c2c-quickstart').style.display = 'none';
-          document.getElementById('c2c-api-content').style.display = 'block';
-          window.location.hash = 'c2c-api-content';
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          padding: '16px',
-          backgroundColor: '#1d4ed8',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '12px',
-          fontWeight: '600',
-          cursor: 'pointer',
-          boxShadow: '0 4px 12px 0 rgba(29, 78, 216, 0.35)'
+          document.getElementById('step3-c2c-fork').style.display = 'none';
+          document.getElementById('step3-c2c-api-content').style.display = 'block';
+          window.location.hash = 'step3-c2c-api-content';
         }}
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
         </svg>
-        Continue with Gateway App + REST API
+        Continue with Terminal C2C API
       </button>
 
       <button
+        className="wizard-button-secondary"
         onClick={() => {
-          document.getElementById('c2c-quickstart').style.display = 'none';
-          document.getElementById('c2c-sdk-content').style.display = 'block';
-          if (window.updateC2CProviderSnippets) {
-            window.updateC2CProviderSnippets();
-          }
-          window.location.hash = 'c2c-sdk-content';
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          padding: '16px',
-          backgroundColor: '#4b5563',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '12px',
-          fontWeight: '600',
-          cursor: 'pointer'
+          document.getElementById('step3-c2c-fork').style.display = 'none';
+          document.getElementById('step3-c2c-sdk-content').style.display = 'block';
+          if (window.updateC2CProviderSnippets) window.updateC2CProviderSnippets();
+          window.location.hash = 'step3-c2c-sdk-content';
         }}
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
         </svg>
-        Continue with C2C SDK
+        Continue with Terminal C2C SDK
       </button>
     </div>
   </div>
 </div>
 
-{/* C2C API Integration Content */}
-<div id="c2c-api-content" className="quickstart-content" style={{display: 'none'}}>
+{/* ═══════════════════════════════════════════════════
+    STEP 3 — C2C API Content
+    ═══════════════════════════════════════════════════ */}
+<div id="step3-c2c-api-content" className="quickstart-content" style={{display: 'none'}}>
   <Info>
-  You've chosen the C2C API integration path. First install and configure the Gateway App, then use the C2C API to communicate with your terminals.
+  You've chosen the **Terminal C2C API** — HTTP REST commands sent over the local network.
   </Info>
-
-  <div style={{ marginBottom: '24px' }}>
-    <a id="c2c-gateway-app-setup" href="/sdk/gateway/app-configuration" target="_blank" rel="noopener noreferrer" className="quickstart-link-card">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div>💻</div>
-        <div>
-          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-            Gateway App Setup
-          </div>
-          <div>
-            Install and configure the Gateway App
-          </div>
-        </div>
-      </div>
-    </a>
-  </div>
 
   <div style={{ marginBottom: '24px' }}>
     <a href="/api-reference/c2c/introduction" className="quickstart-link-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div>📖</div>
         <div>
-          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-            C2C API Reference
-          </div>
-          <div>
-            Complete C2C API documentation and endpoints
-          </div>
+          <div style={{ fontWeight: '600', marginBottom: '4px' }}>Terminal C2C API Reference</div>
+          <div>Complete C2C API documentation and endpoints</div>
         </div>
       </div>
     </a>
@@ -741,7 +495,7 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
 
   <h2>Next steps</h2>
   <CardGroup cols={2}>
-    <Card title="C2C REST API Guide" icon="book" href="/api-reference/c2c/restful-api">
+    <Card title="Terminal C2C API Reference" icon="book" href="/api-reference/c2c/introduction">
       Dive deeper into payload formats, error codes, and advanced operations.
     </Card>
     <Card title="Gateway App Operations" icon="computer" href="/sdk/gateway/app-configuration">
@@ -761,10 +515,12 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
   </ol>
 </div>
 
-{/* C2C SDK Integration Content */}
-<div id="c2c-sdk-content" className="quickstart-content" style={{display: 'none'}}>
+{/* ═══════════════════════════════════════════════════
+    STEP 3 — C2C SDK Content
+    ═══════════════════════════════════════════════════ */}
+<div id="step3-c2c-sdk-content" className="quickstart-content" style={{display: 'none'}}>
   <Info>
-  You've chosen the C2C SDK integration path. This provides direct terminal communication for maximum flexibility and customization.
+  You've chosen the **Terminal C2C SDK** — native Android/iOS method calls for direct terminal communication.
   </Info>
 
   <div style={{ marginBottom: '24px' }}>
@@ -772,12 +528,8 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div>🤖</div>
         <div>
-          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-            Android C2C SDK
-          </div>
-          <div>
-            Complete Android C2C SDK integration guide
-          </div>
+          <div style={{ fontWeight: '600', marginBottom: '4px' }}>Android C2C SDK</div>
+          <div>Complete Android C2C SDK integration guide</div>
         </div>
       </div>
     </a>
@@ -788,12 +540,8 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div>🍎</div>
         <div>
-          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-            iOS C2C SDK
-          </div>
-          <div>
-            Complete iOS C2C SDK integration guide
-          </div>
+          <div style={{ fontWeight: '600', marginBottom: '4px' }}>iOS C2C SDK</div>
+          <div>Complete iOS C2C SDK integration guide</div>
         </div>
       </div>
     </a>
@@ -815,8 +563,8 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
     </Accordion>
     <Accordion title="Payment command returns errors">
       - Inspect the SDK error object for provider-specific codes and retry guidance.
-      - Ensure amount, currency, and payment method align with the provider’s supported values.
-      - For persistent failures, fall back to the API mode and compare payloads.
+      - Ensure amount, currency, and payment method align with the provider's supported values.
+      - For persistent failures, fall back to the Terminal C2C API mode and compare payloads.
     </Accordion>
   </AccordionGroup>
 
@@ -829,7 +577,7 @@ import {H2HProviderSnippetInit} from '/components/H2HProviderSnippetInit.jsx';
       Review concurrency patterns, error domains, and background execution rules.
     </Card>
     <Card title="Migration Guidance" icon="arrow-right" href="/guides/migration/xen-bri-to-h2h">
-      Plan future transitions between Gateway App and SDK-based solutions.
+      Plan future transitions between C2C and H2H solutions.
     </Card>
   </CardGroup>
 

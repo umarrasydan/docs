@@ -3,46 +3,45 @@ title: "SDK & Libraries Overview"
 description: "Choose the right Terminal Gateway, Terminal H2H, or Terminal C2C toolkit for your in-person payments"
 ---
 
-Welcome to the SDK & Libraries hub. Use this page to decide whether you should either operate with the Terminal Gateway App or embed the Terminal H2H/C2C SDKs for a single, cohesive merchant application.
+Welcome to the SDK & Libraries hub. Use this page to decide whether to operate the Terminal Gateway App as a companion or embed the Terminal H2H / C2C SDKs directly in your application.
 
 <Warning>
-Choose one track: run the standalone Gateway App or ship an in-app experience with Terminal H2H or C2C SDKs. Mixing the Gateway App with SDK integrations leads to conflicting device sessions.
+Choose one track per deployment: run the standalone Gateway App **or** embed Terminal H2H or C2C SDKs. Mixing Gateway App with SDK integrations on the same device leads to conflicting sessions.
 </Warning>
 
 ## Select the right toolkit
 
 <Tabs>
   <Tab title="Gateway App">
-    <p>The Terminal Gateway App is a ready-to-use companion that manages device discovery, firmware, and secure networking on shared workstations.</p>
+    <p>The Terminal Gateway App is a ready-to-use companion that manages device discovery, firmware, and secure networking. It is used by two integration paths:</p>
     <ul>
-      <li>Best for merchants who want a quick deployment with minimal engineering effort.</li>
-      <li>Keeps payment acceptance separate from your point-of-sale app while centralizing configuration.</li>
-      <li>Ideal when stores can operate a dedicated workstation alongside the merchant-facing application.</li>
+      <li><strong>H2H path</strong> — The Gateway App relays commands between the <a href="/api-reference/terminal-api/introduction">Terminal API</a> (HTTP) and physical terminals. Required for BRI/NTT; other providers connect directly.</li>
+      <li><strong>C2C path</strong> — The Gateway App exposes the <a href="/api-reference/c2c/introduction">Terminal C2C API</a> (HTTP REST) on the local network. Required for BRI/NTT; other providers receive commands directly.</li>
     </ul>
     <Check>
     Follow the setup guide in <a href="/sdk/gateway/app-configuration">Gateway App configuration</a> to manage devices across locations.
     </Check>
   </Tab>
-  <Tab title="Terminal H2H">
-    <p>Terminal H2H SDKs let you embed Xendit's pre-certified payment experience inside your own Android or iOS applications.</p>
+  <Tab title="Terminal H2H SDK">
+    <p>The Terminal H2H SDK provides <strong>device connectivity</strong> for the H2H integration path. It embeds terminal communication inside your Android or iOS app, replacing the Gateway App as the relay layer.</p>
     <ul>
-      <li>Recommended when you want consistent UI/UX and to avoid maintaining a second application.</li>
-      <li>Devices connect through your app so staff stay within a single workflow.</li>
-      <li>Use the H2H API for server orchestration, receipts, and callbacks.</li>
+      <li>Payment API calls are always made via HTTP to the <a href="/api-reference/terminal-api/introduction">Terminal API</a> — the SDK handles the device side only.</li>
+      <li>Recommended when you want staff to stay in a single app workflow with consistent branding.</li>
+      <li>Required for BRI/NTT terminals on the H2H path if you choose not to use the Gateway App.</li>
     </ul>
     <Tip>
     Start with the <a href="/sdk/h2h/introduction">Terminal H2H introduction</a> then dive into the <a href="/sdk/h2h/android-sdk">Android SDK</a> or <a href="/sdk/h2h/ios-sdk">iOS SDK</a> quickstarts.
     </Tip>
   </Tab>
-  <Tab title="Terminal C2C">
-    <p>Terminal C2C SDKs expose low-level device control so you can design bespoke acceptance flows and manage peripherals directly.</p>
+  <Tab title="Terminal C2C SDK">
+    <p>The Terminal C2C SDK provides <strong>native method calls</strong> as an alternative to the <a href="/api-reference/c2c/introduction">Terminal C2C API</a> (HTTP). Instead of sending REST commands, your app calls SDK methods directly.</p>
     <ul>
-      <li>Perfect for integrators who need advanced routing, custom UI, or offline workflows.</li>
-      <li>Runs entirely inside your application, eliminating extra installs for store staff.</li>
-      <li>Requires explicit handling of state machines, receipts, and failure recovery.</li>
+      <li>For <strong>BRI/NTT</strong> terminals, the C2C SDK is the required install — it handles device connectivity.</li>
+      <li>For <strong>other providers</strong> (Cashup, SHC), the C2C SDK is an optional convenience wrapper.</li>
+      <li>Ideal for kiosks, custom POS, or any scenario requiring advanced device control and offline resilience.</li>
     </ul>
     <Info>
-    Review the <a href="/sdk/c2c/introduction">Terminal C2C overview</a> then select <a href="/sdk/c2c/android-sdk">Android</a> or <a href="/sdk/c2c/ios-sdk">iOS</a> guides to implement your desired channel.
+    Review the <a href="/sdk/c2c/introduction">Terminal C2C overview</a> then select the <a href="/sdk/c2c/android-sdk">Android</a> or <a href="/sdk/c2c/ios-sdk">iOS</a> guide.
     </Info>
   </Tab>
 </Tabs>

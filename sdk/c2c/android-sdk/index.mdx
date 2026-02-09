@@ -5,6 +5,10 @@ description: "Integrate Xendit's Terminal C2C SDK into your Android applications
 
 # Terminal C2C SDK for Android (Kotlin)
 
+<Info>
+**The Terminal C2C SDK is a convenience wrapper** around the [Terminal C2C API](/api-reference/c2c/introduction). For providers other than BRI and NTT, you can call the Terminal C2C API directly without the SDK. BRI and NTT terminals require either the [Gateway App](/sdk/gateway/app-configuration) or the C2C SDK as a pre-install.
+</Info>
+
 The Terminal C2C SDK for Android enables you to integrate secure payment processing directly into your Android applications. This SDK provides a client-to-client communication interface that allows your POS system to interact with the Terminal Gateway over the local network.
 
 <Info>
@@ -828,8 +832,8 @@ try {
     val apiError = e.error
     when (apiError.code) {
         "FAILED_TO_CONNECT" -> {
-            // Terminal H2H service not reachable
-            println("Cannot connect to Terminal H2H")
+            // Terminal Gateway service not reachable
+            println("Cannot connect to Terminal Gateway")
         }
         "AUTHENTICATION_FAILED" -> {
             // Invalid client key or terminal credentials
@@ -865,11 +869,11 @@ data class ApiError(
 ### Common Issues and Solutions
 
 <AccordionGroup>
-<Accordion title="Cannot Connect to Terminal H2H">
-  **Problem**: SDK cannot reach the Terminal H2H service.
+<Accordion title="Cannot Connect to Terminal Gateway">
+  **Problem**: SDK cannot reach the Terminal Gateway service.
   
   **Solution**:
-  1. Verify Terminal H2H service is running locally  
+  1. Verify Terminal Gateway service is running locally  
   2. Check the terminal device IP address is correct
   3. Verify network connectivity between your app and gateway
   
