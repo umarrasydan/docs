@@ -13,40 +13,40 @@ Terminal API (H2H) is the recommended starting point for most merchants because 
 
 <Tabs>
   <Tab title="Terminal API (H2H)">
-    <p>Host-to-Host (H2H) centralizes payment orchestration through Xendit's managed gateway, keeping your app lightweight while still offering granular payment session control.</p>
+    <p>The Terminal API is the Host-to-Host (H2H) HTTP API. Your backend calls Xendit's cloud endpoints to create payment sessions, manage terminals, and receive callbacks.</p>
     <ul>
-      <li>Managed device lifecycle via Terminal H2H applications (desktop or mobile).</li>
+      <li>Always HTTP — your backend makes REST calls to <code>POST /v1/terminal/sessions</code> and related endpoints.</li>
       <li>Unified session and callback model that automatically handles retries and reconciliation.</li>
-      <li>Supports multi-country payment acceptance with minimal additional coding.</li>
+      <li>BRI/NTT terminals require the <a href="/sdk/gateway/app-configuration">Gateway App</a> or <a href="/sdk/h2h/introduction">H2H SDK</a> for device connectivity. Other providers connect directly.</li>
     </ul>
     <Tip>
-    Begin with the <a href="/api-reference/terminal-api/introduction">Terminal API (H2H) introduction</a> and follow its Quickstart to stand up sandbox payments in under 10 minutes.
+    Begin with the <a href="/api-reference/terminal-api/introduction">Terminal API (H2H) introduction</a> and follow the <a href="/guides/getting-started/quickstart">Quick Start</a> to stand up sandbox payments in under 10 minutes.
     </Tip>
   </Tab>
   <Tab title="Terminal API (C2C)">
-    <p>Client-to-Client (C2C) gives you direct control over commands sent to each terminal, letting you design bespoke experiences at the cost of greater operational ownership.</p>
+    <p>Client-to-Client (C2C) gives you direct control over commands sent to terminals. You can interface with terminals in two ways:</p>
     <ul>
-      <li>Ideal for specialized hardware setups, kiosks, or offline-first workflows.</li>
-      <li>BRI and NTT providers require the Gateway App or C2C SDK as a pre-install. Other providers can use the C2C API directly.</li>
-      <li>Use the Terminal C2C API directly, or optionally use the <a href="/sdk/c2c/introduction">Terminal C2C SDK</a> as a convenience wrapper.</li>
+      <li><strong>Terminal C2C API</strong> (HTTP) — Send REST commands (<code>POST /commands/pay</code>, etc.) over the local network. BRI/NTT require the <a href="/sdk/gateway/app-configuration">Gateway App</a>; other providers work directly.</li>
+      <li><strong>Terminal C2C SDK</strong> (native) — Call Android/iOS SDK methods directly. For BRI/NTT the SDK is the required install; for other providers it is an optional convenience.</li>
+      <li>Ideal for kiosks, offline-first workflows, and custom hardware setups.</li>
       <li>Requires custom handling of device states, receipt delivery, and failure recovery.</li>
-      <li>Supports multi-country payment acceptance with minimal additional coding.</li>
     </ul>
     <Warning>
-    Choose C2C only if you have strong device engineering capabilities—mixing H2H and C2C APIs within the same deployment is unsupported.
+    Choose C2C only if you have strong device engineering capabilities — mixing H2H and C2C within the same deployment is unsupported.
     </Warning>
   </Tab>
 </Tabs>
 
 ## Architecture comparison
 
-| Capability | Terminal API (H2H) | Terminal API (C2C) |
+| Capability | Terminal API (H2H) | Terminal C2C API / Terminal C2C SDK |
 | --- | --- | --- |
-| Device management | Gateway App or H2H SDK handles pairing for you | Your app or service maintains device connections |
-| Session orchestration | Managed by Xendit with standardized callbacks | Fully custom—implement your own workflows |
-| SDK availability | H2H SDK (Android/iOS) for device connectivity | C2C SDK (Android/iOS) available as optional wrapper |
-| BRI/NTT requirement | Gateway App or H2H SDK required | Gateway App or C2C SDK required |
-| Time-to-market | Fast—fewer edge cases and pre-built flows | Longer—requires bespoke command handling |
+| API interface | Always HTTP REST via Xendit cloud | HTTP REST (C2C API) or native SDK methods (C2C SDK) |
+| Device management | Gateway App or H2H SDK handles pairing | Your app or service maintains device connections |
+| Session orchestration | Managed by Xendit with standardized callbacks | Fully custom — implement your own workflows |
+| BRI/NTT pre-install | Gateway App or H2H SDK | Gateway App (for C2C API) or C2C SDK (for native) |
+| Other providers | No pre-install needed | No pre-install needed; C2C SDK optional |
+| Time-to-market | Fast — fewer edge cases and pre-built flows | Longer — requires bespoke command handling |
 | Recommended for | Assisted checkout, staff POS, rapid pilots | Kiosks, unattended terminals, advanced custom flows |
 
 ## Sample use cases

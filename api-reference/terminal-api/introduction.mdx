@@ -8,7 +8,7 @@ description: 'Complete API reference for in-person payment processing using Xend
 The Terminal API enables you to process in-person payments using Xendit's terminal devices. This API provides comprehensive functionality for creating payment sessions, managing terminal operations, and handling real-time payment callbacks.
 
 <Warning>
-**Gateway App Required**: For BRI and NTT terminals, you must install the Terminal Gateway application on your local device before using the Terminal API (H2H). Cashup terminals connect directly without requiring the gateway app. See the [Terminal Gateway App Configuration](/sdk/gateway/app-configuration) guide for installation and setup instructions.
+**BRI / NTT pre-install required**: For BRI and NTT terminals, install the [Terminal Gateway App](/sdk/gateway/app-configuration) or the [Terminal H2H SDK](/sdk/h2h/introduction) on your local device before using the Terminal API. Other providers (Cashup, SHC, Atom) connect directly — no pre-install needed.
 </Warning>
 
 <Info>
@@ -87,47 +87,14 @@ curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   for Basic Authentication, even though the password is empty.
 </Warning>
 
-## Terminal H2H Setup
+## Device connectivity
 
-The Terminal H2H is required to manage your terminal devices:
+For BRI and NTT terminals, your device needs the **Terminal Gateway App** or **Terminal H2H SDK** installed to relay commands between the Terminal API and the physical terminal hardware. Choose the option that fits your deployment:
 
-<Tabs>
-<Tab title="Desktop App">
-  **Available Platforms**: Windows, macOS
-  
-  Download and install the Terminal H2H desktop application:
-  
-  1. Download the app from the Xendit dashboard
-  2. Install and launch the application
-  3. Configure your terminal devices
-  4. Connect to the Xendit network
-  
-  <Check>
-  Verify the app shows "Connected" status before processing payments.
-  </Check>
-</Tab>
+- **[Terminal Gateway App](/sdk/gateway/app-configuration)** — A ready-to-use companion application for Windows, macOS, or Android. Minimal development effort.
+- **[Terminal H2H SDK](/sdk/h2h/introduction)** — Embed device connectivity inside your own Android or iOS application. Tighter UX but requires mobile engineering.
 
-<Tab title="Mobile SDK">
-  **Available Platforms**: Android (Kotlin), iOS (Swift)
-  
-  Integrate the Terminal H2H SDK into your mobile application:
-  
-  ```kotlin
-  // Android (Kotlin)
-  implementation 'com.xendit:terminal-gateway-android:1.0.0'
-  ```
-  
-  ```swift
-  // iOS (Swift)
-  pod 'XenditTerminalGateway'
-  ```
-  
-  <Tip>
-  See our [Terminal H2H documentation](/sdk/h2h/introduction) for detailed integration guides.
-  </Tip>
-</Tab>
-</Tabs>
-
+Other providers (Cashup, SHC, Atom) connect directly to the Terminal API without any pre-install.
 
 ## API Reference
 

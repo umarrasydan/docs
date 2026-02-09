@@ -3,22 +3,22 @@
     <thead>
       <tr>
         <th className="quickstart-table-heading green" style={{ width: '50%' }}>
-          <div style={{ fontWeight: '700', marginBottom: '4px' }}>Host-to-Host (H2H)</div>
+          <div style={{ fontWeight: '700', marginBottom: '4px' }}>Host-to-Host (H2H) — Terminal API</div>
           <div>Recommended for most merchants</div>
         </th>
         <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
           <div style={{ fontWeight: '700', marginBottom: '4px' }}>Client-to-Client (C2C)</div>
-          <div>For bespoke kiosk experiences</div>
+          <div>Terminal C2C API or Terminal C2C SDK</div>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td className="quickstart-table-cell green">
-          Managed orchestration with minimal custom code.
+          Your backend calls Xendit's cloud HTTP API. Managed orchestration with minimal custom code.
         </td>
         <td className="quickstart-table-cell">
-          Full control of command flows, retries, and device telemetry.
+          Your POS talks to terminals over the local network via HTTP REST commands or native SDK methods.
         </td>
       </tr>
       <tr>
@@ -26,7 +26,7 @@
           Uses Terminal API sessions for payments, callbacks, and reconciliation.
         </td>
         <td className="quickstart-table-cell">
-          Sends PAY/CANCEL/RECEIPT/SETTLEMENT commands directly from your app.
+          Sends PAY / CANCEL / SETTLEMENT commands directly — via Terminal C2C API (HTTP) or Terminal C2C SDK (native).
         </td>
       </tr>
       <tr>
@@ -37,22 +37,6 @@
           Your team owns device connectivity, error handling, and security.
         </td>
       </tr>
-      <tr>
-        <td className="quickstart-table-cell green">
-          Rapid deployments for staffed checkout counters and mobile associates.
-        </td>
-        <td className="quickstart-table-cell">
-          Ideal for unattended kiosks, experiential retail, or custom hardware setups.
-        </td>
-      </tr>
-      <tr>
-        <td className="quickstart-table-cell green">
-          Works best when you need consistent UI with minimal engineering overhead.
-        </td>
-        <td className="quickstart-table-cell">
-          Best when you require fine-grained control over peripherals and offline logic.
-        </td>
-      </tr>
     </tbody>
   </table>
 
@@ -60,31 +44,18 @@
     <button
       className="wizard-button-primary green"
       onClick={() => {
-        const integrationMode = document.getElementById('integration-mode-selection');
-        const h2h = document.getElementById('h2h-quickstart');
-        const h2hApp = document.getElementById('h2h-app-content');
-        const c2c = document.getElementById('c2c-quickstart');
-        const gatewayInfo = document.getElementById('gateway-app-info');
+        window._wizardPath = 'h2h';
+        document.getElementById('step2-path').style.display = 'none';
 
-        const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-        const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-        const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
+        const atomSection = document.getElementById('provider-atom-section');
+        if (atomSection) atomSection.style.display = '';
+        const h2hBanner = document.getElementById('path-banner-h2h');
+        const c2cBanner = document.getElementById('path-banner-c2c');
+        if (h2hBanner) h2hBanner.style.display = 'flex';
+        if (c2cBanner) c2cBanner.style.display = 'none';
 
-        if (integrationMode) integrationMode.style.display = 'none';
-        if (c2c) c2c.style.display = 'none';
-
-        if ((cashupSelected||shcSelected) && !briSelected && !nttSelected) {
-          if (gatewayInfo) gatewayInfo.style.display = 'none';
-          if (h2hApp) h2hApp.style.display = 'block';
-          if (h2h) h2h.style.display = 'none';
-          window.location.hash = 'h2h-app-content';
-        } else {
-          if (gatewayInfo) gatewayInfo.style.display = '';
-          if (h2h) h2h.style.display = 'block';
-          if (h2hApp) h2hApp.style.display = 'none';
-          window.location.hash = 'h2h-quickstart';
-        }
+        document.getElementById('step3-providers').style.display = 'block';
+        window.location.hash = 'step3-providers';
       }}
     >
       <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
@@ -96,32 +67,22 @@
     <button
       className="wizard-button-secondary"
       onClick={() => {
-        const integrationMode = document.getElementById('integration-mode-selection');
-        const h2h = document.getElementById('h2h-quickstart');
-        const c2c = document.getElementById('c2c-quickstart');
-        const c2cApi = document.getElementById('c2c-api-content');
-        const gatewaySetupList = document.getElementById('c2c-gateway-app-li');
+        window._wizardPath = 'c2c';
+        document.getElementById('step2-path').style.display = 'none';
 
-        const briSelected = document.getElementById('bri-checkbox')?.checked || false;
-        const nttSelected = document.getElementById('ntt-checkbox')?.checked || false;
-        const cashupSelected = document.getElementById('cashup-checkbox')?.checked || false;
-        const shcSelected = document.getElementById('shc-checkbox')?.checked || false;
+        const atomSection = document.getElementById('provider-atom-section');
+        const atomCb = document.getElementById('atom-checkbox');
+        const atomCard = document.getElementById('provider-atom');
+        if (atomSection) atomSection.style.display = 'none';
+        if (atomCb) atomCb.checked = false;
+        if (atomCard) atomCard.classList.remove('selected');
+        const h2hBanner = document.getElementById('path-banner-h2h');
+        const c2cBanner = document.getElementById('path-banner-c2c');
+        if (h2hBanner) h2hBanner.style.display = 'none';
+        if (c2cBanner) c2cBanner.style.display = 'flex';
 
-        if (integrationMode) integrationMode.style.display = 'none';
-        if (h2h) h2h.style.display = 'none';
-
-        if ((cashupSelected||shcSelected) && !briSelected && !nttSelected) {
-          if (gatewaySetupList) gatewaySetupList.style.display = 'none';
-        } else {
-          if (gatewaySetupList) gatewaySetupList.style.display = 'block';
-        }
-
-        if (c2cApi) c2cApi.style.display = 'none';
-        if (c2c) c2c.style.display = 'block';
-        if (window.updateC2CProviderSnippets) {
-          window.updateC2CProviderSnippets();
-        }
-        window.location.hash = 'c2c-quickstart';
+        document.getElementById('step3-providers').style.display = 'block';
+        window.location.hash = 'step3-providers';
       }}
     >
       <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
@@ -132,6 +93,6 @@
   </div>
 
   <Info>
-  Ready to start? H2H fits most deployments for its simplicity and speed. Explore the [H2H documentation](/sdk/h2h/introduction) or [C2C documentation](/sdk/c2c/introduction) for deeper implementation details.
+  **Not sure?** H2H fits most deployments for its simplicity and speed. Explore the [Terminal API (H2H) docs](/api-reference/terminal-api/introduction) or [C2C docs](/api-reference/c2c/introduction) for deeper details.
   </Info>
 </div>

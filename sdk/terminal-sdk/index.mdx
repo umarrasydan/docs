@@ -14,23 +14,23 @@ Welcome to the Terminal SDK hub. Use this page to pick the right SDK pathway and
 ## Choose the right track
 
 <Tabs>
-  <Tab title="Terminal H2H">
-    <p>Ideal for staffed environments (flagship retail, pop-up shops) where associates stay in a single mobile workflow. The SDK handles UI-safe prompts, signature capture, and communicates with Xendit's managed orchestration layer.</p>
+  <Tab title="Terminal H2H SDK">
+    <p>The H2H SDK provides <strong>device connectivity</strong> for the H2H path. Payment API calls are always HTTP via the <a href="/api-reference/terminal-api/introduction">Terminal API</a> — the SDK handles the device communication layer only.</p>
     <ul>
+      <li>Ideal for staffed environments where associates stay in a single mobile workflow.</li>
       <li>Leverage standardized payment sessions, callbacks, and reconciliation flows.</li>
-      <li>Perfect for teams that want managed device orchestration with minimal upkeep.</li>
-      <li>Works alongside the Terminal API (H2H) for back-office automation.</li>
+      <li>Required for BRI/NTT terminals on the H2H path if you choose not to use the Gateway App.</li>
     </ul>
     <Check>
     Jump to the <a href="/sdk/h2h/introduction">Terminal H2H introduction</a> to dive into platform concepts and SDK setup.
     </Check>
   </Tab>
-  <Tab title="Terminal C2C">
-    <p>Designed for kiosks, embedded devices, and venues that demand complete control over terminal commands, peripherals, and offline strategies.</p>
+  <Tab title="Terminal C2C SDK">
+    <p>The C2C SDK provides <strong>native method calls</strong> as a full alternative to the <a href="/api-reference/c2c/introduction">Terminal C2C API</a> (HTTP). Instead of sending REST commands, your app calls SDK methods directly to control terminals.</p>
     <ul>
+      <li>For BRI/NTT terminals the SDK is the required install. For other providers it is an optional convenience.</li>
       <li>Issue PAY, CANCEL, RECEIPT, and SETTLEMENT commands directly from your application.</li>
       <li>Coordinate custom flows with scanners, printers, or loyalty systems.</li>
-      <li>Operate even when the network blips by queueing or retrying commands yourself.</li>
     </ul>
     <Tip>
     Start with the <a href="/sdk/c2c/introduction">Terminal C2C overview</a> to explore capabilities, architecture, and platform prerequisites.
@@ -39,7 +39,7 @@ Welcome to the Terminal SDK hub. Use this page to pick the right SDK pathway and
 </Tabs>
 
 <Warning>
-**BRI and NTT terminals require a pre-install**: For BRI (Indonesia) and NTT (Thailand) terminals, you must install either the [Terminal Gateway App](/sdk/gateway/app-configuration) or the matching SDK (H2H SDK for H2H track, C2C SDK for C2C track) before processing payments. Other providers (CashUp, SHC) can connect directly.
+**BRI / NTT pre-install required**: On the H2H path, install either the [Terminal Gateway App](/sdk/gateway/app-configuration) or the Terminal H2H SDK. On the C2C path, install the Gateway App (for Terminal C2C API) or the Terminal C2C SDK (for native method calls). Other providers (Cashup, SHC) connect directly without any pre-install.
 </Warning>
 
 ## Implementation checklist

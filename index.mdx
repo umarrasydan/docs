@@ -104,7 +104,7 @@ Payment is confirmed, and you can print receipts or update your inventory system
 
 ## Settlement
 
-Funds are settled into your **Xendit Balance** within **T+2 days** after the transaction settlement is completed on the device.
+Funds are settled into your **Xendit Balance** within **T+1 day** after the transaction settlement is completed on the device.
 
 You can view all in-person transactions and settlements from your **Xendit Dashboard**, alongside your online payments, for a unified reconciliation experience.
 
@@ -132,10 +132,6 @@ Once approved, you'll receive your device, complete onboarding, and start accept
 </Step>
 </Steps>
 
-<Info>
-**Note**: BRI (Indonesia) and NTT (Thailand) terminals require a pre-install of the [Terminal Gateway App](/sdk/gateway/app-configuration) or the matching SDK before use. All other terminal providers support direct connection without pre-install.
-</Info>
-
 ## Integration Guide
 
 ### Prerequisites
@@ -149,12 +145,8 @@ Before you begin integration, ensure you have:
   - Production: `https://terminal.xendit.co`
 
 <Info>
-**Credentials vary by track**: The H2H track uses an `API_KEY` (for the Terminal API) and a `CLIENT_KEY` (for the SDK/Gateway App). The C2C track uses a `CLIENT_KEY` for SDK initialization and an `X-API-KEY` for direct API calls. Contact the Xendit In-Person Payment team to obtain the appropriate credentials. See the [Terminal API (H2H) introduction](/api-reference/terminal-api/introduction) or [Terminal API (C2C) introduction](/api-reference/c2c/introduction) for authentication details.
+**Credentials vary by track**: Contact the Xendit In-Person Payment team to obtain the appropriate credentials. See the [Terminal API (H2H) introduction](/api-reference/terminal-api/introduction) or [Terminal API (C2C) introduction](/api-reference/c2c/introduction) for authentication details.
 </Info>
-
-<Warning>
-Terminal API (H2H) uses HTTP Basic Auth with your API key as the username and an empty password. Always include a trailing colon when constructing the header.
-</Warning>
 
 ## Payment Terminal Solutions
 
@@ -162,24 +154,24 @@ Choose the integration approach that fits your use case:
 
 <CardGroup cols={3}>
   <Card
-    title="Standalone (No Integration)"
+    title="Device-Only Setup"
     icon="mobile"
     href="/guides/getting-started/standalone-terminal"
   >
     Use the terminal device directly — enter amounts manually on the device. No API or SDK integration needed. Transactions are visible in your Xendit Dashboard.
   </Card>
   <Card
-    title="H2H Track"
+    title="H2H — Terminal API"
     icon="server"
     href="/api-reference/terminal-api/introduction"
   >
-    **Terminal H2H API** (server-side) manages payment sessions. Connect devices via the **Gateway App** or **H2H SDK** (Android/iOS).
+    Your backend calls Xendit's cloud HTTP API to manage payment sessions and terminal operations.
   </Card>
   <Card
-    title="C2C Track"
+    title="C2C — Terminal C2C API / SDK"
     icon="network-wired"
     href="/api-reference/c2c/introduction"
   >
-    **Terminal C2C API** sends commands directly to devices over a local network. Optionally use the **C2C SDK** as a convenience wrapper. BRI/NTT require Gateway App or C2C SDK.
+    Your POS sends commands to terminals over the local network — via **Terminal C2C API** (HTTP REST) or **Terminal C2C SDK** (native methods).
   </Card>
 </CardGroup>

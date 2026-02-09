@@ -1,5 +1,5 @@
 ---
-title: 'Standalone Payment Terminal'
+title: 'Device-Only Setup'
 description: 'Accept in-person payments by entering amounts directly on the terminal device — no POS integration required'
 ---
 
@@ -45,7 +45,7 @@ sequenceDiagram
 **Transaction visibility varies by market**: Some markets support real-time transaction notifications to Xendit, making transactions visible in your Dashboard immediately. Other markets use batch settlement files sent T+1 or later, meaning transactions appear in your Dashboard after the batch is processed. Contact your Xendit representative to understand the notification timing for your specific market.
 </Info>
 
-## When to Use Standalone Mode
+## When to Use Device-Only Mode
 
 - You don't have a POS system or custom software to integrate
 - You want to start accepting payments immediately without development work
@@ -53,8 +53,4 @@ sequenceDiagram
 
 ## Settlement
 
-Funds are settled into your **Xendit Balance** within **T+2 days** after the transaction settlement is completed on the device. You can view all transactions in the **Xendit Dashboard**.
-
-<Info>
-**BRI and NTT terminals**: If you are using BRI (Indonesia) or NTT (Thailand) terminals, these providers require the [Terminal Gateway App](/sdk/gateway/app-configuration) or the corresponding SDK to be pre-installed on your local device, even for standalone use. Other terminal providers support direct connection without any pre-install.
-</Info>
+Funds are settled into your **Xendit Balance** within **T+1 day** after the transaction settlement is completed on the device. You can view all transactions in the **Xendit Dashboard**.
