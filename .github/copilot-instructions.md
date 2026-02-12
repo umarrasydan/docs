@@ -56,8 +56,7 @@ description: 'One-sentence summary for SEO and search'
 
 **Use existing patterns from the codebase** - check [.cursor/rules/mintlify.mdc](.cursor/rules/mintlify.mdc) for full reference:
 
-```mdx
-```mdx
+````mdx
 {/* Multi-path instructions */}
 <Tabs>
   <Tab title="Option 1">Content</Tab>
@@ -89,13 +88,12 @@ fetch example
 <Frame>
   <img src="/images/path.png" alt="Descriptive alt text" />
 </Frame>
-```
-```
+````
 
 ### API Documentation Pattern
 For Terminal API (H2H) endpoints, use the OpenAPI-generated structure. Example from existing docs:
 
-```mdx
+````mdx
 <RequestExample>
 ```bash
 curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
@@ -107,7 +105,7 @@ curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
 <ParamField path="terminal_id" type="string" required>
   Terminal device identifier. Use any value for simulation, actual ID for physical devices.
 </ParamField>
-```
+````
 
 ## Authentication & Environment Patterns
 

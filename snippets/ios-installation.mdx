@@ -3,20 +3,6 @@
 Install the Terminal SDK by adding it as a framework in Xcode:
 
 <Steps>
-<Step title="Add Sentry dependency">
-  Add the Sentry pod to your Podfile:
-  
-  ```ruby Podfile
-  target 'YourApp' do
-    pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
-  end
-  ```
-  
-  <Check>
-  Run `pod install` to install the dependency.
-  </Check>
-</Step>
-
 <Step title="Extract framework">
   Extract the framework zip file in your project directory.
   
@@ -26,26 +12,28 @@ Install the Terminal SDK by adding it as a framework in Xcode:
 </Step>
 
 <Step title="Add framework to project">
-  In Xcode, select your target and navigate to the "General" tab.
-  
-  Find "Frameworks, Libraries, and Embedded Content" and click the "+" button.
+  In Xcode, open your project and choose **File → Add Package Dependencies…** to start the package flow.
   
   <Frame>
-  <img src="/images/ios/select-target.png" alt="Selecting target and navigating to General tab in Xcode" />
-  </Frame>
-  
-  <Frame>
-  <img src="/images/ios/find-frameworks.png" alt="Finding Frameworks, Libraries, and Embedded Content section in Xcode" />
+  <img src="/images/ios/add-package.png" alt="Opening the Add Package Dependencies menu in Xcode" />
   </Frame>
 </Step>
 
 <Step title="Import framework">
-  Click "Add Other..." and select "Add Files..."
-  
-  Search for the Terminal framework, select it, and click "Open".
+  1. Click **Add Local…** when prompted.
+  2. Browse to the extracted framework zip/location and select the package manifest.
+  3. Ensure the correct target is selected, then click **Add Package** to finish.
   
   <Frame>
-  <img src="/images/ios/import-framework-add-files.png" alt="Importing Terminal framework in Xcode using Add Files dialog" />
+  <img src="/images/ios/add-local.png" alt="Choosing Add Local during the package dependency flow" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/locate-files.png" alt="Locating the extracted framework files" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/add-to-target.png" alt="Selecting the correct target before adding the package" />
   </Frame>
 </Step>
 

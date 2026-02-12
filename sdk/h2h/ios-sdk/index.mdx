@@ -62,11 +62,11 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 Download the Terminal H2H iOS SDK:
 
 <CardGroup cols={1}>
-<Card title="iOS SDK (v0.7.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+iOS-0.7.0.zip">
-  Download the complete iOS SDK package including TerminalGateway.xcframework and documentation
+<Card title="iOS SDK (v1.0.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalSDK+H2H+iOS-1.0.0.zip">
+  Download the complete iOS SDK package including TerminalH2H.xcframework and documentation
 
   ```
-  SHA256: df27560a1f6d83382864a0a048f808deb6d0af613a529103dbdce4b4182628e9
+  SHA256: 61a97854a65501d0c1c14dc7fe94005cd6c0d72b35ee6157ec5a65c74b52e8b7
   ```
 </Card>
 </CardGroup>
@@ -85,11 +85,13 @@ Terminal H2H requires physical payment devices to function. Contact the Xendit t
 
 ### Step 1: Initialize SDK
 
-Call the `XenTerminal.initialize()` method within the Application class of your app:
+Import the SDK module and call `TerminalApp.shared.initialize` from your application entry point:
 
 ```swift AppDelegate.swift
+import TerminalH2H
+
 TerminalApp.shared.initialize(
-   clientKey: TEST_CLIENT_KEY,
+  clientKey: TEST_CLIENT_KEY,
   mode: TerminalMode.integration // switch to TerminalMode.live for production builds
 )
 ```
@@ -133,7 +135,7 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 </Info>
 </Tab>
 
-<Tab title="Cashup Provider (Indonesia)">
+<Tab title="Cashup Provider (Indonesia) (Coming Soon)">
 ```swift
 // Add Cashup provider for Indonesian smart terminals
 TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
@@ -176,15 +178,18 @@ After adding providers, they will be available for use when registering terminal
 
 ### Step 3: Register Terminal Device
 
-Register multiple devices by calling the `registerDevices` method:
+Create terminal device entries using `TerminalDevice.companion.create` and register them with the gateway:
 
 ```swift
-TerminalH2H.shared.registerDevices(devices: [ 
-  TerminalDevice(id: Terminal_ID_1, ipAddress: Terminal_IP_1),    
-  TerminalDevice(id: Terminal_ID_2, ipAddress: Terminal_IP_2), 
-  TerminalDevice(id: Terminal_ID_3, ipAddress: Terminal_IP_3) 
-  // Add more TerminalDevice instances as needed 
-])
+let devices = [
+  TerminalDevice.companion.create(id: "BRI12345", ipAddress: "192.168.1.10"),
+  TerminalDevice.companion.create(id: "BRI67890", ipAddress: "192.168.1.11")
+]
+
+TerminalH2H.shared.registerDevices(
+  devices: devices,
+  restart: true // restart to apply the refreshed device list immediately
+)
 ```
 
 <Tip>
@@ -265,9 +270,10 @@ Manage and restart terminal service connections:
 Monitor Terminal connection status using the `observeEDCConnection` method:
 
 ```swift
-TerminalH2H.shared
-  .observeConnection(device: terminalDevice) { state in     
-   // Handle connection state changes
+let device = TerminalDevice.companion.create(id: "BRI12345", ipAddress: "192.168.1.10")
+
+TerminalH2H.shared.observeConnection(device: device) { state in
+  // Handle connection state transitions
 }
 ```
 
@@ -281,15 +287,16 @@ The SDK handles the following connection states:
 | `connecting` | Device requesting connection to Terminal |
 | `connectingFailed` | Device unable to connect with Terminal |
 | `unsupported` | Connection not supported |
+| `unreachable` | Ping failed; gateway marks device unreachable until it recovers |
 
 ### Observing Error State
 
 Monitor Terminal error states using the `observeError` method:
 
 ```swift
-TerminalH2H.shared.observeError(onResult: { device, error in
-    // Handle error state events
-})
+TerminalH2H.shared.observeError { device, error in
+  // Use device?.id to correlate errors with specific terminals
+}
 ```
 
 ## Error Handling
@@ -312,15 +319,23 @@ struct TerminalError {
 | INVALID_CREDENTIAL | 401 | Provided credentials are invalid or expired |
 | INVALID_REQUEST | 400 | Request format or parameters are invalid |
 | INTERNAL_SERVER_ERROR | 500 | Server-side error occurred during processing |
-| UNKNOWN_ERROR | 0 | Unexpected error that doesn't fit other categories |
+| UNKNOWN_ERROR | - | Unexpected error that does not map to a specific category |
 | KEY_INVALID | -1 | API key is invalid or not authorized |
-| SEND_FAILED | -2 | Failed to send data to the terminal device |
-| NOT_CONNECTED | -3 | No active connection to any terminal device |
+| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - verify terminal ID and credentials |
 | FAILED_TO_CONNECT | -4 | Unable to establish connection to terminal |
-| UNSUPPORTED | -5 | Operation or platform not supported |
+| NOT_CONNECTED | -3 | No active connection to any terminal device |
 | TERMINAL_BUSY | -6 | Terminal is processing another transaction |
+| SEND_FAILED | -2 | Failed to send data to the terminal device |
+| UNSUPPORTED | -5 | Operation or platform not supported |
 | ENCRYPTION_FAILED | -7 | Encryption key invalid or encryption process failed |
-| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check <a href="#finding-terminal-information">TID</a> and credentials |
+| DECLINED_BY_READER | N/A | Card or reader rejected the transaction; prompt customer to retry |
+| PAYMENT_UNPAID | N/A | Payment still pending on terminal; confirm status before retrying |
+| DUPLICATED | N/A | Duplicate command detected; generate a new order ID before retrying |
+| CANCELLED | N/A | Action cancelled on the terminal or by the operator |
+| TIMEOUT | N/A | Operation exceeded configured timeout window |
+| NO_DATA_FOUND | N/A | Terminal cannot find the referenced transaction data |
+| TID_NOT_SET | N/A | Terminal ID is missing in the gateway configuration |
+| TID_NOT_MATCH | N/A | Terminal ID does not match the registered device |
 
 ### Error Handling Best Practices
 
@@ -347,6 +362,26 @@ func handleTerminalError(_ error: TerminalError?) {
     print("Connection failed: \(error.message)")
     // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
     checkNetworkConnectivity()
+
+  case ErrorCode.declinedByReader:
+    // Terminal rejected the card tap/insert
+    print("Declined by reader: \(error.message)")
+    promptCustomerToRetry()
+
+  case ErrorCode.paymentUnpaid:
+    // Payment still pending on the terminal
+    print("Payment unpaid: \(error.message)")
+    confirmStatusWithBackend()
+
+  case ErrorCode.timeout:
+    // Gateway timed out while waiting for terminal response
+    print("Command timeout: \(error.message)")
+    TerminalH2H.shared.restart(terminalID: nil)
+
+  case ErrorCode.duplicated:
+    // Duplicate command detected by the gateway
+    print("Duplicate command detected: \(error.message)")
+    regenerateOrderID()
         
   case ErrorCode.keyInvalid, ErrorCode.invalidCredential:
     // Credential issues
@@ -359,6 +394,11 @@ func handleTerminalError(_ error: TerminalError?) {
     print("Encryption failed: \(error.message)")
     // Re-initialize SDK with correct encryption keys
     reinitializeSDK()
+
+  case ErrorCode.cancelled:
+    // Operator cancelled the command on the terminal
+    print("Operation cancelled: \(error.message)")
+    notifyCashier()
         
   default:
     // Log and escalate unknown errors

@@ -72,7 +72,6 @@ class App : Application() {
     <div id="c2c-ios-provider-snippet">
 ```swift
 import TerminalC2C
-import TerminalCore
 
 func application(
   _ application: UIApplication,
@@ -134,13 +133,13 @@ TerminalC2C.shared.setTerminalDevice(terminalDevice)
     import co.xendit.terminal.c2c.TerminalC2C
     import co.xendit.terminal.c2c.data.Payment
     import co.xendit.terminal.c2c.data.TerminalException
-    import co.xendit.terminal.core.data.PaymentMethod
+    import co.xendit.terminal.id.bri.BRIPaymentMethod // Provided by the BRI provider dependency
 
     // Create payment data
     val payment = Payment(
       orderID = "ORDER_123",
       amount = 10000.0,
-      paymentMethod = PaymentMethod.fromValue("card") // or "ewallet", "qr"
+      paymentMethod = BRIPaymentMethod.contactless
     )
 
     // Execute payment (suspend function)
@@ -161,8 +160,6 @@ TerminalC2C.shared.setTerminalDevice(terminalDevice)
   <Tab title="iOS (Swift)">
     ```swift
     import TerminalC2C
-    import TerminalCore
-    import TerminalBRI
 
     // Create payment data
     let payment = Payment(
@@ -190,7 +187,7 @@ TerminalC2C.shared.setTerminalDevice(terminalDevice)
   </Tabs>
 
   <Info>
-  For SDK testing without hardware, either set `TerminalC2C.isSimulation = true` globally before issuing requests or pass `isSimulation = true` to the payment methods as shown above. Remove these simulation flags for real terminal runs.
+  For SDK testing without hardware, either set `TerminalC2C.isSimulation = true` globally before issuing requests or pass `isSimulation = true` to individual calls as shown above. Remove these simulation flags for real terminal runs.
   </Info>
 </Step>
 </Steps>

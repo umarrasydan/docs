@@ -101,7 +101,6 @@ class App : Application() {
     <div id="h2h-ios-provider-snippet">
 ```swift
 import TerminalH2H
-import TerminalCore
 
 func application(
   _ application: UIApplication,
@@ -127,22 +126,28 @@ func application(
   <Tab title="Android (Kotlin)">
     ```kotlin
     val devices = listOf(
-      TerminalDevice(id = "TID001", ipAddress = "192.168.1.100"),
-      TerminalDevice(id = "TID002", ipAddress = "192.168.1.101")
+      TerminalDevice(id = "TID001", ipAddress = "192.168.1.100", active = true),
+      TerminalDevice(id = "TID002", ipAddress = "192.168.1.101", active = true)
     )
 
-    TerminalH2H.registerDevices(devices)
+    TerminalH2H.registerDevices(
+      devices = devices,
+      restart = true
+    )
     ```
   </Tab>
 
   <Tab title="iOS (Swift)">
     ```swift
     let devices = [
-      TerminalDevice(id: "TID001", ipAddress: "192.168.1.100"),
-      TerminalDevice(id: "TID002", ipAddress: "192.168.1.101")
+      TerminalDevice.companion.create(id: "TID001", ipAddress: "192.168.1.100"),
+      TerminalDevice.companion.create(id: "TID002", ipAddress: "192.168.1.101")
     ]
 
-    TerminalH2H.shared.registerDevices(devices: devices)
+    TerminalH2H.shared.registerDevices(
+      devices: devices,
+      restart: true
+    )
     ```
   </Tab>
   </Tabs>

@@ -37,9 +37,12 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 Download the Terminal C2C iOS SDK:
 
 <CardGroup cols={1}>
-{/* TODO: Replace # with actual S3 download URL */}
-<Card title="iOS SDK (Latest Version)" icon="apple" href="#">
-  Download the complete iOS SDK package including TerminalC2C.xcframework and documentation
+<Card title="iOS SDK (v1.0.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalSDK+C2C+iOS-1.0.0.zip">
+  Download the complete iOS SDK package including TerminalH2H.xcframework and documentation
+
+  ```
+  SHA256: 2ca43d04afbfb1c7237f41e07b44de9dcc9fb80386e995dc287a41938fa618d9
+  ```
 </Card>
 </CardGroup>
 
@@ -68,7 +71,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
 Call the `TerminalApp.shared.initialize()` method within the Application class of your app:
 
 ```swift AppDelegate.swift
-import TerminalCore
+import TerminalC2C
 
 func application(
   _ application: UIApplication,
@@ -112,7 +115,7 @@ Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
   </Info>
 </Tab>
 
-<Tab title="Cashup Indonesia">
+<Tab title="Cashup Indonesia (Coming Soon)">
   ```swift
   // Add Cashup provider for Indonesian terminals
   TerminalC2C.shared.addProvider(provider: TerminalCashup.shared)
@@ -162,8 +165,7 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.compan
     
     ```swift
     import TerminalC2C
-    import TerminalCore
-    
+
     // Configure the default terminal device
     let terminalDevice = TerminalDevice.companion.create(
       id: "TERMINAL_ID",
@@ -180,8 +182,6 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.compan
     
     ```swift
     import TerminalC2C
-    import TerminalCore
-    import TerminalBRI // Import provider modules needed for helper methods
     
     // For BRI terminals
     let briDevice = TerminalDevice.companion.bri(
@@ -220,8 +220,6 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.compan
     
     ```swift
     import TerminalC2C
-    import TerminalCore
-    import TerminalBRI
     
     // Configure multiple terminal devices
     let cashierTerminal = TerminalDevice.companion.create(
@@ -253,7 +251,8 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.compan
       do {
         let result = try await TerminalC2C.shared.createPayment(
           payment: payment,
-          terminalDevice: cashierTerminal // Use specific terminal
+          device: cashierTerminal, // Use specific terminal
+          isSimulation: false
         )
         print("Payment successful: \(result.status)")
       } catch {
@@ -279,12 +278,12 @@ Provider frameworks are optional. You can use the generic `TerminalDevice.compan
 
 When using BRI terminal configuration:
 
-| Payment Method | Description | String Value |
+| Payment Method | Description | Enum Case |
 |---|---|---|
-| **Insert Card** | Chip card transactions | `"purchase"` |
-| **Contactless** | Tap-to-pay transactions | `"contactless"` |
-| **QRIS** | QR code payments | `"qris"` |
-| **Brizzi** | E-money card payments | `"brizzi"` |
+| **Insert Card** | Chip card transactions | `BRIPaymentMethod.insertCard` |
+| **Contactless** | Tap-to-pay transactions | `BRIPaymentMethod.contactless` |
+| **QRIS** | QR code payments | `BRIPaymentMethod.qris` |
+| **Brizzi** | E-money card payments | `BRIPaymentMethod.brizzi` |
 
 <Note>
 BRI terminals support both physical card payments and digital payment methods popular in Indonesia.
@@ -292,14 +291,14 @@ BRI terminals support both physical card payments and digital payment methods po
 
 </Tab>
 
-<Tab title="Cashup Terminals">
+<Tab title="Cashup Terminals (Coming Soon)">
 
 When using Cashup terminal configuration:
 
-| Payment Method | Description | String Value |
+| Payment Method | Description | Enum Case |
 |---|---|---|
-| **Card** | Standard card transactions | `"CARD"` |
-| **QRIS** | QR code payments | `"QRIS"` |
+| **Card** | Standard card transactions | `CashupPaymentMethod.card` |
+| **QRIS** | QR code payments | `CashupPaymentMethod.qris` |
 
 <Note>
 Cashup terminals focus on essential payment methods with card and QRIS support.
@@ -311,20 +310,20 @@ Cashup terminals focus on essential payment methods with card and QRIS support.
 
 When using NTT terminal configuration for Thailand market:
 
-| Payment Method | Description | String Value |
+| Payment Method | Description | Enum Case |
 |---|---|---|
-| **Card** | Credit/debit card transactions | `"CARD"` |
-| **MultiIPP** | Installment payments | `"MULTIIPP"` |
-| **Alipay+** | Alipay transactions | `"ALIPAY+"` |
-| **WeChat Pay** | WeChat payments | `"WECHATPAYCIL"` |
-| **TrueMoney** | TrueMoney wallet | `"TRUEMONEY"` |
-| **LINE Pay** | LINE Pay wallet | `"LINEPAY"` |
-| **ShopeePay** | Shopee wallet | `"SHOPEE"` |
-| **ThaiQR** | Thai QR standard | `"THAIQRCODE"` |
-| **BBL QRCS** | Visa/Master QR | `"BBL QRCS"` |
-| **Atome** | Atome BNPL | `"ATOME"` |
-| **Sabuy Money** | Sabuy wallet | `"SABUYMONEY"` |
-| **Max Me** | Max Me wallet | `"MAXME"` |
+| **Card** | Credit/debit card transactions | `NTTPaymentMethod.card` |
+| **MultiIPP** | Installment payments | `NTTPaymentMethod.multiIpp` |
+| **Alipay+** | Alipay transactions | `NTTPaymentMethod.alipayPlus` |
+| **WeChat Pay** | WeChat payments | `NTTPaymentMethod.wechatPayCil` |
+| **TrueMoney** | TrueMoney wallet | `NTTPaymentMethod.trueMoney` |
+| **LINE Pay** | LINE Pay wallet | `NTTPaymentMethod.linePay` |
+| **ShopeePay** | Shopee wallet | `NTTPaymentMethod.shopee` |
+| **ThaiQR** | Thai QR standard | `NTTPaymentMethod.thaiQrCode` |
+| **BBL QRCS** | Visa/Master QR | `NTTPaymentMethod.bblQrcs` |
+| **Atome** | Atome BNPL | `NTTPaymentMethod.atome` |
+| **Sabuy Money** | Sabuy wallet | `NTTPaymentMethod.sabuyMoney` |
+| **Max Me** | Max Me wallet | `NTTPaymentMethod.maxMe` |
 
 <Note>
 NTT terminals provide comprehensive payment method support for the Thai market, including local e-wallets and QR payment standards.
@@ -336,10 +335,10 @@ NTT terminals provide comprehensive payment method support for the Thai market, 
 
 When using SHC terminal configuration for the Malaysia market:
 
-| Payment Method | Description | String Value |
+| Payment Method | Description | Enum Case |
 |---|---|---|
-| **Card** | Credit/debit card transactions | "CARD" |
-| **DuitNow QR** | Malaysian QR payments | "DUITNOW" |
+| **Card** | Credit/debit card transactions | `SHCPaymentMethod.card` |
+| **DuitNow QR** | Malaysian QR payments | `SHCPaymentMethod.duitNow` |
 
 <Note>
 SHC terminals focus on core card acceptance and DuitNow QR support for Malaysia deployments.
@@ -360,8 +359,6 @@ Process a payment transaction using async/await:
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 // Create payment data
 let payment = Payment(
@@ -373,7 +370,7 @@ let payment = Payment(
 // Execute payment
 Task {
   do {
-    let result = try await TerminalC2C.shared.createPayment(payment)
+    let result = try await TerminalC2C.shared.createPayment(payment: payment)
     print("Payment successful: \(result.status)")
   } catch let error as TerminalException {
     print("Payment failed: \(error.message)")
@@ -397,7 +394,7 @@ TerminalC2C.shared.isSimulation = true
 Task {
   do {
     let result = try await TerminalC2C.shared.createPayment(
-      payment,
+      payment: payment,
       isSimulation: true
     )
     print("Simulated payment: \(result.status)")
@@ -417,8 +414,6 @@ Cancel an ongoing payment transaction:
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 // Create cancel data
 let cancel = Cancel(
@@ -428,7 +423,7 @@ let cancel = Cancel(
 
 Task {
   do {
-    let result = try await TerminalC2C.shared.cancelPayment(cancel)
+    let result = try await TerminalC2C.shared.cancelPayment(cancel: cancel)
     print("Cancellation successful: \(result.status)")
   } catch let error as TerminalException {
     print("Cancellation failed: \(error.message)")
@@ -446,8 +441,6 @@ Trigger receipt printing on the terminal:
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 // Create receipt data
 let receipt = Receipt(
@@ -457,7 +450,7 @@ let receipt = Receipt(
 
 Task {
   do {
-    let result = try await TerminalC2C.shared.printReceipt(receipt)
+    let result = try await TerminalC2C.shared.printReceipt(receipt: receipt)
     print("Receipt print command sent: \(result.status)")
   } catch let error as TerminalException {
     print("Receipt print failed: \(error.message)")
@@ -471,8 +464,6 @@ Initiate a settlement (batch close) process:
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 // Create settlement data
 let settlement = Settlement(
@@ -481,7 +472,7 @@ let settlement = Settlement(
 
 Task {
   do {
-    let result = try await TerminalC2C.shared.performSettlement(settlement)
+    let result = try await TerminalC2C.shared.performSettlement(settlement: settlement)
     print("Settlement successful: \(result.status)")
   } catch let error as TerminalException {
     print("Settlement failed: \(error.message)")
@@ -495,7 +486,6 @@ Retrieve transaction history from the terminal:
 
 ```swift
 import TerminalC2C
-import TerminalCore
 
 // Create histories data with optional filters
 let histories = Histories(
@@ -507,7 +497,7 @@ let histories = Histories(
 
 Task {
   do {
-    let history = try await TerminalC2C.shared.getHistory(histories)
+    let history = try await TerminalC2C.shared.getHistory(histories: histories)
     print("Retrieved history: \(history)")
     
     for transaction in history.transactions {
@@ -521,14 +511,12 @@ Task {
 
 ## Callback-Based API Usage
 
-For compatibility with older code or specific use cases, callback-based methods are also available:
+For compatibility with older code or specific use cases, callback-based methods are also available. Each `*Async` call returns an `ActionJob` you can cancel and invokes the handler with `(TerminalResult?, KotlinThrowable?)`:
 
 ### Create Payment (Callback)
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 let payment = Payment(
   orderID: "ORDER_123",
@@ -536,11 +524,10 @@ let payment = Payment(
   paymentMethod: BRIPaymentMethod.contactless
 )
 
-TerminalC2C.shared.createPaymentAsync(payment) { result in
-  switch result {
-  case Result.success(let paymentResult):
-    print("Payment successful: \(paymentResult.status)")
-  case Result.failure(let error):
+let job = TerminalC2C.shared.createPaymentAsync(payment: payment) { value, error in
+  if let result = value {
+    print("Payment successful: \(result.status)")
+  } else if let error = error {
     if let terminalError = error as? TerminalException {
       print("Terminal error: \(terminalError.message)")
     } else {
@@ -548,78 +535,80 @@ TerminalC2C.shared.createPaymentAsync(payment) { result in
     }
   }
 }
+
+// Cancel the coroutine if the user backs out of the flow
+job.cancel()
 ```
 
 ### Cancel Payment (Callback)
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 let cancel = Cancel(
   paymentMethod: BRIPaymentMethod.contactless,
   terminalReference: "123456"
 )
 
-TerminalC2C.shared.cancelPaymentAsync(cancel) { result in
-  switch result {
-  case Result.success(let cancelResult):
-    print("Cancellation successful: \(cancelResult.status)")
-  case Result.failure(let error):
+let cancelJob = TerminalC2C.shared.cancelPaymentAsync(cancel: cancel) { value, error in
+  if let result = value {
+    print("Cancellation successful: \(result.status)")
+  } else if let error = error {
     print("Cancellation failed: \(error.localizedDescription)")
   }
 }
+
+// Cancel when the request is no longer needed
+cancelJob.cancel()
 ```
 
 ### Print Receipt (Callback)
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 let receipt = Receipt(
   paymentMethod: BRIPaymentMethod.contactless,
   terminalReference: "123456"
 )
 
-TerminalC2C.shared.printReceiptAsync(receipt) { result in
-  switch result {
-  case Result.success(let receiptResult):
-    print("Receipt print command sent: \(receiptResult.status)")
-  case Result.failure(let error):
+let receiptJob = TerminalC2C.shared.printReceiptAsync(receipt: receipt) { value, error in
+  if let result = value {
+    print("Receipt print command sent: \(result.status)")
+  } else if let error = error {
     print("Receipt print failed: \(error.localizedDescription)")
   }
 }
+
+// Optionally cancel if the user exits the receipt screen
+receiptJob.cancel()
 ```
 
 ### Perform Settlement (Callback)
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 let settlement = Settlement(
   paymentMethod: BRIPaymentMethod.contactless
 )
 
-TerminalC2C.shared.performSettlementAsync(settlement) { result in
-  switch result {
-  case Result.success(let settlementResult):
-    print("Settlement successful: \(settlementResult.status)")
-  case Result.failure(let error):
+let settlementJob = TerminalC2C.shared.performSettlementAsync(settlement: settlement) { value, error in
+  if let result = value {
+    print("Settlement successful: \(result.status)")
+  } else if let error = error {
     print("Settlement failed: \(error.localizedDescription)")
   }
 }
+
+// Cancel if the settlement action is no longer required
+settlementJob.cancel()
 ```
 
 ### Get History (Callback)
 
 ```swift
 import TerminalC2C
-import TerminalCore
 
 let histories = Histories(
   commands: [CommandType.pay, CommandType.cancel],
@@ -628,17 +617,19 @@ let histories = Histories(
   to: "2024-01-31T23:59:59Z"
 )
 
-TerminalC2C.shared.getHistoryAsync(histories) { result in
-  switch result {
-  case Result.success(let historyResult):
+let historyJob = TerminalC2C.shared.getHistoryAsync(histories: histories) { value, error in
+  if let historyResult = value {
     print("Retrieved history: \(historyResult)")
     for transaction in historyResult.transactions {
       print("Transaction: \(transaction.status)")
     }
-  case Result.failure(let error):
+  } else if let error = error {
     print("Failed to retrieve history: \(error.localizedDescription)")
   }
 }
+
+// Cancel the history request if you no longer need updates
+historyJob.cancel()
 ```
 
 ## Error Handling
@@ -649,8 +640,6 @@ The SDK throws `TerminalException` for terminal-specific errors:
 
 ```swift
 import TerminalC2C
-import TerminalCore
-import TerminalBRI
 
 let payment = Payment(
   orderID: "ORDER_123",
@@ -659,7 +648,7 @@ let payment = Payment(
 )
 
 do {
-  let result = try await TerminalC2C.shared.createPayment(payment)
+  let result = try await TerminalC2C.shared.createPayment(payment: payment)
 } catch let error as TerminalException {
   let apiError = error.error
   switch apiError.code {
@@ -747,7 +736,7 @@ struct ApiError {
   )
   
   Task {
-    let result = try await TerminalC2C.shared.createPayment(payment)
+    let result = try await TerminalC2C.shared.createPayment(payment: payment)
   }
   ```
 </Accordion>
@@ -797,8 +786,6 @@ struct ApiError {
   
   ```swift
   import TerminalC2C
-  import TerminalCore
-  import TerminalBRI
   
   let payment = Payment(
     orderID: "ORDER_123",
@@ -808,13 +795,14 @@ struct ApiError {
   
   // For iOS 15+
   Task {
-    let result = try await TerminalC2C.shared.createPayment(payment)
+    let result = try await TerminalC2C.shared.createPayment(payment: payment)
   }
   
   // For older iOS versions, use callbacks
-  TerminalC2C.shared.createPaymentAsync(payment) { result in
-    // Handle result
+  let legacyJob = TerminalC2C.shared.createPaymentAsync(payment: payment) { value, error in
+    // Handle value or error
   }
+  legacyJob.cancel()
   ```
 </Accordion>
 </AccordionGroup>
@@ -834,7 +822,7 @@ func processPaymentSafely(orderID: String, amount: Double) async throws -> Termi
   )
     
   do {
-    return try await TerminalC2C.shared.createPayment(payment)
+    return try await TerminalC2C.shared.createPayment(payment: payment)
   } catch let error as TerminalException {
     let apiError = error.error
     switch apiError.code {
@@ -868,7 +856,7 @@ class PaymentViewController: UIViewController {
     
     paymentTask = Task {
       do {
-        let result = try await TerminalC2C.shared.createPayment(payment)
+        let result = try await TerminalC2C.shared.createPayment(payment: payment)
         await MainActor.run {
           // Update UI on main thread
           self.updateUI(with: result)
@@ -919,7 +907,7 @@ class TerminalManager {
     
     // Set device and make payment
     TerminalC2C.shared.setTerminalDevice(device)
-    return try await TerminalC2C.shared.createPayment(payment)
+    return try await TerminalC2C.shared.createPayment(payment: payment)
   }
 }
 ```

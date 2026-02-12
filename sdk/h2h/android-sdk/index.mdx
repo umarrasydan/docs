@@ -260,7 +260,7 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 </Info>
 </Tab>
 
-<Tab title="Cashup Provider (Indonesia)">
+<Tab title="Cashup Provider (Indonesia) (Coming Soon)">
 ```kotlin
 // Add Cashup provider for Indonesian smart terminals
 TerminalH2H.addProvider(TerminalCashup)
@@ -321,19 +321,27 @@ After adding providers, they will be available for use when registering terminal
 
 ### Step 3: Register Terminal Devices
 
-Register your terminal devices with the SDK:
+Create `TerminalDevice` entries for each terminal and register them with the gateway:
 
 ```kotlin
-TerminalH2H.registerDevices(
-  listOf(
-    TerminalDevice(TERMINAL_ID_1, TERMINAL_IP_1),
-    TerminalDevice(TERMINAL_ID_2, TERMINAL_IP_2)
-  )
+val devices = listOf(
+  TerminalDevice(id = "BRI12345", ipAddress = "192.168.1.10", active = true),
+  TerminalDevice(id = "BRI67890", ipAddress = "192.168.1.11", active = true)
 )
 
-// Registration completed - devices are now available for use
-Log.i("TerminalH2H", "Devices registered successfully")
+TerminalH2H.registerDevices(
+  devices = devices,
+  restart = true // restart to apply the refreshed device list immediately
+)
 ```
+
+<Tip>
+For steps to locate each terminal's <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP address</a>, review the [Finding Terminal Information guide](#finding-terminal-information).
+</Tip>
+
+<Info>
+Set <code>active = true</code> for terminals that should be available immediately. You can keep an entry with <code>active = false</code> to stage devices without establishing a connection.
+</Info>
 
 <Check>
 After successful registration, your terminal devices will be available for payment processing.
@@ -446,6 +454,10 @@ Observe terminal connection states in real-time:
         // Connection attempt failed
         Log.e("Terminal", "Failed to connect to ${terminalDevice.id}")
       }
+      ConnectionState.UNREACHABLE -> {
+        // Gateway cannot reach the device; SDK keeps retrying
+        Log.w("Terminal", "Device unreachable ${terminalDevice.id}")
+      }
       // ... handle other states
     }
   }
@@ -468,6 +480,10 @@ Observe terminal connection states in real-time:
         // Terminal is offline
         Log.w("Terminal", "Disconnected from ${terminalDevice.id}")
       }
+      ConnectionState.UNREACHABLE -> {
+        // Gateway temporarily marks the device unreachable
+        Log.w("Terminal", "Unreachable device ${terminalDevice.id}")
+      }
       // ... handle other states
     }
   }
@@ -484,6 +500,7 @@ Observe terminal connection states in real-time:
 | UNKNOWN | Initial state before any connection attempt |
 | CONNECTING | Currently establishing connection to terminal |
 | CONNECTING_FAILED | Connection attempt failed due to network or authentication issues |
+| UNREACHABLE | Gateway ping failed; SDK retries until the terminal responds |
 | UNSUPPORTED | Terminal type or connection method not supported |
 
 ### Monitor Error States
@@ -548,6 +565,14 @@ data class TerminalError(
 | TERMINAL_BUSY | -6 | Terminal is processing another transaction |
 | ENCRYPTION_FAILED | -7 | Encryption key invalid or encryption process failed |
 | AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check <a href="#finding-terminal-information">TID</a> and credentials |
+| DECLINED_BY_READER | N/A | Card reader rejected the transaction; prompt the customer to retry |
+| PAYMENT_UNPAID | N/A | Payment is still pending on the terminal; confirm status before retrying |
+| DUPLICATED | N/A | Duplicate command detected; generate a new order ID before retrying |
+| CANCELLED | N/A | Action cancelled on the terminal or by the operator |
+| TIMEOUT | N/A | Operation exceeded the configured timeout window |
+| NO_DATA_FOUND | N/A | Terminal cannot find the referenced transaction data |
+| TID_NOT_SET | N/A | Terminal ID is missing in the gateway configuration |
+| TID_NOT_MATCH | N/A | Terminal ID does not match the registered device |
 
 ### Error Handling Best Practices
 
@@ -588,6 +613,25 @@ fun handleTerminalError(error: TerminalError?) {
       Log.e("TerminalH2H", "Encryption failed: ${error.message}")
       // Re-initialize SDK with correct encryption keys
       reinitializeSDK()
+    }
+
+    ErrorCode.TIMEOUT -> {
+      // Operation exceeded configured timeout window
+      Log.w("TerminalH2H", "Operation timed out: ${error.message}")
+      // Retry using exponential backoff or restart the device connection
+      retryAfterDelay(5000)
+    }
+
+    ErrorCode.CANCELLED -> {
+      // Action cancelled on terminal or by operator
+      Log.i("TerminalH2H", "Command cancelled: ${error.message}")
+      // Surface a friendly message to the cashier and re-initiate if needed
+    }
+
+    ErrorCode.DECLINED_BY_READER -> {
+      // Card or reader rejected the transaction
+      Log.w("TerminalH2H", "Reader declined: ${error.message}")
+      // Prompt customer to retry or use a different payment method
     }
     
     else -> {

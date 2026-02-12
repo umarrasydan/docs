@@ -243,7 +243,23 @@ import {WizardInit} from '/components/WizardInit.jsx';
         <div id="provider-cashup" className="provider-card quickstart-card" onClick={() => { window._toggleProvider('cashup'); }}>
           <div className="provider-icon"><img src="/images/providers/cashup.png" alt="Cashup" /></div>
           <div className="provider-info">
-            <div className="provider-name">Cashup</div>
+            <div className="provider-name">
+              Cashup
+              <span
+                style={{
+                  marginLeft: '8px',
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  color: '#92400e',
+                  background: '#fef3c7',
+                  padding: '2px 6px',
+                  borderRadius: '9999px'
+                }}
+              >
+                Coming soon
+              </span>
+            </div>
             <div className="provider-desc">Multi-brand payment terminals</div>
           </div>
           <input type="checkbox" id="cashup-checkbox" />

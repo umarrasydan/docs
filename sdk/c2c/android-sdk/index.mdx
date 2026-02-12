@@ -219,7 +219,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     </Info>
   </Tab>
   
-  <Tab title="Cashup Indonesia">
+  <Tab title="Cashup Indonesia (Coming Soon)">
     ```kotlin
     // Add Cashup provider for Indonesian terminals
     TerminalC2C.addProvider(TerminalCashup)
@@ -311,7 +311,7 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     </Info>
   </Tab>
   
-  <Tab title="Cashup Indonesia">
+  <Tab title="Cashup Indonesia (Coming Soon)">
     ```kotlin
     // Add Cashup provider for Indonesian terminals
     TerminalC2C.addProvider(TerminalCashup)
@@ -370,7 +370,10 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     
     ```kotlin
     import co.xendit.terminal.c2c.TerminalC2C
+    import co.xendit.terminal.c2c.data.Payment
+    import co.xendit.terminal.c2c.data.TerminalException
     import co.xendit.terminal.core.data.TerminalDevice
+    import co.xendit.terminal.id.bri.BRIPaymentMethod
     
     // Configure the default terminal device
     val terminalDevice = TerminalDevice.create(
@@ -457,14 +460,20 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
     val payment = Payment(
       orderID = "ORDER_123",
       amount = 10000.0,
-      paymentMethod = PaymentMethod.fromValue("card")
+      paymentMethod = BRIPaymentMethod.contactless
     )
     
     // Specify terminal device per request
-    val result = TerminalC2C.createPayment(
-      payment = payment,
-      terminalDevice = cashierTerminal // Use specific terminal
-    )
+    val result = try {
+      TerminalC2C.createPayment(
+        payment = payment,
+        device = cashierTerminal,
+        isSimulation = false
+      )
+    } catch (error: TerminalException) {
+      // Handle payment failures per transaction
+      throw error
+    }
     ```
     
     <Info>
@@ -488,10 +497,10 @@ When using `co.xendit.terminal:id-bri-android` dependency:
 
 | Payment Method | Description | Code Example |
 |---|---|---|
-| **Insert Card** | Chip card transactions | `PaymentMethod.insertCard()` |
-| **Contactless** | Tap-to-pay transactions | `PaymentMethod.contactless()` |
-| **QRIS** | QR code payments | `PaymentMethod.qris()` |
-| **Brizzi** | E-money card payments | `PaymentMethod.brizzi()` |
+| **Insert Card** | Chip card transactions | `BRIPaymentMethod.insertCard` |
+| **Contactless** | Tap-to-pay transactions | `BRIPaymentMethod.contactless` |
+| **QRIS** | QR code payments | `BRIPaymentMethod.qris` |
+| **Brizzi** | E-money card payments | `BRIPaymentMethod.brizzi` |
 
 <Note>
 BRI terminals support both physical card payments and digital payment methods popular in Indonesia.
@@ -499,14 +508,14 @@ BRI terminals support both physical card payments and digital payment methods po
 
 </Tab>
 
-<Tab title="Cashup Terminals">
+<Tab title="Cashup Terminals (Coming Soon)">
 
 When using `co.xendit.terminal:id-cashup-android` dependency:
 
 | Payment Method | Description | Code Example |
 |---|---|---|
-| **Card** | Standard card transactions | `PaymentMethod.card()` |
-| **QRIS** | QR code payments | `PaymentMethod.qris()` |
+| **Card** | Standard card transactions | `CashupPaymentMethod.card` |
+| **QRIS** | QR code payments | `CashupPaymentMethod.qris` |
 
 <Note>
 Cashup terminals focus on essential payment methods with card and QRIS support.
@@ -520,18 +529,18 @@ When using `co.xendit.terminal:th-ntt-android` dependency for Thailand market:
 
 | Payment Method | Description | Code Example |
 |---|---|---|
-| **Card** | Credit/debit card transactions | `PaymentMethod.card()` |
-| **MultiIPP** | Installment payments | `PaymentMethod.multiIpp()` |
-| **Alipay+** | Alipay transactions | `PaymentMethod.alipayPlus()` |
-| **WeChat Pay** | WeChat payments | `PaymentMethod.wechatPayCil()` |
-| **TrueMoney** | TrueMoney wallet | `PaymentMethod.trueMoney()` |
-| **LINE Pay** | LINE Pay wallet | `PaymentMethod.linePay()` |
-| **ShopeePay** | Shopee wallet | `PaymentMethod.shopee()` |
-| **ThaiQR** | Thai QR standard | `PaymentMethod.thaiQrCode()` |
-| **BBL QRCS** | Visa/Master QR | `PaymentMethod.bblQrcs()` |
-| **Atome** | Atome BNPL | `PaymentMethod.atome()` |
-| **Sabuy Money** | Sabuy wallet | `PaymentMethod.sabuyMoney()` |
-| **Max Me** | Max Me wallet | `PaymentMethod.maxMe()` |
+| **Card** | Credit/debit card transactions | `NTTPaymentMethod.card` |
+| **MultiIPP** | Installment payments | `NTTPaymentMethod.multiIpp` |
+| **Alipay+** | Alipay transactions | `NTTPaymentMethod.alipayPlus` |
+| **WeChat Pay** | WeChat payments | `NTTPaymentMethod.wechatPayCil` |
+| **TrueMoney** | TrueMoney wallet | `NTTPaymentMethod.trueMoney` |
+| **LINE Pay** | LINE Pay wallet | `NTTPaymentMethod.linePay` |
+| **ShopeePay** | Shopee wallet | `NTTPaymentMethod.shopee` |
+| **ThaiQR** | Thai QR standard | `NTTPaymentMethod.thaiQrCode` |
+| **BBL QRCS** | Visa/Master QR | `NTTPaymentMethod.bblQrcs` |
+| **Atome** | Atome BNPL | `NTTPaymentMethod.atome` |
+| **Sabuy Money** | Sabuy wallet | `NTTPaymentMethod.sabuyMoney` |
+| **Max Me** | Max Me wallet | `NTTPaymentMethod.maxMe` |
 
 <Note>
 NTT terminals provide comprehensive payment method support for the Thai market, including local e-wallets and QR payment standards.
@@ -541,7 +550,11 @@ NTT terminals provide comprehensive payment method support for the Thai market, 
 </Tabs>
 
 <Warning>
-Provider-specific payment methods require the corresponding provider dependency. Using generic `PaymentMethod.fromValue("method_name")` works with all providers but doesn't provide type safety.
+Provider-specific payment enums require the corresponding provider dependency. They expose the exact string values expected by each terminal while keeping your code type-safe.
+
+<Info>
+Replace the enum with the provider you integrate: `CashupPaymentMethod`, `NTTPaymentMethod`, or `SHCPaymentMethod` mirror the samples above.
+</Info>
 </Warning>
 
 ## API Usage
@@ -554,28 +567,30 @@ Process a payment transaction using the TerminalC2C singleton:
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Payment
 import co.xendit.terminal.c2c.data.TerminalException
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 // Create payment data
 val payment = Payment(
-    orderID = "ORDER_123",
-    amount = 10000.0,
-    paymentMethod = PaymentMethod.fromValue("card") // or "ewallet", "qr"
+  orderID = "ORDER_123",
+  amount = 10000.0,
+  paymentMethod = BRIPaymentMethod.contactless
 )
 
 // Execute payment (suspend function)
 try {
-    val result = TerminalC2C.createPayment(payment)
-    println("Payment successful: ${result.status}")
-} catch (e: TerminalException) {
-    println("Payment failed: ${e.message}")
-} catch (e: Exception) {
-    println("Error: ${e.message}")
+  val result = TerminalC2C.createPayment(
+    payment = payment,
+    device = null,          // Optional: override the default device
+    isSimulation = false    // Optional: pass true when exercising the simulator
+  )
+  println("Payment successful: ${result.status}")
+} catch (error: TerminalException) {
+  println("Payment failed: ${error.message}")
 }
 ```
 
 <Tip>
-For non-coroutine environments, use `TerminalC2C.createPaymentAsync(payment, callback)`.
+For non-coroutine environments, call `TerminalC2C.createPaymentAsync` which returns an `ActionJob` you can cancel if the UI is dismissed. The callback signature is `(TerminalResult?, Throwable?)`.
 </Tip>
 
 ### Simulation Testing
@@ -606,19 +621,24 @@ Cancel an ongoing payment transaction:
 ```kotlin
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Cancel
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 // Create cancel data
 val cancel = Cancel(
-    paymentMethod = PaymentMethod.fromValue("card"), // Optional
-    terminalReference = "123456" // Reference from previous transaction
+  paymentMethod = BRIPaymentMethod.contactless, // Optional
+  terminalReference = "123456" // Reference from previous transaction
 )
 
 try {
-    val result = TerminalC2C.cancelPayment(cancel)
-    println("Cancellation successful: ${result.status}")
-} catch (e: TerminalException) {
-    println("Cancellation failed: ${e.message}")
+  val result = TerminalC2C.cancelPayment(
+    cancel = cancel,
+    device = null,
+    isSimulation = false
+  )
+  println("Cancellation successful: ${result.status}")
+} catch (error: TerminalException) {
+  println("Cancellation failed: ${error.message}")
 }
 ```
 
@@ -629,19 +649,24 @@ Trigger receipt printing on the terminal:
 ```kotlin
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Receipt
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 // Create receipt data
 val receipt = Receipt(
-    paymentMethod = PaymentMethod.fromValue("card"), // Optional
-    terminalReference = "123456" // Reference from previous transaction
+  paymentMethod = BRIPaymentMethod.contactless, // Optional
+  terminalReference = "123456"
 )
 
 try {
-    val result = TerminalC2C.printReceipt(receipt)
-    println("Receipt print command sent: ${result.status}")
-} catch (e: TerminalException) {
-    println("Receipt print failed: ${e.message}")
+  val result = TerminalC2C.printReceipt(
+    receipt = receipt,
+    device = null,
+    isSimulation = false
+  )
+  println("Receipt print command sent: ${result.status}")
+} catch (error: TerminalException) {
+  println("Receipt print failed: ${error.message}")
 }
 ```
 
@@ -652,18 +677,23 @@ Initiate a settlement (batch close) process:
 ```kotlin
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Settlement
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 // Create settlement data
 val settlement = Settlement(
-    paymentMethod = PaymentMethod.fromValue("card") // Optional: null for all payment methods
+  paymentMethod = BRIPaymentMethod.contactless // Optional: pass null to settle all methods
 )
 
 try {
-    val result = TerminalC2C.performSettlement(settlement)
-    println("Settlement successful: ${result.status}")
-} catch (e: TerminalException) {
-    println("Settlement failed: ${e.message}")
+  val result = TerminalC2C.performSettlement(
+    settlement = settlement,
+    device = null,
+    isSimulation = false
+  )
+  println("Settlement successful: ${result.status}")
+} catch (error: TerminalException) {
+  println("Settlement failed: ${error.message}")
 }
 ```
 
@@ -675,6 +705,7 @@ Retrieve transaction history from the terminal:
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Histories
 import co.xendit.terminal.core.data.Status
+import co.xendit.terminal.core.data.TerminalResult
 import co.xendit.terminal.core.data.response.CommandType
 
 // Create histories data with optional filters
@@ -686,14 +717,14 @@ val histories = Histories(
 )
 
 try {
-    val history = TerminalC2C.getHistory(histories)
-    println("Retrieved history: $history")
-    
-    history.transactions.forEach { transaction ->
-        println("Transaction: ${transaction.status}")
-    }
-} catch (e: TerminalException) {
-    println("Failed to retrieve history: ${e.message}")
+  val results: List<TerminalResult> = TerminalC2C.getHistory(histories)
+  println("Retrieved ${results.size} records")
+
+  results.forEach { transaction ->
+    println("Transaction status: ${transaction.status}")
+  }
+} catch (error: TerminalException) {
+  println("Failed to retrieve history: ${error.message}")
 }
 ```
 
@@ -706,113 +737,139 @@ For interoperability with Java or callback-based code, use the async methods:
 ```kotlin
 import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Payment
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 val payment = Payment(
-    orderID = "ORDER_123",
-    amount = 10000.0,
-    paymentMethod = PaymentMethod.fromValue("card")
+  orderID = "ORDER_123",
+  amount = 10000.0,
+  paymentMethod = BRIPaymentMethod.contactless
 )
 
-TerminalC2C.createPaymentAsync(payment) { result ->
-    result.onSuccess { paymentResult ->
-        println("Payment successful: ${paymentResult.status}")
-    }.onFailure { error ->
-        when (error) {
-            is TerminalException -> {
-                println("Terminal error: ${error.message}")
-            }
-            else -> {
-                println("Error: ${error.message}")
-            }
-        }
-    }
+val job = TerminalC2C.createPaymentAsync(
+  payment = payment,
+  device = null,
+  isSimulation = false
+) { result, error ->
+  when {
+    error != null -> println("Payment failed: ${error.message}")
+    result != null -> println("Payment successful: ${result.status}")
+    else -> println("Payment finished with no result")
+  }
 }
+
+// Cancel the job if the user navigates away
+job.cancel()
 ```
 
 ### Cancel Payment (Async)
 
 ```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Cancel
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 val cancel = Cancel(
-    paymentMethod = PaymentMethod.fromValue("card"), // Optional
-    terminalReference = "123456"
+  paymentMethod = BRIPaymentMethod.contactless,
+  terminalReference = "123456"
 )
 
-TerminalC2C.cancelPaymentAsync(cancel) { result ->
-    result.onSuccess { cancelResult ->
-        println("Cancellation successful: ${cancelResult.status}")
-    }.onFailure { error ->
-        println("Cancellation failed: ${error.message}")
-    }
+val cancelJob = TerminalC2C.cancelPaymentAsync(
+  cancel = cancel,
+  device = null,
+  isSimulation = false
+) { result, error ->
+  when {
+    error != null -> println("Cancellation failed: ${error.message}")
+    result != null -> println("Cancellation successful: ${result.status}")
+  }
 }
+
+cancelJob.cancel()
 ```
 
 ### Print Receipt (Async)
 
 ```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Receipt
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 val receipt = Receipt(
-    paymentMethod = PaymentMethod.fromValue("card"), // Optional
-    terminalReference = "123456"
+  paymentMethod = BRIPaymentMethod.contactless,
+  terminalReference = "123456"
 )
 
-TerminalC2C.printReceiptAsync(receipt) { result ->
-    result.onSuccess { receiptResult ->
-        println("Receipt print command sent: ${receiptResult.status}")
-    }.onFailure { error ->
-        println("Receipt print failed: ${error.message}")
-    }
+val receiptJob = TerminalC2C.printReceiptAsync(
+  receipt = receipt,
+  device = null,
+  isSimulation = false
+) { result, error ->
+  when {
+    error != null -> println("Receipt print failed: ${error.message}")
+    result != null -> println("Receipt print command sent: ${result.status}")
+  }
 }
+
+receiptJob.cancel()
 ```
 
 ### Perform Settlement (Async)
 
 ```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Settlement
-import co.xendit.terminal.core.data.PaymentMethod
+import co.xendit.terminal.id.bri.BRIPaymentMethod
 
 val settlement = Settlement(
-    paymentMethod = PaymentMethod.fromValue("card") // Optional: null for all payment methods
+  paymentMethod = BRIPaymentMethod.contactless
 )
 
-TerminalC2C.performSettlementAsync(settlement) { result ->
-    result.onSuccess { settlementResult ->
-        println("Settlement successful: ${settlementResult.status}")
-    }.onFailure { error ->
-        println("Settlement failed: ${error.message}")
-    }
+val settlementJob = TerminalC2C.performSettlementAsync(
+  settlement = settlement,
+  device = null,
+  isSimulation = false
+) { result, error ->
+  when {
+    error != null -> println("Settlement failed: ${error.message}")
+    result != null -> println("Settlement successful: ${result.status}")
+  }
 }
+
+settlementJob.cancel()
 ```
 
 ### Get History (Async)
 
 ```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
 import co.xendit.terminal.c2c.data.Histories
 import co.xendit.terminal.core.data.Status
+import co.xendit.terminal.core.data.TerminalResult
 import co.xendit.terminal.core.data.response.CommandType
 
 val histories = Histories(
-    commands = listOf(CommandType.PAY, CommandType.CANCEL), // Optional
-    statuses = listOf(Status.SUCCESS), // Optional
-    from = "2024-01-01T00:00:00Z",
-    to = "2024-01-31T23:59:59Z"
+  commands = listOf(CommandType.PAY, CommandType.CANCEL),
+  statuses = listOf(Status.SUCCESS),
+  from = "2024-01-01T00:00:00Z",
+  to = "2024-01-31T23:59:59Z"
 )
 
-TerminalC2C.getHistoryAsync(histories) { result ->
-    result.onSuccess { historyResult ->
-        println("Retrieved history: $historyResult")
-        historyResult.transactions.forEach { transaction ->
-            println("Transaction: ${transaction.status}")
-        }
-    }.onFailure { error ->
-        println("Failed to retrieve history: ${error.message}")
+val historyJob = TerminalC2C.getHistoryAsync(
+  histories = histories,
+  device = null,
+  isSimulation = false
+) { results: List<TerminalResult>?, error ->
+  when {
+    error != null -> println("Failed to retrieve history: ${error.message}")
+    results != null -> {
+      println("Retrieved ${results.size} records")
+      results.forEach { println("Transaction status: ${it.status}") }
     }
+  }
 }
+
+historyJob.cancel()
 ```
 
 ## Error Handling
@@ -951,7 +1008,7 @@ suspend fun processPaymentSafely(orderID: String, amount: Double): Result<Termin
         val payment = Payment(
             orderID = orderID,
             amount = amount,
-            paymentMethod = PaymentMethod.fromValue("card")
+      paymentMethod = BRIPaymentMethod.contactless
         )
         val result = TerminalC2C.createPayment(payment)
         Result.success(result)
@@ -1024,9 +1081,9 @@ class PaymentActivity : AppCompatActivity() {
     
     fun processPayment() {
         val payment = Payment(
-            orderID = "ORDER_123",
-            amount = 10000.0,
-            paymentMethod = PaymentMethod.fromValue("card")
+          orderID = "ORDER_123",
+          amount = 10000.0,
+          paymentMethod = BRIPaymentMethod.contactless
         )
         
         scope.launch {
