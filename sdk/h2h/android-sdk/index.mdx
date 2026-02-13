@@ -16,8 +16,6 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 <AccordionGroup>
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
-    - Added Cashup provider support for Indonesian terminals
-    - Added SHC provider support for Malaysian terminals
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
     
     <Warning>
@@ -144,14 +142,8 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     // Indonesia - BRI terminals
     implementation("co.xendit.terminal:id-bri-android:<latest_version>")
     
-    // Indonesia - Cashup terminals  
-    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
-    
     // Thailand - NTT terminals
     implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
-
-    // Malaysia - SHC terminals
-    implementation("co.xendit.terminal:my-shc-android:<latest_version>")
   }
   ```
   
@@ -167,14 +159,8 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     // Indonesia - BRI terminals
     implementation 'co.xendit.terminal:id-bri-android:<latest_version>'
     
-    // Indonesia - Cashup terminals
-    implementation 'co.xendit.terminal:id-cashup-android:<latest_version>'
-    
     // Thailand - NTT terminals
     implementation 'co.xendit.terminal:th-ntt-android:<latest_version>'
-
-    // Malaysia - SHC terminals
-    implementation 'co.xendit.terminal:my-shc-android:<latest_version>'
   }
   ```
   </CodeGroup>
@@ -227,6 +213,10 @@ Use `TerminalMode.INTEGRATION` for development and testing. Switch to `TerminalM
 
 Add the specific terminal providers you need for your integration:
 
+<Note>
+For Share Commerce (SHC), Cashup, and Atom terminals, you do not need to add a Terminal H2H provider. Those devices run terminal logic through the Gateway app installed on the hardware. If the app is missing, install it from the <a href="/sdk/gateway/app-configuration#download-the-app">Gateway download page</a> or contact <a href="mailto:inpersonpayments@xendit.co">inpersonpayments@xendit.co</a> for assistance.
+</Note>
+
 <Tabs>
 <Tab title="BRI Provider (Indonesia)">
 ```kotlin
@@ -260,53 +250,17 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 </Info>
 </Tab>
 
-<Tab title="Cashup Provider (Indonesia) (Coming Soon)">
-```kotlin
-// Add Cashup provider for Indonesian smart terminals
-TerminalH2H.addProvider(TerminalCashup)
-```
-
-**Required dependency:**
-```kotlin
-implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
-```
-
-<Info>
-Cashup provider supports modern smart payment devices with cards, e-wallets, and QR code capabilities.
-</Info>
-</Tab>
-
-<Tab title="SHC Provider (Malaysia)">
-```kotlin
-// Add SHC provider for Malaysian terminals
-TerminalH2H.addProvider(TerminalSHC)
-```
-
-**Required dependency:**
-```kotlin
-implementation("co.xendit.terminal:my-shc-android:<latest_version>")
-```
-
-<Info>
-SHC provider supports Share commerce terminals for the Malaysia market with card and QR payment capabilities.
-</Info>
-</Tab>
-
 <Tab title="Multiple Providers">
 ```kotlin
 // Add multiple providers for supporting different terminal types
 TerminalH2H.addProvider(TerminalBRI)
 TerminalH2H.addProvider(TerminalNTT)
-TerminalH2H.addProvider(TerminalCashup)
-TerminalH2H.addProvider(TerminalSHC)
 ```
 
 **Required dependencies:**
 ```kotlin
 implementation("co.xendit.terminal:id-bri-android:<latest_version>")
 implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
-implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
-implementation("co.xendit.terminal:my-shc-android:<latest_version>")
 ```
 
 <Warning>

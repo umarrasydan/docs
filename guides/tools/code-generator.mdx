@@ -132,67 +132,6 @@ TerminalH2H.observeConnection(
 }
 ```
 </Tab>
-
-<Tab title="Cashup Provider (Indonesia)">
-```kotlin
-// build.gradle.kts dependencies
-dependencies {
-    implementation("co.xendit.terminal:h2h-android:<latest_version>")
-    implementation("co.xendit.terminal:core-android:<latest_version>")
-    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
-}
-
-// Application class initialization
-class MyApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-
-        TerminalApp.initialize(
-            application = this,
-            clientKey = CLIENT_KEY,
-            mode = TerminalMode.INTEGRATION
-        )
-
-        // Add Cashup provider
-        TerminalH2H.addProvider(TerminalCashup)
-    }
-}
-
-// Register Cashup terminal devices
-TerminalH2H.registerDevices(
-    devices = listOf(
-        TerminalDevice(id = "CASHUP_TERMINAL_001", ipAddress = "192.168.1.100", active = true),
-        TerminalDevice(id = "CASHUP_TERMINAL_002", ipAddress = "192.168.1.101", active = true)
-    ),
-    restart = true
-)
-
-// Configure operation timeout
-TerminalH2H.setOperationTimeout(minutes = 5)
-// Note: Type-specific timeouts not available for Cashup provider
-
-// Monitor Cashup terminal connections
-TerminalH2H.observeConnection(
-    CoroutineScope(Dispatchers.IO),
-    terminalDevice
-) { state ->
-    when (state) {
-        ConnectionState.CONNECTED -> {
-            Log.i("Terminal", "Cashup terminal connected")
-        }
-        ConnectionState.DISCONNECTED -> {
-            Log.w("Terminal", "Cashup terminal disconnected")
-        }
-        ConnectionState.CONNECTING_FAILED -> {
-            Log.e("Terminal", "Cashup terminal connection failed")
-        }
-        ConnectionState.UNREACHABLE -> {
-            Log.w("Terminal", "Cashup terminal unreachable")
-        }
-    }
-}
-```
-</Tab>
 </Tabs>
 
 ### Android (Kotlin) - Terminal C2C
@@ -413,57 +352,6 @@ TerminalH2H.shared.observeConnection(device: nttDevice) { state in
 ```
 </Tab>
 
-<Tab title="Cashup Provider (Indonesia)">
-```swift
-// Add to Podfile:
-target 'YourApp' do
-  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
-end
-
-// Add TerminalH2H.xcframework to your project
-
-import TerminalH2H
-
-let cashupDevice = TerminalDevice.companion.create(id: "CASHUP_TERMINAL_001", ipAddress: "192.168.1.100")
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        TerminalApp.shared.initialize(
-            clientKey: CLIENT_KEY,
-            mode: TerminalMode.integration // switch to .live for production
-        )
-
-        TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
-
-        TerminalH2H.shared.registerDevices(
-            devices: [cashupDevice],
-            restart: true
-        )
-
-        return true
-    }
-}
-
-// Monitor connection state
-TerminalH2H.shared.observeConnection(device: cashupDevice) { state in
-    switch state {
-    case .connected:
-        print("Cashup terminal connected")
-    case .disconnected:
-        print("Cashup terminal disconnected")
-    case .connecting:
-        print("Connecting to Cashup terminal")
-    case .unreachable:
-        print("Cashup terminal unreachable")
-    default:
-        break
-    }
-}
-```
 </Tab>
 </Tabs>
 

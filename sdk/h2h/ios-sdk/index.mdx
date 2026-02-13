@@ -16,8 +16,6 @@ This SDK works alongside the Terminal API to provide a complete in-person paymen
 <AccordionGroup>
   <Accordion title="v1.0.0 — 6-Feb-2026">
     What's new:
-    - Added Cashup provider support for Indonesian terminals
-    - Added SHC provider support for Malaysian terminals
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
     
     <Warning>
@@ -112,6 +110,10 @@ The SDK supports two modes:
 
 Add the specific terminal providers you need for your integration:
 
+<Note>
+For Share Commerce (SHC), Cashup, and Atom terminals, you do not need to add a Terminal H2H provider. Those devices run terminal logic through the Gateway app installed on the hardware. If the app is missing, install it from the <a href="/sdk/gateway/app-configuration#download-the-app">Gateway download page</a> or contact <a href="mailto:inpersonpayments@xendit.co">inpersonpayments@xendit.co</a> for help.
+</Note>
+
 <Tabs>
 <Tab title="BRI Provider (Indonesia)">
 ```swift
@@ -135,35 +137,11 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 </Info>
 </Tab>
 
-<Tab title="Cashup Provider (Indonesia) (Coming Soon)">
-```swift
-// Add Cashup provider for Indonesian smart terminals
-TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
-```
-
-<Info>
-Cashup provider supports modern smart payment devices with cards, e-wallets, and QR code capabilities.
-</Info>
-</Tab>
-
-<Tab title="SHC Provider (Malaysia)">
-```swift
-// Add SHC provider for Malaysian terminals
-TerminalH2H.shared.addProvider(provider: TerminalSHC.shared)
-```
-
-<Info>
-SHC provider supports Share commerce terminals for the Malaysia market with card and QR payment capabilities.
-</Info>
-</Tab>
-
 <Tab title="Multiple Providers">
 ```swift
 // Add multiple providers for supporting different terminal types
 TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
 TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
-TerminalH2H.shared.addProvider(provider: TerminalCashup.shared)
-TerminalH2H.shared.addProvider(provider: TerminalSHC.shared)
 ```
 
 <Warning>
