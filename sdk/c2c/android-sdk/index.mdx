@@ -168,25 +168,28 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
 
 Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal [IP address](#finding-terminal-information) and [Terminal ID (TID)](#finding-terminal-information).
 
-<Steps>
-<Step title="Initialize Terminal App">
-  Initialize the Terminal App with your client key:
-  
-  ```kotlin
-  import co.xendit.terminal.core.TerminalApp
-  
-  // In your Application class or Activity
-  TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
-  // or TerminalMode.INTEGRATION for testing
-  ```
-  
-  <Warning>
-  Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
-  </Warning>
-</Step>
+### Step 1: Initialize Terminal App
+Initialize the Terminal App with your client key:
 
-<Step title="Add Terminal Providers">
-  <Tabs>
+```kotlin
+import co.xendit.terminal.core.TerminalApp
+
+// In your Application class or Activity
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
+// or TerminalMode.INTEGRATION for testing
+```
+
+<Warning>
+Replace `CLIENT_KEY` with your actual client key from the Xendit dashboard.
+</Warning>
+
+### Step 2: Add Terminal Providers
+
+<Note>
+For Share Commerce (SHC) and Cashup terminals, make sure the Gateway app is installed on the device. If it is missing, install it from the <a href="/sdk/gateway/app-configuration#download-the-app">Gateway download page</a> or contact <a href="mailto:inpersonpayments@xendit.co">inpersonpayments@xendit.co</a> for assistance.
+</Note>
+
+<Tabs>
   <Tab title="BRI Indonesia">
     ```kotlin
     // Add BRI provider for Indonesian terminals
@@ -266,227 +269,135 @@ Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-
   </Tab>
   </Tabs>
   
-  <Note>
-  Provider dependencies are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific dependencies. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
-  </Note>
-</Step>
+<Note>
+Provider dependencies are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific dependencies. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
+</Note>
 
-<Step title="Configure Terminal Device">
-  <Tabs>
-  <Tab title="BRI Indonesia">
-    ```kotlin
-    // Add BRI provider for Indonesian terminals
-    TerminalC2C.addProvider(TerminalBRI)
-    ```
-    
-    **Required dependency:**
-    ```gradle app/build.gradle
-    dependencies {
-      implementation 'co.xendit.terminal:id-bri-android:latest'
-      // ... other dependencies
-    }
-    ```
-    
-    <Info>
-    BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
-    </Info>
-  </Tab>
-  
-  <Tab title="NTT Thailand">
-    ```kotlin
-    // Add NTT provider for Thai terminals
-    TerminalC2C.addProvider(TerminalNTT)
-    ```
-    
-    **Required dependency:**
-    ```gradle app/build.gradle
-    dependencies {
-      implementation 'co.xendit.terminal:th-ntt-android:latest'
-      // ... other dependencies
-    }
-    ```
-    
-    <Info>
-    NTT provider supports multi-function terminals with card payments and QR code transactions.
-    </Info>
-  </Tab>
-  
-  <Tab title="Cashup Indonesia (Coming Soon)">
-    ```kotlin
-    // Add Cashup provider for Indonesian terminals
-    TerminalC2C.addProvider(TerminalCashup)
-    ```
-    
-    **Required dependency:**
-    ```gradle app/build.gradle
-    dependencies {
-      implementation 'co.xendit.terminal:id-cashup-android:latest'
-      // ... other dependencies
-    }
-    ```
-    
-    <Info>
-    Cashup provider offers simplified integration with essential payment methods.
-    </Info>
-  </Tab>
-  
-  <Tab title="Multiple Providers">
-    ```kotlin
-    // Add multiple providers
-    TerminalC2C.addProvider(TerminalBRI)
-    TerminalC2C.addProvider(TerminalNTT)
-    TerminalC2C.addProvider(TerminalCashup)
-    TerminalC2C.addProvider(TerminalSHC)
-    ```
-    
-    **Required dependencies:**
-    ```gradle app/build.gradle
-    dependencies {
-      implementation 'co.xendit.terminal:id-bri-android:latest'
-      implementation 'co.xendit.terminal:th-ntt-android:latest'
-      implementation 'co.xendit.terminal:id-cashup-android:latest'
-      implementation 'co.xendit.terminal:my-shc-android:latest'
-      // ... other dependencies
-    }
-    ```
-    
-    <Tip>
-    This setup allows your app to work with different terminal types based on your merchant's configuration.
-    </Tip>
-  </Tab>
-  </Tabs>
-  
-  <Note>
-  Provider dependencies are optional. You can use the generic `TerminalDevice.create()` method without adding provider-specific dependencies. Provider frameworks enable access to specialized helper methods like `TerminalDevice.bri()`, `TerminalDevice.ntt()`, and `TerminalDevice.cashup()`.
-  </Note>
-</Step>
+### Step 3: Configure Terminal Device
+Set up your terminal device configuration using the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information):
 
-<Step title="Configure Terminal Device">
-  Set up your terminal device configuration using the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information):
-  
-  <Tabs>
-  <Tab title="Generic Method">
-    Use the generic `create` method (available without provider dependencies):
-    
-    ```kotlin
-    import co.xendit.terminal.c2c.TerminalC2C
-    import co.xendit.terminal.c2c.data.Payment
-    import co.xendit.terminal.c2c.data.TerminalException
-    import co.xendit.terminal.core.data.TerminalDevice
-    import co.xendit.terminal.id.bri.BRIPaymentMethod
-    
-    // Configure the default terminal device
-    val terminalDevice = TerminalDevice.create(
-      id = "TERMINAL_ID",
-      ipAddress = "192.168.1.100",
-      provider = "BRI" // or "CASHUP", "NTT"
-    )
-    
-    // Set as default device for TerminalC2C
-    TerminalC2C.setTerminalDevice(terminalDevice)
-    ```
-  </Tab>
-  
-  <Tab title="Provider-Specific Methods">
-    Use provider-specific helper methods when you include the corresponding provider dependency:
-    
-    ```kotlin
-    import co.xendit.terminal.c2c.TerminalC2C
-    import co.xendit.terminal.core.data.TerminalDevice
-    
-    // For BRI terminals (requires id-bri-android dependency)
-    val briDevice = TerminalDevice.bri(
-      id = "TERMINAL_ID",
-      ipAddress = "192.168.1.100"
-    )
-    
-    // For Cashup terminals (requires id-cashup-android dependency)
-    val cashupDevice = TerminalDevice.cashup(
-      id = "TERMINAL_ID", 
-      ipAddress = "192.168.1.101"
-    )
-    
-    // For NTT terminals (requires th-ntt-android dependency)
-    val nttDevice = TerminalDevice.ntt(
-      id = "TERMINAL_ID",
-      ipAddress = "192.168.1.102"
-    )
-    
-    // For SHC terminals (requires my-shc-android dependency)
-    val shcDevice = TerminalDevice.shc(
-      id = "TERMINAL_ID",
-      ipAddress = "192.168.1.103"
-    )
-    
-    // Set as default device for TerminalC2C
-    TerminalC2C.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
-    ```
-    
-    <Note>
-    Provider-specific methods require the corresponding dependency:
-    - `TerminalDevice.bri()` requires `co.xendit.terminal:id-bri-android`
-    - `TerminalDevice.cashup()` requires `co.xendit.terminal:id-cashup-android`  
-    - `TerminalDevice.ntt()` requires `co.xendit.terminal:th-ntt-android`
-    - `TerminalDevice.shc()` requires `co.xendit.terminal:my-shc-android`
-    </Note>
-  </Tab>
-  
-  <Tab title="Multiple EDC Devices">
-    For apps handling multiple EDC devices, configure each terminal and specify per transaction:
-    
-    ```kotlin
-    import co.xendit.terminal.c2c.TerminalC2C
-    import co.xendit.terminal.core.data.TerminalDevice
-    
-    // Configure multiple terminal devices
-    val cashierTerminal = TerminalDevice.create(
-      id = "TID001",
-      ipAddress = "192.168.1.100",
-      provider = "BRI"
-    )
-    
-    val driveThruTerminal = TerminalDevice.create(
-      id = "TID002", 
-      ipAddress = "192.168.1.101",
-      provider = "BRI"
-    )
-    
-    val selfServiceTerminal = TerminalDevice.ntt(
-      id = "TID003",
-      ipAddress = "192.168.1.102"
-    )
-    
-    // Use specific terminal per transaction
-    val payment = Payment(
-      orderID = "ORDER_123",
-      amount = 10000.0,
-      paymentMethod = BRIPaymentMethod.contactless
-    )
-    
-    // Specify terminal device per request
-    val result = try {
-      TerminalC2C.createPayment(
-        payment = payment,
-        device = cashierTerminal,
-        isSimulation = false
-      )
-    } catch (error: TerminalException) {
-      // Handle payment failures per transaction
-      throw error
-    }
-    ```
-    
-    <Info>
-    This approach allows dynamic terminal selection based on business logic, location, or user interaction without setting a global default.
-    </Info>
-  </Tab>
-  </Tabs>
-  
-  <Tip>
-  You can also specify a device per request instead of setting a default device.
-  </Tip>
-</Step>
-</Steps>
+<Tabs>
+<Tab title="Generic Method">
+Use the generic `create` method (available without provider dependencies):
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.c2c.data.Payment
+import co.xendit.terminal.c2c.data.TerminalException
+import co.xendit.terminal.core.data.TerminalDevice
+import co.xendit.terminal.id.bri.BRIPaymentMethod
+
+// Configure the default terminal device
+val terminalDevice = TerminalDevice.create(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.100",
+  provider = "BRI" // or "CASHUP", "NTT"
+)
+
+// Set as default device for TerminalC2C
+TerminalC2C.setTerminalDevice(terminalDevice)
+```
+</Tab>
+
+<Tab title="Provider-Specific Methods">
+Use provider-specific helper methods when you include the corresponding provider dependency:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.data.TerminalDevice
+
+// For BRI terminals (requires id-bri-android dependency)
+val briDevice = TerminalDevice.bri(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.100"
+)
+
+// For Cashup terminals (requires id-cashup-android dependency)
+val cashupDevice = TerminalDevice.cashup(
+  id = "TERMINAL_ID", 
+  ipAddress = "192.168.1.101"
+)
+
+// For NTT terminals (requires th-ntt-android dependency)
+val nttDevice = TerminalDevice.ntt(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.102"
+)
+
+// For SHC terminals (requires my-shc-android dependency)
+val shcDevice = TerminalDevice.shc(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.103"
+)
+
+// Set as default device for TerminalC2C
+TerminalC2C.setTerminalDevice(briDevice) // or cashupDevice, nttDevice
+```
+
+<Note>
+Provider-specific methods require the corresponding dependency:
+- `TerminalDevice.bri()` requires `co.xendit.terminal:id-bri-android`
+- `TerminalDevice.cashup()` requires `co.xendit.terminal:id-cashup-android`  
+- `TerminalDevice.ntt()` requires `co.xendit.terminal:th-ntt-android`
+- `TerminalDevice.shc()` requires `co.xendit.terminal:my-shc-android`
+</Note>
+</Tab>
+
+<Tab title="Multiple EDC Devices">
+For apps handling multiple EDC devices, configure each terminal and specify per transaction:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.data.TerminalDevice
+
+// Configure multiple terminal devices
+val cashierTerminal = TerminalDevice.create(
+  id = "TID001",
+  ipAddress = "192.168.1.100",
+  provider = "BRI"
+)
+
+val driveThruTerminal = TerminalDevice.create(
+  id = "TID002", 
+  ipAddress = "192.168.1.101",
+  provider = "BRI"
+)
+
+val selfServiceTerminal = TerminalDevice.ntt(
+  id = "TID003",
+  ipAddress = "192.168.1.102"
+)
+
+// Use specific terminal per transaction
+val payment = Payment(
+  orderID = "ORDER_123",
+  amount = 10000.0,
+  paymentMethod = BRIPaymentMethod.contactless
+)
+
+// Specify terminal device per request
+val result = try {
+  TerminalC2C.createPayment(
+    payment = payment,
+    device = cashierTerminal,
+    isSimulation = false
+  )
+} catch (error: TerminalException) {
+  // Handle payment failures per transaction
+  throw error
+}
+```
+
+<Info>
+This approach allows dynamic terminal selection based on business logic, location, or user interaction without setting a global default.
+</Info>
+</Tab>
+</Tabs>
+
+<Tip>
+You can also specify a device per request instead of setting a default device.
+</Tip>
+
 
 ## Supported Payment Methods by Provider
 
