@@ -499,7 +499,7 @@ import {WizardInit} from '/components/WizardInit.jsx';
     </Accordion>
     <Accordion title="401 or 403 errors from C2C API">
       - Verify you are using the Gateway App API key rather than your Dashboard key.
-      - Include the correct provider header (BRI, NTT, or CASHUP) with each request.
+      - Include the correct provider header (BRI, NTT, CASHUP, or SHC) with each request.
       - Regenerate the Gateway App credentials if the key rotation recently occurred.
     </Accordion>
     <Accordion title="Terminal does not prompt for payment">
@@ -574,7 +574,7 @@ import {WizardInit} from '/components/WizardInit.jsx';
     </Accordion>
     <Accordion title="Terminal remains offline">
       - Check that the terminal device IP is reachable from the mobile device.
-      - Verify the provider SDK (BRI, NTT, Cashup) is registered before setting the device.
+      - Verify the provider SDK (BRI, NTT, Cashup, SHC) is registered before setting the device.
       - Recreate the terminal pairing if the device was rebooted or network changed.
     </Accordion>
     <Accordion title="Payment command returns errors">

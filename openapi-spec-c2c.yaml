@@ -349,6 +349,8 @@ paths:
             enum:
               - BRI
               - NTT
+              - CASHUP
+              - SHC
           description: Provider name.
         - name: simulation
           in: header
@@ -460,6 +462,8 @@ paths:
             enum:
               - BRI
               - NTT
+              - CASHUP
+              - SHC
           description: Provider name.
         - name: simulation
           in: header
@@ -567,6 +571,8 @@ paths:
             enum:
               - BRI
               - NTT
+              - CASHUP
+              - SHC
           description: Provider name.
         - name: simulation
           in: header
@@ -665,6 +671,8 @@ paths:
             enum:
               - BRI
               - NTT
+              - CASHUP
+              - SHC
           description: Provider name.
         - name: simulation
           in: header
@@ -768,6 +776,8 @@ paths:
             enum:
               - BRI
               - NTT
+              - CASHUP
+              - SHC
           description: Provider name.
         - name: simulation
           in: header
