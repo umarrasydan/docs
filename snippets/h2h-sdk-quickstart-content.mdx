@@ -1,0 +1,327 @@
+## Prerequisites
+
+- Terminal H2H SDK added to your app (Android or iOS)
+- At least one terminal device available (or use simulation/testing flows in your environment)
+- Terminal device details: [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information)
+
+### For Physical Terminal Testing
+- Terminal H2H SDK integrated in your Android/iOS app
+- Physical terminal device connected and showing "Ready" status
+- Terminal registered with Xendit for test mode (contact support if needed)
+- Valid `terminal_id` from your registered device
+
+### For Simulation Testing (No Terminal Required)
+- Any `terminal_id` value (e.g., `SIM001`) - no registration needed
+- Special test amounts to trigger different payment scenarios
+- Use `4040404` as terminal_id to test invalid terminal error handling
+
+<Info>
+You’ll integrate the SDK in your mobile app, then use the Terminal API to create payment sessions. The SDK handles the device communication layer for supported terminals.
+</Info>
+
+## 1. Configure your environment
+
+Set up both your backend and mobile app environment.
+
+<Steps>
+<Step title="Set environment variables">
+  Configure your Terminal API credentials and base URL:
+  
+  ```bash .env
+  TERMINAL_API_KEY=your_dev_terminal_api_key
+  TERMINAL_BASE_URL=https://terminal-dev.xendit.co
+  WEBHOOK_URL=http://localhost:3000/terminal/callbacks
+  TERMINAL_ID=TID001
+  ```
+</Step>
+
+<Step title="Add provider dependencies">
+  Choose your platform and initialize the SDK:
+  
+  - [H2H iOS SDK](/sdk/h2h/ios-sdk)
+  - [H2H Android SDK](/sdk/h2h/android-sdk)
+
+  Include the provider-specific artifacts before initializing the SDK. Select the providers above to populate the correct entries.
+
+  <Tabs>
+  <Tab title="Android (Gradle)">
+    <div id="h2h-android-dependency-snippet">
+```groovy
+dependencies {
+  // Terminal H2H SDK
+  implementation("co.xendit.terminal:h2h-android:<latest_version>")
+
+  // Core Terminal SDK (required)
+  implementation("co.xendit.terminal:core-android:<latest_version>")
+
+  implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+}
+```
+    </div>
+  </Tab>
+
+  <Tab title="iOS (Frameworks)">
+    <div id="h2h-ios-dependency-snippet">
+```text
+# Add these provider frameworks using Xcode (General > Frameworks, Libraries, and Embedded Content).
+# See /sdk/h2h/ios-sdk#installation for installation steps.
+
+- Add TerminalBRI.xcframework via Xcode (General > Frameworks, Libraries, and Embedded Content). Follow /sdk/h2h/ios-sdk#installation.
+```
+    </div>
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Initialize the H2H SDK in your app">
+  <Tabs>
+  <Tab title="Android (Kotlin)">
+    <div id="h2h-android-provider-snippet">
+```kotlin
+import co.xendit.terminal.core.TerminalApp
+import co.xendit.terminal.h2h.TerminalH2H
+
+class App : Application() {
+  override fun onCreate() {
+    super.onCreate()
+
+    TerminalApp.initialize(
+      application = this,
+      clientKey = CLIENT_KEY,
+      mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION
+    )
+    TerminalH2H.addProvider(TerminalBRI)
+  }
+}
+```
+    </div>
+  </Tab>
+
+  <Tab title="iOS (Swift)">
+    <div id="h2h-ios-provider-snippet">
+```swift
+import TerminalH2H
+
+func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+) -> Bool {
+  TerminalApp.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // or TerminalMode.integration
+  )
+  TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+  return true
+}
+```
+    </div>
+  </Tab>
+  </Tabs>
+</Step>
+
+<Step title="Register your terminal device(s)">
+  Register devices in the SDK using your [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information).
+
+  <Tabs>
+  <Tab title="Android (Kotlin)">
+    ```kotlin
+    val devices = listOf(
+      TerminalDevice(id = "TID001", ipAddress = "192.168.1.100", active = true),
+      TerminalDevice(id = "TID002", ipAddress = "192.168.1.101", active = true)
+    )
+
+    TerminalH2H.registerDevices(
+      devices = devices,
+      restart = true
+    )
+    ```
+  </Tab>
+
+  <Tab title="iOS (Swift)">
+    ```swift
+    let devices = [
+      TerminalDevice.companion.create(id: "TID001", ipAddress: "192.168.1.100"),
+      TerminalDevice.companion.create(id: "TID002", ipAddress: "192.168.1.101")
+    ]
+
+    TerminalH2H.shared.registerDevices(
+      devices: devices,
+      restart: true
+    )
+    ```
+  </Tab>
+  </Tabs>
+  
+  <Tip>
+  If you don’t have these yet, follow the [Finding Terminal Information](#finding-terminal-information) guide linked above.
+  </Tip>
+</Step>
+</Steps>
+
+## 2. Choose your testing approach
+
+You can use **simulation testing** (no physical device) or **physical terminal testing**. The testing flows are the same as in the H2H App quickstart, but your payment sessions will be triggered from your mobile app.
+
+<Info>
+For detailed simulation and physical terminal test flows (including special test amounts), refer to the "Choose your testing approach" section in the H2H App quickstart above.
+</Info>
+
+## 4. Monitor callbacks
+
+Your webhook server will receive real-time payment updates from the Terminal API.
+
+<Info>
+Callback events include `PAYMENT_CREATED`, `PAYMENT_SUCCEEDED`, `PAYMENT_FAILED`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
+</Info>
+
+```javascript webhook.js (excerpt)
+app.post('/terminal/callbacks', (req, res) => {
+  console.log('Event:', req.body?.type, req.body?.data?.status);
+  res.sendStatus(200);
+});
+```
+
+## 5. Verify payment details
+
+Query payment details after receiving a success callback.
+
+```bash cURL
+curl -X GET 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID' \
+  -u 'YOUR_TERMINAL_API_KEY:'
+```
+
+```javascript JavaScript
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+async function getPaymentDetails(paymentId) {
+  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+  
+  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/payments/${paymentId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': auth,
+    },
+  });
+  
+  const data = await res.json();
+  console.log('Payment status:', data.status);
+  console.log('Amount:', data.request_amount);
+  return data;
+}
+```
+
+## 6. Optional: Void a payment
+
+If needed, you can void a payment transaction:
+
+```bash cURL
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/payments/PAYMENT_ID/void' \
+  -u 'YOUR_TERMINAL_API_KEY:'
+```
+
+```javascript JavaScript
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+async function voidPayment(paymentId) {
+  const auth = 'Basic ' + Buffer.from(`${process.env.TERMINAL_API_KEY}:`).toString('base64');
+  
+  const res = await fetch(`${process.env.TERMINAL_BASE_URL}/v1/terminal/payments/${paymentId}/void`, {
+    method: 'POST',
+    headers: {
+      'Authorization': auth,
+    },
+  });
+  
+  const data = await res.json();
+  console.log('Void response:', data);
+  return data;
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+<Accordion title="401 Unauthorized">
+- Ensure you include a trailing colon in the Basic Auth username encoding
+- Verify the key is a Terminal API key (not Dashboard API key)
+- Check that you're using the development base URL for testing
+</Accordion>
+
+<Accordion title="Simulation not working as expected">
+- Verify you're using the correct special amounts: `400508` (decline), `400509` (channel unavailable), `400711` (cancellation)
+- Check that you're in test mode (using development base URL)
+- Any `terminal_id` works for simulation - you don't need a real terminal registered
+- Normal amounts (not special test amounts) will always succeed in simulation mode
+</Accordion>
+
+<Accordion title="Terminal not prompting (Physical terminals only)">
+- Confirm Terminal H2H shows device as Connected/Ready
+- Verify `terminal_id` matches your device configuration exactly
+- Check network connectivity on the device
+- Ensure device has correct time settings
+- **For simulation testing**: You don't need a physical terminal - any terminal_id will work
+</Accordion>
+
+<Accordion title="Webhook not receiving callbacks">
+- Use ngrok to expose your local server publicly
+- Ensure your webhook endpoint returns HTTP 200
+- Check server logs and firewall settings
+- Verify the webhook URL is configured correctly
+- **For simulation**: Callbacks work the same way as physical terminals
+</Accordion>
+
+<Accordion title="Environment variables not loading">
+- Verify `.env` file is in the correct location
+- Check that you're calling `dotenv.config()` before using environment variables
+- Ensure `.env` file is not committed to version control
+</Accordion>
+
+<Accordion title="Ready to transition from simulation to physical terminal">
+- Install and configure Terminal Gateway app or H2H SDK
+- Register your physical terminal devices with actual Terminal IDs and IP addresses
+- Update your environment variables to use real terminal IDs
+- Test with small amounts on the physical device
+- All your existing integration code will work without changes!
+</Accordion>
+</AccordionGroup>
+
+## Next steps
+
+Now that you have a working H2H SDK integration, explore these advanced features:
+
+<CardGroup cols={2}>
+  <Card title="Terminal API (H2H) Introduction" icon="book" href="/api-reference/terminal-api/introduction">
+    Complete Terminal API (H2H) documentation and reference
+  </Card>
+  
+  <Card title="Terminal H2H" icon="globe" href="/sdk/h2h/introduction">
+    Learn about Terminal H2H SDKs for Android and iOS
+  </Card>
+  
+  <Card title="Payment Callbacks" icon="webhook" href="/api-reference/terminal-api/callbacks">
+    Handle real-time payment notifications and status updates
+  </Card>
+  
+  <Card title="Gateway App Configuration" icon="computer" href="/sdk/gateway/app-configuration">
+    Configure Terminal Gateway app for your devices
+  </Card>
+</CardGroup>
+
+## Production deployment
+
+When ready for production:
+
+1. **Switch to live API keys** - Use production Terminal API key and base URL `https://terminal.xendit.co`
+2. **Update webhook URLs** - Configure production webhook endpoints that are publicly accessible
+3. **Test thoroughly** - Start with small amounts and verify all payment flows work correctly
+4. **Monitor and log** - Set up proper logging and monitoring for payment events
+
+<Warning>
+Always test thoroughly with small amounts in production before processing real customer payments.
+</Warning>

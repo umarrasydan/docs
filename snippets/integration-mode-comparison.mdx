@@ -1,0 +1,98 @@
+<div className="quickstart-elevated">
+  <table className="quickstart-table">
+    <thead>
+      <tr>
+        <th className="quickstart-table-heading green" style={{ width: '50%' }}>
+          <div style={{ fontWeight: '700', marginBottom: '4px' }}>Host-to-Host (H2H) — Terminal API</div>
+          <div>Recommended for most merchants</div>
+        </th>
+        <th className="quickstart-table-heading neutral" style={{ width: '50%' }}>
+          <div style={{ fontWeight: '700', marginBottom: '4px' }}>Client-to-Client (C2C)</div>
+          <div>Terminal C2C API or Terminal C2C SDK</div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td className="quickstart-table-cell green">
+          Your backend calls Xendit's cloud HTTP API. Managed orchestration with minimal custom code.
+        </td>
+        <td className="quickstart-table-cell">
+          Your POS talks to terminals over the local network via HTTP REST commands or native SDK methods.
+        </td>
+      </tr>
+      <tr>
+        <td className="quickstart-table-cell green">
+          Uses Terminal API sessions for payments, callbacks, and reconciliation.
+        </td>
+        <td className="quickstart-table-cell">
+          Sends PAY / CANCEL / SETTLEMENT commands directly — via Terminal C2C API (HTTP) or Terminal C2C SDK (native).
+        </td>
+      </tr>
+      <tr>
+        <td className="quickstart-table-cell green">
+          Xendit manages device orchestration and infrastructure.
+        </td>
+        <td className="quickstart-table-cell">
+          Your team owns device connectivity, error handling, and security.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '24px' }}>
+    <button
+      className="wizard-button-primary green"
+      onClick={() => {
+        window._wizardPath = 'h2h';
+        document.getElementById('step2-path').style.display = 'none';
+
+        const atomSection = document.getElementById('provider-atom-section');
+        if (atomSection) atomSection.style.display = '';
+        const h2hBanner = document.getElementById('path-banner-h2h');
+        const c2cBanner = document.getElementById('path-banner-c2c');
+        if (h2hBanner) h2hBanner.style.display = 'flex';
+        if (c2cBanner) c2cBanner.style.display = 'none';
+
+        document.getElementById('step3-providers').style.display = 'block';
+        window.location.hash = 'step3-providers';
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+      Continue with H2H
+    </button>
+
+    <button
+      className="wizard-button-secondary"
+      onClick={() => {
+        window._wizardPath = 'c2c';
+        document.getElementById('step2-path').style.display = 'none';
+
+        const atomSection = document.getElementById('provider-atom-section');
+        const atomCb = document.getElementById('atom-checkbox');
+        const atomCard = document.getElementById('provider-atom');
+        if (atomSection) atomSection.style.display = 'none';
+        if (atomCb) atomCb.checked = false;
+        if (atomCard) atomCard.classList.remove('selected');
+        const h2hBanner = document.getElementById('path-banner-h2h');
+        const c2cBanner = document.getElementById('path-banner-c2c');
+        if (h2hBanner) h2hBanner.style.display = 'none';
+        if (c2cBanner) c2cBanner.style.display = 'flex';
+
+        document.getElementById('step3-providers').style.display = 'block';
+        window.location.hash = 'step3-providers';
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+      </svg>
+      Continue with C2C
+    </button>
+  </div>
+
+  <Info>
+  **Not sure?** H2H fits most deployments for its simplicity and speed. Explore the [Terminal API (H2H) docs](/api-reference/terminal-api/introduction) or [C2C docs](/api-reference/c2c/introduction) for deeper details.
+  </Info>
+</div>

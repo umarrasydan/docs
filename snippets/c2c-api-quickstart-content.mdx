@@ -1,0 +1,64 @@
+## Prerequisites
+
+- Gateway App installed and configured
+- Access to C2C API credentials and endpoints
+- Terminal device details: [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information)
+
+<Info>
+In C2C API mode, your system communicates with terminals via the Gateway App and REST endpoints. Set up the Gateway App first, then follow the API guide.
+</Info>
+
+## Steps
+
+<Steps>
+<Step title="Install and configure the Gateway App">
+  Follow the Gateway App setup guide:
+  
+  - [Gateway App Setup](/sdk/gateway/app-configuration)
+</Step>
+
+<Step title="Confirm terminal device information">
+  Collect the [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information) for each device you’ll use.
+</Step>
+
+<Step title="Integrate using the C2C API">
+  Implement the REST API integration:
+  
+  - [C2C API Reference](/api-reference/c2c/introduction)
+
+  ```bash Create a payment request
+  curl -X POST "http://{GATEWAY_IP}:8189/commands/pay" \
+    -H "Content-Type: application/json" \
+    -H "X-API-KEY: CLIENT_API_KEY" \
+    -H "provider: BRI" \
+    -H "simulation: true" \
+    -d '{
+      "terminal_id": "10362517",
+      "order_id": "ORDER123",
+      "request_amount": 10000,
+      "payment_method": "QRIS"
+    }'
+  ```
+
+  <Info>
+  Using `simulation: true` returns mock responses so you can test without a physical device. Remove the header when exercising real hardware; the value defaults to `false`.
+  </Info>
+
+  ```json Successful response
+  {
+    "order_id": "ORDER123",
+    "terminal_id": "10362517",
+    "terminal_reference": "1750407594445|1750407594",
+    "payment_method": "QRIS",
+    "amount": 10000,
+    "currency": "IDR",
+    "transaction_date": "2025-06-20T15:19:54+07:00",
+    "status": "SUCCESS"
+  }
+  ```
+</Step>
+</Steps>
+
+<Check>
+You’re ready to send API requests through the Gateway App to the terminal devices you configured.
+</Check>

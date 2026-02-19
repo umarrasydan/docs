@@ -1,0 +1,54 @@
+## Installation
+
+Install the Terminal SDK by adding it as a framework in Xcode:
+
+<Steps>
+<Step title="Extract framework">
+  Extract the framework zip file in your project directory.
+  
+  <Frame>
+  <img src="/images/ios/extract-zip.png" alt="Extracting framework zip file in Finder" />
+  </Frame>
+</Step>
+
+<Step title="Add framework to project">
+  In Xcode, open your project and choose **File → Add Package Dependencies…** to start the package flow.
+  
+  <Frame>
+  <img src="/images/ios/add-package.png" alt="Opening the Add Package Dependencies menu in Xcode" />
+  </Frame>
+</Step>
+
+<Step title="Import framework">
+  1. Click **Add Local…** when prompted.
+  2. Browse to the extracted framework zip/location and select the package manifest.
+  3. Ensure the correct target is selected, then click **Add Package** to finish.
+  
+  <Frame>
+  <img src="/images/ios/add-local.png" alt="Choosing Add Local during the package dependency flow" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/locate-files.png" alt="Locating the extracted framework files" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/add-to-target.png" alt="Selecting the correct target before adding the package" />
+  </Frame>
+</Step>
+
+<Step title="Configure build settings">
+  Go to "Build Settings" and make the following changes:
+  
+  - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
+  - Search for "Other Linker Flags" and add "-lsqlite3"
+  
+  <Frame>
+  <img src="/images/ios/enable-sandbox-no.png" alt="Setting ENABLE_USER_SCRIPT_SANDBOXING to NO in Xcode Build Settings" />
+  </Frame>
+  
+  <Frame>
+  <img src="/images/ios/add-lsqlite3.png" alt="Adding -lsqlite3 to Other Linker Flags in Xcode Build Settings" />
+  </Frame>
+</Step>
+</Steps>

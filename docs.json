@@ -15,11 +15,28 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "guides/getting-started/quickstart"]
+            "pages": [
+              "index",
+              "guides/getting-started/standalone-terminal"
+            ]
           },
           {
             "group": "Migration",
-            "pages": ["guides/migration/xen-bri-to-terminal-gateway"]
+            "pages": [
+              "guides/migration/xen-bri-to-h2h",
+              "guides/migration/xen-bri-sdk-to-c2c"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Quick Start",
+        "groups": [
+          {
+            "group": "Quick Start",
+            "pages": [
+              "guides/getting-started/quickstart"
+            ]
           }
         ]
       },
@@ -27,7 +44,13 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Terminal API",
+            "group": "Overview",
+            "pages": [
+              "api-reference/index"
+            ]
+          },
+          {
+            "group": "Terminal API (H2H)",
             "openapi": "openapi-spec.yaml",
             "pages": [
               "api-reference/terminal-api/introduction",
@@ -43,22 +66,53 @@
             ]
           },
           {
-            "group": "Terminal Gateway",
+            "group": "Terminal API (C2C)",
+            "openapi": "openapi-spec-c2c.yaml",
             "pages": [
-              "api-reference/terminal-gateway/introduction",
-              "api-reference/terminal-gateway/app-configuration",
-              "api-reference/terminal-gateway/android-sdk/index",
-              "api-reference/terminal-gateway/ios-sdk/index",
+              "api-reference/c2c/introduction",
+              "POST /commands/pay",
+              "POST /commands/cancel",
+              "POST /commands/receipt",
+              "POST /commands/settlement",
+              "POST /commands/histories"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK & Libraries",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "sdk/index"
+            ]
+          },
+          {
+            "group": "Terminal App",
+            "pages": [
+              "sdk/gateway/introduction",
+              "sdk/gateway/app-configuration"
+            ]
+          },
+          {
+            "group": "Terminal SDK",
+            "pages": [
+              "sdk/terminal-sdk/index",
               {
-                "group": "Client-to-Client",
-                "openapi": "openapi-spec-c2c.yaml",
+                "group": "H2H",
                 "pages": [
-                  "api-reference/terminal-gateway/client-to-client",
-                  "POST /commands/pay",
-                  "POST /commands/cancel",
-                  "POST /commands/receipt",
-                  "POST /commands/settlement",
-                  "POST /commands/histories"
+                  "sdk/h2h/introduction",
+                  "sdk/h2h/android-sdk/index",
+                  "sdk/h2h/ios-sdk/index"
+                ]
+              },
+              {
+                "group": "C2C",
+                "pages": [
+                  "sdk/c2c/introduction",
+                  "sdk/c2c/android-sdk/index",
+                  "sdk/c2c/ios-sdk/index"
                 ]
               }
             ]
@@ -98,7 +152,15 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["curl", "php", "java", "go", "python", "javascript", "ruby"],
+      "languages": [
+        "curl",
+        "php",
+        "java",
+        "go",
+        "python",
+        "javascript",
+        "ruby"
+      ],
       "defaults": "all"
     }
   },

@@ -13,8 +13,6 @@ Xendit Payment Terminal enables businesses to accept **in-person payments** thro
 
 With a **single API integration**, you can connect your existing **Point of Sale (POS), ticketing, or kiosk software** to Xendit's terminals across **multiple countries**, including **Indonesia, Thailand, Vietnam, and Malaysia** (coming soon to the **Philippines**).
 
-Our partnership with local financial institutions ensures smooth onboarding, compliance, and support in each market.
-
 ## Key Benefits
 
 ### 🌍 Multi-Country Reach with a Single Integration
@@ -32,10 +30,6 @@ Our streamlined onboarding and close bank partnerships allow you to receive devi
 ### 🧩 Flexible Integration Options
 
 Connect your POS or software directly to the terminal through our API for self-serve kiosks, automated amount entry, transaction confirmation, and reconciliation.
-
-### 🧑‍💼 Consultative Support
-
-Our global operations and customer success teams collaborate closely with your Finance and Operations departments to optimize workflows, provide training, and ensure smooth payment acceptance.
 
 ## Country Availability & Supported Payment Methods
 
@@ -59,8 +53,6 @@ Our global operations and customer success teams collaborate closely with your F
 
 ## How It Works
 
-Xendit Terminals can be used **with or without API integration**.
-
 ### POS-Integrated Payment Terminal
 
 In this setup, your POS system communicates directly with Xendit Payment Terminal via our API. This enables automated payment workflows where transaction amounts are sent directly from your system to the terminal.
@@ -68,25 +60,25 @@ In this setup, your POS system communicates directly with Xendit Payment Termina
 ```mermaid
 sequenceDiagram
     participant Merchant as Merchant POS System
-    participant Xendit as Terminal API
-    participant Gateway as Terminal Gateway
+    participant Xendit as Terminal API (H2H)
+    participant Gateway as Terminal H2H
     participant Terminal as Payment Terminal EDC
     participant Customer as Customer
     participant Bank as Card Network/Bank
 
     Merchant->>Xendit: 1. Create payment session<br/>(amount, currency, terminal_id)
     Xendit-->>Merchant: Session created (session_id)
-    
+
     Xendit->>Gateway: 2. Notify terminal of new session
     Gateway->>Terminal: Forward session details
     Terminal->>Customer: 3. Display payment prompt<br/>(amount to pay)
-    
+
     Customer->>Terminal: 4. Make payment on device
     Terminal->>Bank: 5. Process payment
     Bank-->>Terminal: Payment authorized
 
     Terminal->>Customer: Display success & receipt
-    
+
     Terminal->>Gateway: 6. Payment successful
     Gateway->>Xendit: Update session status
     Xendit->>Merchant: 7. Webhook notification<br/>(payment status)
@@ -94,7 +86,7 @@ sequenceDiagram
 
 <Steps>
 <Step title="Create payment session">
-Your POS system creates a payment session through Terminal API with the transaction amount and terminal details.
+Your POS system creates a payment session through Terminal API (H2H) with the transaction amount and terminal details.
 </Step>
 
 <Step title="Customer completes payment">
@@ -110,47 +102,9 @@ Payment is confirmed, and you can print receipts or update your inventory system
 </Step>
 </Steps>
 
-### Standalone Payment Terminal
-
-For merchants without a POS integration, payments can be accepted directly from the terminal by manually entering the amount on the device.
-
-```mermaid
-sequenceDiagram
-    participant Merchant as Merchant Staff
-    participant Terminal as Payment Terminal EDC
-    participant Customer as Customer
-    participant Xendit as Xendit Platform
-    participant Bank as Card Network/Bank
-
-    Merchant->>Terminal: 1. Manually enter payment amount
-    Terminal->>Customer: 2. Display payment prompt<br/>(amount to pay)
-    
-    Customer->>Terminal: 3. Make payment on device
-    Terminal->>Bank: 4. Process payment
-    Bank-->>Terminal: Payment authorized
-    
-    Terminal->>Merchant: 5. Display success
-    Terminal->>Customer: Print/display receipt
-    
-    alt Real-time notification (some markets)
-        Bank->>Xendit: 6a. Immediate transaction notification
-        Note over Bank,Xendit: Transaction visible in<br/>Dashboard immediately
-    else Batch settlement (T+1 or later)
-        Note over Bank,Xendit: 6b. Transaction sent in batch<br/>(next business day or later)
-        Bank->>Xendit: Batch file with transactions
-        Note over Bank,Xendit: Transactions appear in Dashboard<br/>after batch processing
-    end
-    
-    Note over Merchant,Xendit: Merchant can view and reconcile<br/>transactions in Xendit Dashboard
-```
-
-<Info>
-**Transaction visibility varies by market**: Some markets support real-time transaction notifications to Xendit, making transactions visible in your Dashboard immediately. Other markets use batch settlement files sent T+1 or later, meaning transactions appear in your Dashboard after the batch is processed. Contact your Xendit representative to understand the notification timing for your specific market.
-</Info>
-
 ## Settlement
 
-Funds are settled into your **Xendit Balance** within **T+2 days** after the transaction settlement is completed on the device.
+Funds are settled into your **Xendit Balance** within **T+1 day** after the transaction settlement is completed on the device.
 
 You can view all in-person transactions and settlements from your **Xendit Dashboard**, alongside your online payments, for a unified reconciliation experience.
 
@@ -184,155 +138,40 @@ Once approved, you'll receive your device, complete onboarding, and start accept
 
 Before you begin integration, ensure you have:
 
-- **Terminal API key** from the Xendit In-Person Payment team (for API authentication)
-- **Terminal Gateway client key** from the Xendit In-Person Payment team (for SDK/app initialization)
-- Terminal Gateway set up (desktop app or Android/iOS SDK)
-- A terminal with Terminal ID and network connectivity
+- **API credentials** for your chosen integration track from the Xendit In-Person Payment team
+- A terminal device with Terminal ID and network connectivity
 - Your environment base URL:
   - Development: `https://terminal-dev.xendit.co`
   - Production: `https://terminal.xendit.co`
 
 <Info>
-**Two different keys**: The Terminal API uses an `API_KEY` for authentication, while the Terminal Gateway SDK/app uses a `CLIENT_KEY` for initialization. Contact the Xendit In-Person Payment team to obtain both keys.
+**Credentials vary by track**: Contact the Xendit In-Person Payment team to obtain the appropriate credentials. See the [Terminal API (H2H) introduction](/api-reference/terminal-api/introduction) or [Terminal API (C2C) introduction](/api-reference/c2c/introduction) for authentication details.
 </Info>
-
-<Warning>
-Terminal API uses HTTP Basic Auth with your Terminal API key as the username and an empty password. Always include a trailing colon when constructing the header.
-</Warning>
-
-### Quick Start
-
-<Card
-  title="Quick Start Guide"
-  icon="rocket"
-  href="/guides/getting-started/quickstart"
-  horizontal
->
-  Follow our step-by-step quickstart guide to integrate Xendit payments and process your first transaction in under 10 minutes.
-</Card>
 
 ## Payment Terminal Solutions
 
-Xendit's Payment Terminal consists of two main components that work together:
-
-<CardGroup cols={2}>
-  <Card
-    title="Terminal API"
-    icon="terminal"
-    href="/api-reference/terminal-api/introduction"
-  >
-    Create and manage payment sessions for in-person transactions. Handles payment processing, callbacks, and transaction management.
-  </Card>
-  <Card
-    title="Terminal Gateway"
-    icon="globe"
-    href="/api-reference/terminal-gateway/introduction"
-  >
-    Connect and manage physical terminal devices. Available as desktop app and mobile SDKs for Android and iOS.
-  </Card>
-</CardGroup>
-
-## Integration Workflow
-
-1. **Create a session** with Terminal API for an amount, currency, and terminal.
-2. **Execute on device** through Terminal Gateway; the customer taps/inserts/swipes.
-3. **Receive callbacks** for real-time status updates.
-4. **Query details** for reconciliation or show receipts.
-
-<Info>
-**Don't have a physical terminal yet?** Start with our comprehensive [quickstart guide](/guides/getting-started/quickstart) which includes detailed simulation testing options that let you build and test your integration immediately without hardware.
-</Info>
-
-## Key Features
-
-Explore the essential capabilities of Xendit's Payment Terminal:
-
-<CardGroup cols={2}>
-  <Card
-    title="Payment Callbacks"
-    icon="webhook"
-    href="/api-reference/terminal-api/callbacks"
-  >
-    Receive real-time payment notifications and status updates through our webhook system for transaction monitoring.
-  </Card>
-  <Card
-    title="Device Management"
-    icon="circle-nodes"
-    href="/api-reference/terminal-gateway/app-configuration"
-  >
-    Configure and manage your terminal devices using the Terminal Gateway application with step-by-step setup guides.
-  </Card>
-</CardGroup>
-
-## Platform-Specific Guides
-
-Choose your development platform for detailed integration instructions:
+Choose the integration approach that fits your use case:
 
 <CardGroup cols={3}>
   <Card
-    title="Android SDK"
-    icon="android"
-    href="/api-reference/terminal-gateway/android-sdk"
+    title="Device-Only Setup"
+    icon="mobile"
+    href="/guides/getting-started/standalone-terminal"
   >
-    Native Android development with Kotlin SDK for terminal device integration.
+    Use the terminal device directly — enter amounts manually on the device. No API or SDK integration needed. Transactions are visible in your Xendit Dashboard.
   </Card>
   <Card
-    title="iOS SDK"
-    icon="apple"
-    href="/api-reference/terminal-gateway/ios-sdk"
-  >
-    Native iOS development with Swift SDK for terminal device integration.
-  </Card>
-  <Card
-    title="Terminal Gateway App"
-    icon="desktop"
-    href="/api-reference/terminal-gateway/app-configuration"
-  >
-    Desktop application setup and configuration for managing terminal devices.
-  </Card>
-</CardGroup>
-
-## Developer Resources
-
-Everything you need to build with Xendit's Payment Terminal:
-
-<CardGroup cols={2}>
-  <Card
-    title="Migration Guide"
-    icon="arrow-right"
-    href="/guides/migration/xen-bri-to-terminal-gateway"
-  >
-    Migrate from Xen BRI SDK to Terminal Gateway SDK with detailed code examples and architectural changes.
-  </Card>
-  <Card
-    title="API Reference"
-    icon="book"
+    title="H2H — Terminal API"
+    icon="server"
     href="/api-reference/terminal-api/introduction"
   >
-    Complete Terminal API documentation with endpoints, authentication, and response schemas.
+    Your backend calls Xendit's cloud HTTP API to manage payment sessions and terminal operations.
   </Card>
   <Card
-    title="Finding Terminal Information"
-    icon="magnifying-glass"
-    href="/snippets/finding-terminal-information"
+    title="C2C — Terminal C2C API / SDK"
+    icon="network-wired"
+    href="/api-reference/c2c/introduction"
   >
-    Learn how to locate your terminal ID and IP address for different terminal providers.
-  </Card>
-  <Card
-    title="Support & Help"
-    icon="life-ring"
-    href="mailto:inpersonpayments@xendit.co"
-  >
-    Get personalized assistance from our Terminal API support team for integration questions.
+    Your POS sends commands to terminals over the local network — via **Terminal C2C API** (HTTP REST) or **Terminal C2C SDK** (native methods).
   </Card>
 </CardGroup>
-
-## Need Help?
-
-<Card
-  title="Contact Terminal Support"
-  icon="envelope"
-  href="mailto:inpersonpayments@xendit.co"
->
-  Get personalized assistance from our Terminal API support team for integration questions, device setup, or technical issues.
-</Card>

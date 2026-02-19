@@ -1,0 +1,34 @@
+## Choose Your Integration Mode
+
+Compare Host-to-Host (H2H) and Client-to-Client (C2C) modes to select the best approach for your needs.
+
+| Feature | **Host-to-Host (H2H)** ✅ **RECOMMENDED** | Client-to-Client (C2C) |
+|---------|-------------------------------------------|-------------------------|
+| **Deployment Model** | Centralized fleet management through Gateway App | Direct terminal-to-app communication over local network |
+| **Device Management** | Managed by Xendit Terminal Gateway | Self-managed by your application |
+| **API Model** | Managed payment sessions with callbacks | Direct device commands (pay, cancel, receipt, settlement) |
+| **SDK** | H2H SDK (Android/iOS) for device connectivity | C2C SDK (Android/iOS) available as optional convenience wrapper |
+| **Network Requirements** | Internet connectivity required | Local network or internet connectivity |
+| **Offline Support** | Limited (requires connection to Gateway) | Better offline capabilities |
+| **BRI/NTT Terminals** | Require Gateway App or H2H SDK | Require Gateway App or C2C SDK |
+| **Customization** | Standard workflows | Full control over payment flows |
+| **Time to Market** | Faster — standard implementation | Longer — custom development required |
+| **Best For** | Standard payment acceptance, quick deployment | Custom POS systems, kiosks, specialized workflows |
+
+<CardGroup cols={2}>
+  <Card title="Choose H2H (Recommended)" icon="check" color="green" href="#prerequisites">
+    **Fastest integration path**
+
+    Managed payment sessions, standardized callbacks, and Xendit-handled device orchestration. Perfect for most use cases.
+  </Card>
+
+  <Card title="Choose C2C" icon="gear" color="gray" href="/api-reference/c2c/introduction">
+    **Custom integration**
+
+    Full control over payment flows with direct terminal commands. C2C SDK is optional — you can call the API directly. Best for specialized workflows.
+  </Card>
+</CardGroup>
+
+<Info>
+**Ready to start?** H2H is recommended for most use cases due to its simplicity and faster time to market. Continue with the quickstart guide below, or explore the [H2H Documentation](/sdk/h2h/introduction) and [C2C Documentation](/api-reference/c2c/introduction).
+</Info>

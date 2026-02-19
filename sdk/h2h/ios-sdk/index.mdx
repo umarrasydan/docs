@@ -1,19 +1,27 @@
 ---
 title: "iOS SDK (Swift)"
-description: "Integrate payment processing with physical terminals using the Terminal Gateway SDK for iOS (Swift)"
+description: "Integrate payment processing with physical terminals using the Terminal H2H SDK for iOS (Swift)"
 ---
 
-# Terminal Gateway SDK for iOS (Swift)
+# Terminal H2H SDK for iOS (Swift)
 
-The Terminal Gateway SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals and process transactions seamlessly using our comprehensive Swift SDK.
+The Terminal H2H SDK for iOS enables you to integrate secure payment processing directly into your iOS applications. Connect to physical payment terminals and process transactions seamlessly using our comprehensive Swift SDK.
 
 <Info>
-This SDK works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal Gateway SDK to interact with physical payment devices.
+This SDK works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal H2H SDK to interact with physical payment devices.
 </Info>
 
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.0.0 — 19-Feb-2026">
+    What's new:
+    - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
+    
+    <Warning>
+    **Breaking Change**: Class name changed from `TerminalGateway` to `TerminalH2H`. Update your imports and references accordingly.
+    </Warning>
+  </Accordion>
   <Accordion title="v0.7.0 — 5-Dec-2025">
     What's new:
     - Fixed NTT payment method value mapping to ensure correct provider selection
@@ -49,106 +57,41 @@ The SDK follows semantic versioning. Breaking changes will bump the major versio
 
 ## Download
 
-Download the Terminal Gateway iOS SDK:
+Download the Terminal H2H iOS SDK:
 
 <CardGroup cols={1}>
-<Card title="iOS SDK (v0.7.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalGateway+iOS-0.7.0.zip">
-  Download the complete iOS SDK package including TerminalGateway.xcframework and documentation
+<Card title="iOS SDK (v1.0.0)" icon="apple" href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalSDK+H2H+iOS-1.0.0.zip">
+  Download the complete iOS SDK package including TerminalH2H.xcframework and documentation
 
   ```
-  SHA256: df27560a1f6d83382864a0a048f808deb6d0af613a529103dbdce4b4182628e9
+  SHA256: 61a97854a65501d0c1c14dc7fe94005cd6c0d72b35ee6157ec5a65c74b52e8b7
   ```
 </Card>
 </CardGroup>
 
-## Installation
+import IOSInstallation from '/snippets/ios-installation.mdx';
 
-Install the Terminal Gateway SDK by adding it as a framework in Xcode:
-
-<Steps>
-<Step title="Add Sentry dependency">
-  Add the Sentry pod to your Podfile:
-  
-  ```ruby Podfile
-  target 'YourApp' do
-    pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
-  end
-  ```
-  
-  <Check>
-  Run `pod install` to install the dependency.
-  </Check>
-</Step>
-
-<Step title="Extract framework">
-  Extract the TerminalGateway.xcframework zip file in your project directory.
-  
-  <Frame>
-  <img src="/images/ios/extract-zip.png" alt="Extracting TerminalGateway.xcframework zip file in Finder" />
-  </Frame>
-</Step>
-
-<Step title="Add framework to project">
-  In Xcode, select your target and navigate to the "General" tab.
-  
-  Find "Frameworks, Libraries, and Embedded Content" and click the "+" button.
-  
-  <Frame>
-  <img src="/images/ios/select-target.png" alt="Selecting target and navigating to General tab in Xcode" />
-  </Frame>
-  
-  <Frame>
-  <img src="/images/ios/find-frameworks.png" alt="Finding Frameworks, Libraries, and Embedded Content section in Xcode" />
-  </Frame>
-</Step>
-
-<Step title="Import framework">
-  Click "Add Other..." and select "Add Files..."
-  
-  Search for TerminalGateway.xcframework, select it, and click "Open".
-  
-  <Frame>
-  <img src="/images/ios/import-framework-add-files.png" alt="Importing TerminalGateway.xcframework in Xcode using Add Files dialog" />
-  </Frame>
-</Step>
-
-<Step title="Configure build settings">
-  Go to "Build Settings" and make the following changes:
-  
-  - Search for "ENABLE_USER_SCRIPT_SANDBOXING" and set it to "NO"
-  - Search for "Other Linker Flags" and add "-lsqlite3"
-  
-  <Frame>
-  <img src="/images/ios/enable-sandbox-no.png" alt="Setting ENABLE_USER_SCRIPT_SANDBOXING to NO in Xcode Build Settings" />
-  </Frame>
-  
-  <Frame>
-  <img src="/images/ios/add-lsqlite3.png" alt="Adding -lsqlite3 to Other Linker Flags in Xcode Build Settings" />
-  </Frame>
-</Step>
-</Steps>
+<IOSInstallation />
 
 ## Getting Started
 
 Before starting, you'll need an In-Person Payment CLIENT_KEY from the Xendit In-Person Payment team. You will also need the terminal <a href="#finding-terminal-information">IP address</a>.
 
 <Warning>
-Terminal Gateway requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
+Terminal H2H requires physical payment devices to function. Contact the Xendit team to obtain compatible terminal devices and configuration details.
 </Warning>
 
 ### Step 1: Initialize SDK
 
-Call the `XenTerminal.initialize()` method within the Application class of your app:
+Import the SDK module and call `TerminalApp.shared.initialize` from your application entry point:
 
 ```swift AppDelegate.swift
-TerminalApp.shared.initialize(
-   clientKey: TEST_CLIENT_KEY,
-   mode: TerminalMode.integration
-)
+import TerminalH2H
 
-TerminalGateway.shared.addProvider(provider: TerminalBRI.shared)
-// For NTT
-// TerminalGateway.shared.addProvider(provider: TerminalNTT.shared)
+TerminalApp.shared.initialize(
+  clientKey: TEST_CLIENT_KEY,
+  mode: TerminalMode.integration // switch to TerminalMode.live for production builds
+)
 ```
 
 The SDK supports two modes:
@@ -163,22 +106,104 @@ The SDK supports two modes:
 </Tab>
 </Tabs>
 
-### Step 2: Register Terminal Device
+### Step 2: Add Terminal Providers
 
-Register multiple devices by calling the `registerDevices` method:
+Add the specific terminal providers you need for your integration:
+
+<Note>
+For Share Commerce (SHC), Cashup, and Atom terminals, you do not need to add a Terminal H2H provider. Those devices run terminal logic through the Gateway app installed on the hardware. If the app is missing, install it from the <a href="/sdk/gateway/app-configuration#download-the-app">Gateway download page</a> or contact <a href="mailto:inpersonpayments@xendit.co">inpersonpayments@xendit.co</a> for help.
+</Note>
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```swift
+// Add BRI provider for Indonesian terminals
+TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+```
+
+<Info>
+BRI provider supports timeout configuration for card and QR transactions, and provides enhanced transaction retry capabilities.
+</Info>
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```swift
+// Add NTT provider for Thai terminals
+TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
+```
+
+<Info>
+NTT provider supports multi-function terminals with card payments and QR code transactions.
+</Info>
+</Tab>
+
+<Tab title="Multiple Providers">
+```swift
+// Add multiple providers for supporting different terminal types
+TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
+```
+
+<Warning>
+Only add providers for terminal types you actually plan to use. Each provider adds to your app's size and initialization time.
+</Warning>
+</Tab>
+</Tabs>
+
+<Check>
+After adding providers, they will be available for use when registering terminal devices in the next step.
+</Check>
+
+### Step 3: Register Terminal Device
+
+Create terminal device entries using `TerminalDevice.companion.create` and register them with the gateway:
 
 ```swift
-TerminalGateway.shared.registerDevices(devices: [ 
-  TerminalDevice(id: Terminal_ID_1, ipAddress: Terminal_IP_1),    
-  TerminalDevice(id: Terminal_ID_2, ipAddress: Terminal_IP_2), 
-  TerminalDevice(id: Terminal_ID_3, ipAddress: Terminal_IP_3) 
-  // Add more TerminalDevice instances as needed 
-])
+let devices = [
+  TerminalDevice.companion.create(id: "BRI12345", ipAddress: "192.168.1.10"),
+  TerminalDevice.companion.create(id: "BRI67890", ipAddress: "192.168.1.11")
+]
+
+TerminalH2H.shared.registerDevices(
+  devices: devices,
+  restart: true // restart to apply the refreshed device list immediately
+)
 ```
 
 <Tip>
 For detailed instructions on finding <a href="#finding-terminal-information">Terminal ID</a> and <a href="#finding-terminal-information">IP address</a> for different terminal providers, see our [Finding Terminal Information guide](#finding-terminal-information).
 </Tip>
+
+### Step 4: Calling Terminal API
+
+With Terminal H2H SDK configured, you can now process payments using the Terminal API. The SDK handles communication with physical terminals through the local gateway service.
+
+```bash
+# Example: Create a payment session
+curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
+  -u 'API_KEY:' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-key: unique-session-123' \
+  -d '{
+    "terminal_id": "TERMINAL_ID",
+    "amount": 10000,
+    "currency": "IDR",
+    "external_id": "payment-123",
+    "payment_method": "card"
+  }'
+```
+
+<Info>
+For complete API documentation including request/response formats, error handling, and advanced features, see the [Terminal API (H2H)](/api-reference/terminal-api/introduction) documentation.
+</Info>
+
+<Tip>
+The Terminal H2H SDK automatically manages the connection to your registered terminal devices and handles communication protocols for different providers.
+</Tip>
+
+<Check>
+You're now ready to process payments using the Terminal H2H SDK integrated with Terminal API.
+</Check>
 
 ## Optional Methods
 
@@ -187,11 +212,11 @@ For detailed instructions on finding <a href="#finding-terminal-information">Ter
 Configure the maximum allowed time for operations to complete before the service cancels and retries the transaction:
 
 ```swift
-TerminalGateway.shared.setOperationTimeout(minutes: 5) // default value is 5 minutes
+TerminalH2H.shared.setOperationTimeout(minutes: 5) // default value is 5 minutes
 
 // Set provider-specific timeouts
-TerminalGateway.shared.setOperationTimeout(type: TimeoutType.card, minutes: 10)
-TerminalGateway.shared.setOperationTimeout(type: TimeoutType.qr, minutes: 10)
+TerminalH2H.shared.setOperationTimeout(type: TimeoutType.card, minutes: 10)
+TerminalH2H.shared.setOperationTimeout(type: TimeoutType.qr, minutes: 10)
 ```
 
 ### Restart Terminal Connection
@@ -204,7 +229,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts all connections
-  TerminalGateway.shared.restart(terminalID: nil)
+  TerminalH2H.shared.restart(terminalID: nil)
   ```
 </Tab>
 
@@ -213,7 +238,7 @@ Manage and restart terminal service connections:
   
   ```swift
   // This restarts the connection to a specific Terminal
-  TerminalGateway.shared.restart(terminalID: TERMINAL_ID)
+  TerminalH2H.shared.restart(terminalID: TERMINAL_ID)
   ```
 </Tab>
 </Tabs>
@@ -223,9 +248,10 @@ Manage and restart terminal service connections:
 Monitor Terminal connection status using the `observeEDCConnection` method:
 
 ```swift
-TerminalGateway.shared
-  .observeConnection(device: terminalDevice) { state in     
-   // Handle connection state changes
+let device = TerminalDevice.companion.create(id: "BRI12345", ipAddress: "192.168.1.10")
+
+TerminalH2H.shared.observeConnection(device: device) { state in
+  // Handle connection state transitions
 }
 ```
 
@@ -239,22 +265,23 @@ The SDK handles the following connection states:
 | `connecting` | Device requesting connection to Terminal |
 | `connectingFailed` | Device unable to connect with Terminal |
 | `unsupported` | Connection not supported |
+| `unreachable` | Ping failed; gateway marks device unreachable until it recovers |
 
 ### Observing Error State
 
 Monitor Terminal error states using the `observeError` method:
 
 ```swift
-TerminalGateway.shared.observeError(onResult: { device, error in
-    // Handle error state events
-})
+TerminalH2H.shared.observeError { device, error in
+  // Use device?.id to correlate errors with specific terminals
+}
 ```
 
 ## Error Handling
 
 ### Error Data Structure
 
-All errors returned by the Terminal Gateway SDK follow this structure:
+All errors returned by the Terminal H2H SDK follow this structure:
 
 ```swift
 struct TerminalError {
@@ -270,15 +297,23 @@ struct TerminalError {
 | INVALID_CREDENTIAL | 401 | Provided credentials are invalid or expired |
 | INVALID_REQUEST | 400 | Request format or parameters are invalid |
 | INTERNAL_SERVER_ERROR | 500 | Server-side error occurred during processing |
-| UNKNOWN_ERROR | 0 | Unexpected error that doesn't fit other categories |
+| UNKNOWN_ERROR | - | Unexpected error that does not map to a specific category |
 | KEY_INVALID | -1 | API key is invalid or not authorized |
-| SEND_FAILED | -2 | Failed to send data to the terminal device |
-| NOT_CONNECTED | -3 | No active connection to any terminal device |
+| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - verify terminal ID and credentials |
 | FAILED_TO_CONNECT | -4 | Unable to establish connection to terminal |
-| UNSUPPORTED | -5 | Operation or platform not supported |
+| NOT_CONNECTED | -3 | No active connection to any terminal device |
 | TERMINAL_BUSY | -6 | Terminal is processing another transaction |
+| SEND_FAILED | -2 | Failed to send data to the terminal device |
+| UNSUPPORTED | -5 | Operation or platform not supported |
 | ENCRYPTION_FAILED | -7 | Encryption key invalid or encryption process failed |
-| AUTHENTICATION_FAILED | -21 | Terminal authentication failed - check <a href="#finding-terminal-information">TID</a> and credentials |
+| DECLINED_BY_READER | N/A | Card or reader rejected the transaction; prompt customer to retry |
+| PAYMENT_UNPAID | N/A | Payment still pending on terminal; confirm status before retrying |
+| DUPLICATED | N/A | Duplicate command detected; generate a new order ID before retrying |
+| CANCELLED | N/A | Action cancelled on the terminal or by the operator |
+| TIMEOUT | N/A | Operation exceeded configured timeout window |
+| NO_DATA_FOUND | N/A | Terminal cannot find the referenced transaction data |
+| TID_NOT_SET | N/A | Terminal ID is missing in the gateway configuration |
+| TID_NOT_MATCH | N/A | Terminal ID does not match the registered device |
 
 ### Error Handling Best Practices
 
@@ -286,42 +321,69 @@ Implement comprehensive error handling for robust payment processing:
 
 ```swift
 func handleTerminalError(_ error: TerminalError?) {
-    switch error?.code {
-    case .authenticationFailed:
-        // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
-        print("Authentication failed: \(error?.message ?? "")")
-        // Show user-friendly message and retry with correct credentials
+  guard let error = error else { return }
+
+  switch error.code {
+  case ErrorCode.authenticationFailed:
+    // Verify API key and <a href="#finding-terminal-information">terminal ID</a>
+    print("Authentication failed: \(error.message)")
+    // Show user-friendly message and retry with correct credentials
         
-    case .terminalBusy:
-        // Terminal is processing another transaction
-        print("Terminal busy: \(error?.message ?? "")")
-        // Wait and retry after a delay
-        retryAfterDelay(5.0) // 5 seconds
+  case ErrorCode.terminalBusy:
+    // Terminal is processing another transaction
+    print("Terminal busy: \(error.message)")
+    // Wait and retry after a delay
+    retryAfterDelay(5.0) // 5 seconds
         
-    case .failedToConnect, .notConnected:
-        // Network connectivity issues
-        print("Connection failed: \(error?.message ?? "")")
-        // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
-        checkNetworkConnectivity()
+  case ErrorCode.failedToConnect, ErrorCode.notConnected:
+    // Network connectivity issues
+    print("Connection failed: \(error.message)")
+    // Check network connection and terminal <a href="#finding-terminal-information">IP address</a>
+    checkNetworkConnectivity()
+
+  case ErrorCode.declinedByReader:
+    // Terminal rejected the card tap/insert
+    print("Declined by reader: \(error.message)")
+    promptCustomerToRetry()
+
+  case ErrorCode.paymentUnpaid:
+    // Payment still pending on the terminal
+    print("Payment unpaid: \(error.message)")
+    confirmStatusWithBackend()
+
+  case ErrorCode.timeout:
+    // Gateway timed out while waiting for terminal response
+    print("Command timeout: \(error.message)")
+    TerminalH2H.shared.restart(terminalID: nil)
+
+  case ErrorCode.duplicated:
+    // Duplicate command detected by the gateway
+    print("Duplicate command detected: \(error.message)")
+    regenerateOrderID()
         
-    case .keyInvalid, .invalidCredential:
-        // Credential issues
-        print("Invalid credentials: \(error?.message ?? "")")
-        // Rotate or refresh API credentials
-        refreshCredentials()
+  case ErrorCode.keyInvalid, ErrorCode.invalidCredential:
+    // Credential issues
+    print("Invalid credentials: \(error.message)")
+    // Rotate or refresh API credentials
+    refreshCredentials()
         
-    case .encryptionFailed:
-        // Encryption key issues
-        print("Encryption failed: \(error?.message ?? "")")
-        // Re-initialize SDK with correct encryption keys
-        reinitializeSDK()
+  case ErrorCode.encryptionFailed:
+    // Encryption key issues
+    print("Encryption failed: \(error.message)")
+    // Re-initialize SDK with correct encryption keys
+    reinitializeSDK()
+
+  case ErrorCode.cancelled:
+    // Operator cancelled the command on the terminal
+    print("Operation cancelled: \(error.message)")
+    notifyCashier()
         
-    default:
-        // Log and escalate unknown errors
-        print("Unknown error: \(error?.message ?? "")")
-        // Report to monitoring system
-        reportError(error)
-    }
+  default:
+    // Log and escalate unknown errors
+    print("Unknown error: \(error.message)")
+    // Report to monitoring system
+    reportError(error)
+  }
 }
 ```
 
@@ -373,11 +435,11 @@ Always implement retry logic for transient errors like `TERMINAL_BUSY` and `FAIL
   // Example: Query payment session status
   let paymentSession = terminalApi.getPaymentSession(sessionId)
   switch paymentSession.status {
-  case .completed:
+  case PaymentStatus.completed:
       // Process successful payment
-  case .failed:
+  case PaymentStatus.failed:
       // Handle failed payment
-  case .pending:
+  case PaymentStatus.pending:
       // Payment still in progress
   }
   ```

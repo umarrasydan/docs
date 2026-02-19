@@ -1,0 +1,729 @@
+---
+title: "Code Generator"
+description: "Interactive tool to generate provider-specific integration code for Terminal SDK"
+---
+
+# File Removed
+
+This file has been deleted.
+
+### Android (Kotlin) - Terminal H2H
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```kotlin
+// build.gradle.kts dependencies
+dependencies {
+    implementation("co.xendit.terminal:h2h-android:<latest_version>")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+}
+
+// Application class initialization
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        TerminalApp.initialize(
+            application = this,
+            clientKey = CLIENT_KEY,
+            mode = TerminalMode.INTEGRATION
+        )
+
+        // Add BRI provider
+        TerminalH2H.addProvider(TerminalBRI)
+    }
+}
+
+// Register BRI terminal devices
+TerminalH2H.registerDevices(
+    devices = listOf(
+        TerminalDevice(id = "BRI_TERMINAL_001", ipAddress = "192.168.1.100", active = true),
+        TerminalDevice(id = "BRI_TERMINAL_002", ipAddress = "192.168.1.101", active = true)
+    ),
+    restart = true
+)
+
+// Configure BRI-specific timeout settings
+TerminalH2H.setOperationTimeout(minutes = 5)
+TerminalH2H.setOperationTimeout(type = TimeoutType.CARD, minutes = 10)
+TerminalH2H.setOperationTimeout(type = TimeoutType.QR, minutes = 5)
+
+// Monitor BRI terminal connections
+TerminalH2H.observeConnection(
+    CoroutineScope(Dispatchers.IO),
+    terminalDevice
+) { state ->
+    when (state) {
+        ConnectionState.CONNECTED -> {
+            Log.i("Terminal", "BRI terminal connected")
+        }
+        ConnectionState.DISCONNECTED -> {
+            Log.w("Terminal", "BRI terminal disconnected")
+        }
+        ConnectionState.CONNECTING_FAILED -> {
+            Log.e("Terminal", "BRI terminal connection failed")
+        }
+        ConnectionState.UNREACHABLE -> {
+            Log.w("Terminal", "BRI terminal unreachable")
+        }
+    }
+}
+```
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```kotlin
+// build.gradle.kts dependencies
+dependencies {
+    implementation("co.xendit.terminal:h2h-android:<latest_version>")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+}
+
+// Application class initialization
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        TerminalApp.initialize(
+            application = this,
+            clientKey = CLIENT_KEY,
+            mode = TerminalMode.INTEGRATION
+        )
+
+        // Add NTT provider
+        TerminalH2H.addProvider(TerminalNTT)
+    }
+}
+
+// Register NTT terminal devices
+TerminalH2H.registerDevices(
+    devices = listOf(
+        TerminalDevice(id = "NTT_TERMINAL_001", ipAddress = "192.168.1.100", active = true),
+        TerminalDevice(id = "NTT_TERMINAL_002", ipAddress = "192.168.1.101", active = true)
+    ),
+    restart = true
+)
+
+// Configure operation timeout
+TerminalH2H.setOperationTimeout(minutes = 5)
+// Note: Type-specific timeouts not available for NTT provider
+
+// Monitor NTT terminal connections
+TerminalH2H.observeConnection(
+    CoroutineScope(Dispatchers.IO),
+    terminalDevice
+) { state ->
+    when (state) {
+        ConnectionState.CONNECTED -> {
+            Log.i("Terminal", "NTT terminal connected")
+        }
+        ConnectionState.DISCONNECTED -> {
+            Log.w("Terminal", "NTT terminal disconnected")
+        }
+        ConnectionState.CONNECTING_FAILED -> {
+            Log.e("Terminal", "NTT terminal connection failed")
+        }
+        ConnectionState.UNREACHABLE -> {
+            Log.w("Terminal", "NTT terminal unreachable")
+        }
+    }
+}
+```
+</Tab>
+</Tabs>
+
+### Android (Kotlin) - Terminal C2C
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```kotlin
+// build.gradle.kts dependencies
+dependencies {
+    implementation("co.xendit.terminal:c2c-android:<latest_version>")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:id-bri-android:<latest_version>")
+}
+
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
+
+// Configure BRI terminal device
+val briDevice = TerminalDevice.bri(
+    id = "BRI_TERMINAL_001",
+    ipAddress = "192.168.1.100"
+)
+
+// Set as default device for TerminalC2C
+TerminalC2C.setTerminalDevice(briDevice)
+
+// Monitor connection state
+briDevice.connectionState.collect { state ->
+    when (state) {
+        ConnectionState.CONNECTED -> {
+            Log.i("Terminal", "BRI terminal connected")
+        }
+        ConnectionState.DISCONNECTED -> {
+            Log.w("Terminal", "BRI terminal disconnected")
+        }
+    }
+}
+```
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```kotlin
+// build.gradle.kts dependencies
+dependencies {
+    implementation("co.xendit.terminal:c2c-android:<latest_version>")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
+}
+
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
+
+// Configure NTT terminal device
+val nttDevice = TerminalDevice.ntt(
+    id = "NTT_TERMINAL_001",
+    ipAddress = "192.168.1.100"
+)
+
+// Set as default device for TerminalC2C
+TerminalC2C.setTerminalDevice(nttDevice)
+
+// Monitor connection state
+nttDevice.connectionState.collect { state ->
+    when (state) {
+        ConnectionState.CONNECTED -> {
+            Log.i("Terminal", "NTT terminal connected")
+        }
+        ConnectionState.DISCONNECTED -> {
+            Log.w("Terminal", "NTT terminal disconnected")
+        }
+    }
+}
+```
+</Tab>
+
+<Tab title="Cashup Provider (Indonesia)">
+```kotlin
+// build.gradle.kts dependencies
+dependencies {
+    implementation("co.xendit.terminal:c2c-android:<latest_version>")
+    implementation("co.xendit.terminal:core-android:<latest_version>")
+    implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+}
+
+// Initialize Terminal App (use TerminalMode.INTEGRATION for testing)
+TerminalApp.initialize(context, CLIENT_KEY, TerminalMode.LIVE)
+
+// Configure Cashup terminal device
+val cashupDevice = TerminalDevice.cashup(
+    id = "CASHUP_TERMINAL_001",
+    ipAddress = "192.168.1.100"
+)
+
+// Set as default device for TerminalC2C
+TerminalC2C.setTerminalDevice(cashupDevice)
+
+// Monitor connection state
+cashupDevice.connectionState.collect { state ->
+    when (state) {
+        ConnectionState.CONNECTED -> {
+            Log.i("Terminal", "Cashup terminal connected")
+        }
+        ConnectionState.DISCONNECTED -> {
+            Log.w("Terminal", "Cashup terminal disconnected")
+        }
+    }
+}
+```
+</Tab>
+</Tabs>
+
+### iOS (Swift) - Terminal H2H
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```swift
+// Add to Podfile:
+target 'YourApp' do
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
+end
+
+// Add TerminalH2H.xcframework to your project
+
+import TerminalH2H
+
+let briDevice = TerminalDevice.companion.create(id: "BRI_TERMINAL_001", ipAddress: "192.168.1.100")
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        TerminalApp.shared.initialize(
+            clientKey: CLIENT_KEY,
+            mode: TerminalMode.integration // switch to .live for production
+        )
+
+        TerminalH2H.shared.addProvider(provider: TerminalBRI.shared)
+
+        TerminalH2H.shared.registerDevices(
+            devices: [briDevice],
+            restart: true
+        )
+
+        return true
+    }
+}
+
+// Monitor connection state
+TerminalH2H.shared.observeConnection(device: briDevice) { state in
+    switch state {
+    case .connected:
+        print("BRI terminal connected")
+    case .disconnected:
+        print("BRI terminal disconnected")
+    case .connecting:
+        print("Connecting to BRI terminal")
+    case .unreachable:
+        print("BRI terminal unreachable")
+    default:
+        break
+    }
+}
+```
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```swift
+// Add to Podfile:
+target 'YourApp' do
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '8.45.0'
+end
+
+// Add TerminalH2H.xcframework to your project
+
+import TerminalH2H
+
+let nttDevice = TerminalDevice.companion.create(id: "NTT_TERMINAL_001", ipAddress: "192.168.1.100")
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        TerminalApp.shared.initialize(
+            clientKey: CLIENT_KEY,
+            mode: TerminalMode.integration // switch to .live for production
+        )
+
+        TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
+
+        TerminalH2H.shared.registerDevices(
+            devices: [nttDevice],
+            restart: true
+        )
+
+        return true
+    }
+}
+
+// Monitor connection state
+TerminalH2H.shared.observeConnection(device: nttDevice) { state in
+    switch state {
+    case .connected:
+        print("NTT terminal connected")
+    case .disconnected:
+        print("NTT terminal disconnected")
+    case .connecting:
+        print("Connecting to NTT terminal")
+    case .unreachable:
+        print("NTT terminal unreachable")
+    default:
+        break
+    }
+}
+```
+</Tab>
+
+</Tab>
+</Tabs>
+
+### iOS (Swift) - Terminal C2C
+
+<Tabs>
+<Tab title="BRI Provider (Indonesia)">
+```swift
+// Add TerminalC2C.xcframework to your project
+
+import TerminalC2C
+
+// Initialize Terminal C2C for BRI (use TerminalMode.integration for testing)
+TerminalC2C.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // use TerminalMode.integration for testing
+)
+
+// Configure BRI terminal device
+let briDevice = TerminalDevice.companion.bri(
+    id: "BRI_TERMINAL_001",
+    ipAddress: "192.168.1.100"
+)
+
+// Set terminal device
+TerminalC2C.shared.setTerminalDevice(briDevice)
+
+// Monitor connection state
+TerminalC2C.shared.observeConnectionState { state in
+    switch state {
+    case ConnectionState.connected:
+        print("BRI terminal connected")
+    case ConnectionState.disconnected:
+        print("BRI terminal disconnected")
+    case ConnectionState.connecting:
+        print("Connecting to BRI terminal")
+    }
+}
+```
+</Tab>
+
+<Tab title="NTT Provider (Thailand)">
+```swift
+// Add TerminalC2C.xcframework to your project
+
+import TerminalC2C
+
+// Initialize Terminal C2C for NTT (use TerminalMode.integration for testing)
+TerminalC2C.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // use TerminalMode.integration for testing
+)
+
+// Configure NTT terminal device
+let nttDevice = TerminalDevice.companion.ntt(
+    id: "NTT_TERMINAL_001",
+    ipAddress: "192.168.1.100"
+)
+
+// Set terminal device
+TerminalC2C.shared.setTerminalDevice(nttDevice)
+
+// Monitor connection state
+TerminalC2C.shared.observeConnectionState { state in
+    switch state {
+    case ConnectionState.connected:
+        print("NTT terminal connected")
+    case ConnectionState.disconnected:
+        print("NTT terminal disconnected")
+    case ConnectionState.connecting:
+        print("Connecting to NTT terminal")
+    }
+}
+```
+</Tab>
+
+<Tab title="Cashup Provider (Indonesia)">
+```swift
+// Add TerminalC2C.xcframework to your project
+
+import TerminalC2C
+
+// Initialize Terminal C2C for Cashup (use TerminalMode.integration for testing)
+TerminalC2C.shared.initialize(
+    clientKey: CLIENT_KEY,
+    mode: TerminalMode.live // use TerminalMode.integration for testing
+)
+
+// Configure Cashup terminal device
+let cashupDevice = TerminalDevice.companion.cashup(
+    id: "CASHUP_TERMINAL_001",
+    ipAddress: "192.168.1.100"
+)
+
+// Set terminal device
+TerminalC2C.shared.setTerminalDevice(cashupDevice)
+
+// Monitor connection state
+TerminalC2C.shared.observeConnectionState { state in
+    switch state {
+    case ConnectionState.connected:
+        print("Cashup terminal connected")
+    case ConnectionState.disconnected:
+        print("Cashup terminal disconnected")
+    case ConnectionState.connecting:
+        print("Connecting to Cashup terminal")
+    }
+}
+```
+</Tab>
+</Tabs>
+
+### Error Handling Template
+
+All providers share common error handling patterns. Use this template for robust error management:
+
+<CodeGroup>
+```kotlin Android Error Handling
+fun handleTerminalError(error: TerminalError?) {
+    when (error?.code) {
+        ErrorCode.AUTHENTICATION_FAILED -> {
+            // Verify API key and terminal ID
+            Log.e("Terminal", "Authentication failed: ${error.message}")
+            showAuthenticationErrorDialog()
+        }
+        
+        ErrorCode.TERMINAL_BUSY -> {
+            // Terminal is processing another transaction
+            Log.w("Terminal", "Terminal busy: ${error.message}")
+            retryAfterDelay(5000) // 5 seconds
+        }
+        
+        ErrorCode.FAILED_TO_CONNECT, ErrorCode.NOT_CONNECTED -> {
+            // Network connectivity issues
+            Log.e("Terminal", "Connection failed: ${error.message}")
+            checkNetworkConnectivity()
+        }
+        
+        ErrorCode.KEY_INVALID, ErrorCode.INVALID_CREDENTIAL -> {
+            // Credential issues
+            Log.e("Terminal", "Invalid credentials: ${error.message}")
+            refreshCredentials()
+        }
+        
+        else -> {
+            // Log and escalate unknown errors
+            Log.e("Terminal", "Unknown error: ${error?.message}")
+            reportError(error)
+        }
+    }
+}
+```
+
+```swift iOS Error Handling
+func handleTerminalError(_ error: TerminalError?) {
+    guard let error = error else { return }
+    
+    switch error.code {
+    case ErrorCode.authenticationFailed:
+        // Verify API key and terminal ID
+        print("Authentication failed: \(error.message)")
+        showAuthenticationErrorDialog()
+        
+    case ErrorCode.terminalBusy:
+        // Terminal is processing another transaction
+        print("Terminal busy: \(error.message)")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            // Retry after 5 seconds
+            retryLastOperation()
+        }
+        
+    case ErrorCode.failedToConnect, ErrorCode.notConnected:
+        // Network connectivity issues
+        print("Connection failed: \(error.message)")
+        checkNetworkConnectivity()
+        
+    case ErrorCode.keyInvalid, ErrorCode.invalidCredential:
+        // Credential issues
+        print("Invalid credentials: \(error.message)")
+        refreshCredentials()
+        
+    default:
+        // Log and escalate unknown errors
+        print("Unknown error: \(error.message)")
+        reportError(error)
+    }
+}
+```
+</CodeGroup>
+
+## Available Providers
+
+The Terminal SDK supports multiple payment providers across different Southeast Asian markets:
+
+<CardGroup cols={2}>
+<Card title="Bank Rakyat Indonesia (BRI)" icon="bank">
+  **Country**: Indonesia  
+  **Terminal Types**: Physical EDC machines  
+  **Payment Methods**: Debit cards, credit cards, e-money
+</Card>
+
+<Card title="NTT Data Payment Services" icon="credit-card">
+  **Country**: Thailand  
+  **Terminal Types**: Multi-function terminals  
+  **Payment Methods**: Cards, installments, QR payments
+</Card>
+
+<Card title="Cashup Payment Terminal" icon="mobile">
+  **Country**: Indonesia  
+  **Terminal Types**: Smart payment devices  
+  **Payment Methods**: Cards, e-wallets, QR codes
+</Card>
+</CardGroup>
+
+## SDK Types Explained
+
+<Tabs>
+<Tab title="Terminal H2H (Host-to-Host)">
+  **Recommended for most integrations**
+  
+  - Direct connection between your application and physical terminals
+  - Centralized fleet management through gateway application  
+  - Better for production environments with multiple terminals
+  - Requires Terminal Gateway app installation on the device
+  
+  **Best for**: Retail environments, multi-terminal setups, enterprise deployments
+</Tab>
+
+<Tab title="Terminal C2C (Client-to-Client)">
+  **For direct terminal communication**
+  
+  - Direct REST API communication with terminals over local network
+  - No gateway app required for some providers (like Cashup)
+  - Simpler setup for single-terminal scenarios
+  - Uses separate OpenAPI specification
+  
+  **Best for**: Single-terminal setups, embedded systems, custom integrations
+</Tab>
+</Tabs>
+
+## Platform-Specific Notes
+
+### Android (Kotlin)
+
+- **Minimum SDK**: Android 5.0 (API level 21)
+- **Dependencies**: Use Maven Local repository included in SDK package
+- **Gradle Configuration**: Both Gradle Groovy and Kotlin DSL supported
+- **Provider Dependencies**: Optional, include only what you need
+
+### iOS (Swift)
+
+- **Requirements**: iOS 12.0+ 
+- **Dependencies**: Sentry cocoapod required
+- **Installation**: Add TerminalH2H.xcframework to your project
+- **Provider Methods**: Available without additional dependencies
+
+## Common Integration Patterns
+
+<AccordionGroup>
+<Accordion title="Multi-Provider Setup">
+If you need to support multiple providers in the same application:
+
+```kotlin
+// Add multiple providers
+TerminalH2H.addProvider(TerminalBRI)
+TerminalH2H.addProvider(TerminalNTT)
+
+// Register devices from different providers
+TerminalH2H.registerDevices(
+    devices = listOf(
+        TerminalDevice(id = "BRI_TERMINAL_001", ipAddress = "192.168.1.100", active = true),
+        TerminalDevice(id = "NTT_TERMINAL_001", ipAddress = "192.168.1.101", active = true)
+    ),
+    restart = true
+)
+```
+</Accordion>
+
+<Accordion title="Environment-Specific Configuration">
+Configure different settings for development vs production:
+
+```kotlin
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        val mode = if (BuildConfig.DEBUG) {
+            TerminalMode.INTEGRATION
+        } else {
+            TerminalMode.LIVE
+        }
+
+        TerminalApp.initialize(
+            application = this,
+            clientKey = if (BuildConfig.DEBUG) TEST_CLIENT_KEY else LIVE_CLIENT_KEY,
+            mode = mode
+        )
+    }
+}
+```
+</Accordion>
+
+<Accordion title="Error Handling Setup">
+Implement comprehensive error handling from the start:
+
+```kotlin
+TerminalH2H.observeError(
+    CoroutineScope(Dispatchers.IO)
+) { device, error ->
+    when (error?.code) {
+        ErrorCode.AUTHENTICATION_FAILED -> {
+            // Handle auth errors
+            showAuthenticationErrorDialog()
+        }
+        ErrorCode.TERMINAL_BUSY -> {
+            // Handle busy terminal
+            showTerminalBusyMessage()
+            scheduleRetry(device)
+        }
+        ErrorCode.FAILED_TO_CONNECT, ErrorCode.NOT_CONNECTED -> {
+            // Handle connection issues
+            checkNetworkConnectivity()
+            showConnectionErrorDialog()
+        }
+        ErrorCode.DECLINED_BY_READER -> {
+            // Card or reader rejected the transaction
+            promptCustomerRetry()
+        }
+        ErrorCode.CANCELLED -> {
+            // Operator or terminal cancelled the action
+            notifyOperatorOfCancellation()
+        }
+        ErrorCode.TIMEOUT -> {
+            // Operation exceeded configured timeout
+            scheduleRetry(device)
+        }
+        else -> {
+            // Log unexpected errors
+            logUnexpectedError(error)
+        }
+    }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+After generating your code:
+
+<Steps>
+<Step title="Set up development environment">
+  Follow the [quickstart guide](/guides/getting-started/quickstart) to complete your development environment setup.
+</Step>
+
+<Step title="Configure API credentials">
+  Get your `CLIENT_KEY` from the Xendit dashboard and configure it securely in your application.
+</Step>
+
+<Step title="Find terminal information">
+  Locate your [terminal ID and IP address](/snippets/finding-terminal-information) for device registration.
+</Step>
+
+<Step title="Test with simulation">
+  Use simulation mode with special test amounts before connecting to physical terminals.
+</Step>
+
+<Step title="Implement payment flow">
+  Build your payment processing flow using the Terminal API alongside the SDK.
+</Step>
+</Steps>
+
+<Tip>
+Start with the generated code, then customize it based on your specific requirements. The code generator provides a solid foundation for any Terminal SDK integration.
+</Tip>

@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Xendit's Payment Terminal API
-  version: 0.4.1
-  description:
-    API specification for Xendit's Payment Terminal (Electronic Data Capture) Payment
-    Sessions and Commands
+  version: "0.4.1"
+  description: API specification for Xendit's Payment Terminal (Electronic Data Capture) Payment Sessions and Commands
 servers:
   - url: https://terminal-dev.xendit.co
     description: Development
@@ -18,39 +16,39 @@ paths:
       security:
         - BasicAuth: []
       operationId: createTerminalPaymentSession
-      summary: 'Create a Terminal Payment Session'
+      summary: Create a Terminal Payment Session
       parameters:
         - name: idempotency-key
           in: header
           required: true
           schema:
             type: string
-          description: 'Idempotency key to ensure the request is not processed multiple times'
+          description: Idempotency key to ensure the request is not processed multiple times
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTerminalPaymentSession'
+              $ref: "#/components/schemas/CreateTerminalPaymentSession"
       responses:
-        '200':
-          description: 'Terminal Payment Session created successfully'
+        "200":
+          description: Terminal Payment Session created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TerminalPaymentSessionResponse'
-        '400':
-          description: 'Bad Request'
+                $ref: "#/components/schemas/TerminalPaymentSessionResponse"
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: 'Unauthorized'
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
   /v1/terminal/sessions/{id}:
     get:
       tags:
@@ -58,7 +56,7 @@ paths:
       security:
         - BasicAuth: []
       operationId: fetchTerminalPaymentSession
-      summary: 'Fetch Terminal Payment Session'
+      summary: Fetch Terminal Payment Session
       parameters:
         - name: id
           in: path
@@ -66,26 +64,26 @@ paths:
           schema:
             type: string
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-          description: 'Terminal Payment Session ID'
+          description: Terminal Payment Session ID
       responses:
-        '200':
-          description: 'Terminal Payment Session fetched successfully'
+        "200":
+          description: Terminal Payment Session fetched successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TerminalPaymentSessionResponse'
-        '401':
-          description: 'Unauthorized'
+                $ref: "#/components/schemas/TerminalPaymentSessionResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: 'Terminal Payment Session not found'
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Terminal Payment Session not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
   /v1/terminal/sessions/{id}/retry:
     post:
       tags:
@@ -93,7 +91,7 @@ paths:
       security:
         - BasicAuth: []
       operationId: retryTerminalPaymentSession
-      summary: "Retry Terminal Payment Session"
+      summary: Retry Terminal Payment Session
       parameters:
         - name: id
           in: path
@@ -101,14 +99,14 @@ paths:
           schema:
             type: string
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-          description: "Terminal Session ID"
+          description: Terminal Session ID
       responses:
-        '200':
-          description: 'Terminal Payment Session fetched successfully'
+        "200":
+          description: Terminal Payment Session fetched successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RetrySessionResponse'
+                $ref: "#/components/schemas/RetrySessionResponse"
   /v1/terminal/payments/{id}:
     get:
       tags:
@@ -116,7 +114,7 @@ paths:
       security:
         - BasicAuth: []
       operationId: getTerminalPayment
-      summary: 'Get Terminal Payment Detail'
+      summary: Get Terminal Payment Detail
       parameters:
         - name: id
           in: path
@@ -124,26 +122,26 @@ paths:
           schema:
             type: string
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-          description: 'Terminal Payment ID'
+          description: Terminal Payment ID
       responses:
-        '200':
-          description: 'Terminal Payment fetched successfully'
+        "200":
+          description: Terminal Payment fetched successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentResponse'
-        '401':
-          description: 'Unauthorized'
+                $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: 'Terminal Payment not found'
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Terminal Payment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
   /v1/terminal/payments/{id}/void:
     post:
       tags:
@@ -151,7 +149,7 @@ paths:
       security:
         - BasicAuth: []
       operationId: voidPayment
-      summary: 'Void a Terminal Payment'
+      summary: Void a Terminal Payment
       parameters:
         - name: id
           in: path
@@ -159,32 +157,32 @@ paths:
           schema:
             type: string
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-          description: 'Terminal Payment ID'
+          description: Terminal Payment ID
       responses:
-        '200':
-          description: 'Terminal void request created successfully'
+        "200":
+          description: Terminal void request created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VoidPaymentResponse'
-        '400':
-          description: 'Bad Request'
+                $ref: "#/components/schemas/VoidPaymentResponse"
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: 'Unauthorized'
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: 'Terminal Payment not found'
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Terminal Payment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
   /v1/terminal/commands:
     post:
       tags:
@@ -192,32 +190,32 @@ paths:
       security:
         - BasicAuth: []
       operationId: PushTerminalCommands
-      summary: 'Create Terminal commands'
+      summary: Create Terminal commands
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PushCommandRequest'
+              $ref: "#/components/schemas/PushCommandRequest"
       responses:
-        '200':
-          description: 'Create command successfully'
+        "200":
+          description: Create command successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PushCommandResponse'
-        '400':
-          description: 'Bad Request'
+                $ref: "#/components/schemas/PushCommandResponse"
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: 'Unauthorized'
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   securitySchemes:
@@ -232,15 +230,14 @@ components:
       properties:
         terminal_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         order_id:
           type: string
-          example: 'order-12345'
+          example: "order-12345"
           maxLength: 255
         payment_methods:
-          type:
-            - array
-            - 'null'
+          type: array
+          nullable: true
           items:
             type: string
             enum:
@@ -277,12 +274,12 @@ components:
       properties:
         reference_id:
           type: string
-          example: 'ref_123456789'
+          example: "ref_123456789"
         customer_id:
           type: string
-          example: 'cus_123456789'
+          example: "cus_123456789"
         customer:
-          $ref: '#/components/schemas/Customer'
+          $ref: "#/components/schemas/Customer"
         currency:
           type: string
           enum:
@@ -308,15 +305,14 @@ components:
           enum:
             - TERMINAL
         description:
-          type:
-            - string
-            - 'null'
-          example: 'Payment for order #123'
+          type: string
+          nullable: true
+          example: "Payment for order #123"
         metadata:
           type: object
           additionalProperties: true
         channel_properties:
-          $ref: '#/components/schemas/ChannelProperties'
+          $ref: "#/components/schemas/ChannelProperties"
     TerminalPaymentSessionResponse:
       type: object
       required:
@@ -344,10 +340,10 @@ components:
           type: string
         reference_id:
           type: string
-          example: 'ref_123456789'
+          example: "ref_123456789"
         customer_id:
           type: string
-          example: 'cus_123456789'
+          example: "cus_123456789"
         session_type:
           type: string
           enum:
@@ -380,34 +376,32 @@ components:
             - FAILED
             - CANCELED
         description:
-          type:
-            - string
-            - 'null'
-          example: 'Payment for order #123'
+          type: string
+          nullable: true
+          example: "Payment for order #123"
         metadata:
           type: object
           additionalProperties: true
         canceled_at:
-          type:
-            - string
-            - 'null'
+          type: string
+          nullable: true
           format: date-time
         channel_properties:
-          $ref: '#/components/schemas/ChannelProperties'
+          $ref: "#/components/schemas/ChannelProperties"
         created:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
         updated:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
     PaymentDetails:
       type: object
       properties:
         terminal_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         payment_method:
           type: string
           enum:
@@ -445,17 +439,17 @@ components:
       properties:
         payment_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
           pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
         business_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         reference_id:
           type: string
-          example: 'ref-12345'
+          example: "ref-12345"
         customer_id:
           type: string
-          example: 'cus-12345'
+          example: "cus-12345"
         type:
           type: string
           enum:
@@ -467,14 +461,14 @@ components:
             - ID
             - VN
             - TH
-          example: 'ID'
+          example: "ID"
         currency:
           type: string
           enum:
             - IDR
             - VND
             - THB
-          example: 'IDR'
+          example: "IDR"
         request_amount:
           type: number
           minimum: 1
@@ -485,38 +479,37 @@ components:
             - SUCCEEDED
             - VOIDED
             - AUTHORIZED
-          example: 'SUCCEEDED'
+          example: "SUCCEEDED"
         payment_details:
-          $ref: '#/components/schemas/PaymentDetails'
+          $ref: "#/components/schemas/PaymentDetails"
         failure_code:
-          type:
-            - string
-            - 'null'
-          example: 'VOID_FAILED'
+          type: string
+          nullable: true
+          example: "VOID_FAILED"
         metadata:
           type: object
           additionalProperties: true
         created:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
         updated:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
     PushCommandRequest:
       type: object
       properties:
         terminal_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         type:
           type: string
           enum:
             - PRINT_RECEIPT
             - SETTLE
         properties:
-          $ref: '#/components/schemas/CommandProperties'
+          $ref: "#/components/schemas/CommandProperties"
       required:
         - terminal_id
         - type
@@ -525,33 +518,33 @@ components:
       properties:
         id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         status:
           type: string
           enum:
             - ACTIVE
             - COMPLETED
-          example: 'ACTIVE'
+          example: "ACTIVE"
         terminal_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         business_id:
           type: string
-          example: 'abcd-3254fsd-3242'
+          example: "abcd-3254fsd-3242"
         type:
           type: string
           enum:
             - PRINT_RECEIPT
             - SETTLE
-          example: 'PRINT_RECEIPT'
+          example: "PRINT_RECEIPT"
         created:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
         updated:
           type: string
           format: date-time
-          example: '2024-11-06T15:32:42Z'
+          example: "2024-11-06T15:32:42Z"
       required:
         - id
         - status
@@ -563,7 +556,7 @@ components:
       properties:
         order_id:
           type: string
-          example: 'order-12345'
+          example: "order-12345"
         payment_method:
           type: string
           enum:
@@ -592,13 +585,13 @@ components:
       properties:
         code:
           type: string
-          example: 'SUCCESS'
+          example: "SUCCESS"
         error_code:
           type: string
-          example: ''
+          example: ""
         message:
           type: string
-          example: 'Void request created successfully'
+          example: "Void request created successfully"
     ErrorResponse:
       type: object
       required:
@@ -614,10 +607,10 @@ components:
             - CURRENCY_NOT_SUPPORTED
             - TERMINAL_NOT_FOUND
             - COMMAND_NOT_SUPPORTED
-          example: 'INVALID_REQUEST'
+          example: "INVALID_REQUEST"
         message:
           type: string
-          example: 'Missing required parameter: terminal_id'
+          example: "Missing required parameter: terminal_id"
     Customer:
       type: object
       properties:
@@ -626,34 +619,34 @@ components:
           enum:
             - INDIVIDUAL
             - BUSINESS
-          example: 'INDIVIDUAL'
+          example: "INDIVIDUAL"
         reference_id:
           type: string
-          example: 'cus_123456789'
+          example: "cus_123456789"
         email:
           type: string
-          format: email
           nullable: true
+          format: email
           example: test@xendit.co
         mobile_number:
           type: string
-          example: '+62123456789'
           nullable: true
+          example: "+62123456789"
         phone_number:
           type: string
-          example: '+62123456789'
           nullable: true
+          example: "+62123456789"
         individual_detail:
           type: object
           nullable: true
           properties:
             given_names:
               type: string
-              example: 'John Doe'
+              example: "John Doe"
             surname:
               type: string
-              example: 'Doe'
               nullable: true
+              example: "Doe"
         business_detail:
           type: object
           nullable: true
@@ -665,10 +658,10 @@ components:
       properties:
         code:
           type: string
-          example: 'SUCCESS'
+          example: "SUCCESS"
         error_code:
           type: string
-          example: ''
+          example: ""
         message:
           type: string
-          example: 'Payment session retried successfully'
+          example: "Payment session retried successfully"
