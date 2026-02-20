@@ -2,18 +2,7 @@
 
 - Terminal H2H SDK added to your app (Android or iOS)
 - At least one terminal device available (or use simulation/testing flows in your environment)
-- Terminal device details: [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information)
-
-### For Physical Terminal Testing
-- Terminal H2H SDK integrated in your Android/iOS app
-- Physical terminal device connected and showing "Ready" status
-- Terminal registered with Xendit for test mode (contact support if needed)
-- Valid `terminal_id` from your registered device
-
-### For Simulation Testing (No Terminal Required)
-- Any `terminal_id` value (e.g., `SIM001`) - no registration needed
-- Special test amounts to trigger different payment scenarios
-- Use `4040404` as terminal_id to test invalid terminal error handling
+- Terminal device details: [Terminal ID (TID)](/sdk/gateway/app-configuration#finding-terminal-information) and [IP address](/sdk/gateway/app-configuration#finding-terminal-information)
 
 <Info>
 You’ll integrate the SDK in your mobile app, then use the Terminal API to create payment sessions. The SDK handles the device communication layer for supported terminals.
@@ -120,7 +109,7 @@ func application(
 </Step>
 
 <Step title="Register your terminal device(s)">
-  Register devices in the SDK using your [Terminal ID (TID)](#finding-terminal-information) and [IP address](#finding-terminal-information).
+  Register devices in the SDK using your [Terminal ID (TID)](/sdk/gateway/app-configuration#finding-terminal-information) and [IP address](/sdk/gateway/app-configuration#finding-terminal-information).
 
   <Tabs>
   <Tab title="Android (Kotlin)">
@@ -153,7 +142,7 @@ func application(
   </Tabs>
   
   <Tip>
-  If you don’t have these yet, follow the [Finding Terminal Information](#finding-terminal-information) guide linked above.
+  If you don’t have these yet, follow the [Finding Terminal Information](/sdk/gateway/app-configuration#finding-terminal-information) guide.
   </Tip>
 </Step>
 </Steps>
@@ -166,22 +155,22 @@ You can use **simulation testing** (no physical device) or **physical terminal t
 For detailed simulation and physical terminal test flows (including special test amounts), refer to the "Choose your testing approach" section in the H2H App quickstart above.
 </Info>
 
-## 4. Monitor callbacks
+## 3. Monitor callbacks
 
 Your webhook server will receive real-time payment updates from the Terminal API.
 
 <Info>
-Callback events include `PAYMENT_CREATED`, `PAYMENT_SUCCEEDED`, `PAYMENT_FAILED`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
+Callback events include `terminal_session.completed`, `terminal_session.canceled`, `terminal_payment.succeeded`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
 </Info>
 
 ```javascript webhook.js (excerpt)
 app.post('/terminal/callbacks', (req, res) => {
-  console.log('Event:', req.body?.type, req.body?.data?.status);
+  console.log('Event:', req.body?.event, req.body?.data?.status);
   res.sendStatus(200);
 });
 ```
 
-## 5. Verify payment details
+## 4. Verify payment details
 
 Query payment details after receiving a success callback.
 
@@ -213,7 +202,7 @@ async function getPaymentDetails(paymentId) {
 }
 ```
 
-## 6. Optional: Void a payment
+## 5. Optional: Void a payment
 
 If needed, you can void a payment transaction:
 

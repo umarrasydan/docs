@@ -17,6 +17,7 @@ import {WizardInit} from '/components/WizardInit.jsx';
 <C2CProviderSnippetInit />
 <H2HProviderSnippetInit />
 
+
 {/* ═══════════════════════════════════════════════════
     STEP 1 — Integration Type: Device-Only vs POS-Integrated
     ═══════════════════════════════════════════════════ */}
@@ -40,14 +41,14 @@ import {WizardInit} from '/components/WizardInit.jsx';
 
   <div style={{ marginBottom: '8px' }}>
     <h2 style={{ fontWeight: '700', marginBottom: '8px', fontSize: '24px' }}>
-      How do you want to accept payments?
+      Choose how you want to accept payments
     </h2>
     <p style={{ maxWidth: '560px', margin: '0', color: 'var(--terminal-text-secondary)', fontSize: '15px' }}>
-      Choose whether you need to integrate your POS system with the terminal or use it as a standalone device.
+      Pick the fastest route for your business now. You can switch to a deeper integration path later.
     </p>
   </div>
 
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '700px', marginTop: '24px' }}>
+  <div className="quickstart-choice-grid">
     <div
       className="quickstart-card"
       style={{ padding: '24px' }}
@@ -226,7 +227,7 @@ import {WizardInit} from '/components/WizardInit.jsx';
     </p>
   </div>
 
-  <div style={{ maxWidth: '900px' }}>
+  <div className="quickstart-provider-container">
     {/* Indonesia */}
     <div className="country-section">
       <h3 className="country-header"><span className="country-flag">🇮🇩</span> Indonesia</h3>
@@ -316,8 +317,15 @@ import {WizardInit} from '/components/WizardInit.jsx';
   {/* Continue */}
   <div style={{ marginTop: '36px' }}>
     <button
+      id="provider-continue-button"
       className="wizard-button-primary"
       onClick={() => {
+        const hasSelectedProvider = document.querySelectorAll('#step3-providers input[type="checkbox"]:checked').length > 0;
+        if (!hasSelectedProvider) {
+          if (window._updateProviderContinueState) window._updateProviderContinueState();
+          return;
+        }
+
         const path = window._wizardPath;
         if (window.updateC2CProviderSnippets) window.updateC2CProviderSnippets();
         if (window.updateH2HProviderSnippets) window.updateH2HProviderSnippets();
@@ -338,6 +346,9 @@ import {WizardInit} from '/components/WizardInit.jsx';
       </svg>
       Continue with selected provider(s)
     </button>
+    <p id="provider-continue-hint" className="wizard-helper-text" style={{ display: 'none' }}>
+      Select at least one provider to continue.
+    </p>
   </div>
 </div>
 
@@ -435,7 +446,7 @@ import {WizardInit} from '/components/WizardInit.jsx';
       </tbody>
     </table>
 
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '24px' }}>
+    <div className="wizard-button-grid">
       <button
         className="wizard-button-primary blue"
         onClick={() => {

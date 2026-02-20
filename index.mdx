@@ -9,148 +9,34 @@ description: "Accept in-person payments through Xendit's payment terminals acros
 <img src="/images/terminal-and-dashboard.png" alt="Xendit Terminal device and dashboard interface" />
 </Frame>
 
-Xendit Payment Terminal enables businesses to accept **in-person payments** through our Android-based payment terminals. Whether you're running a café, retail store, restaurant, or kiosk, our terminals let you seamlessly collect payments from **cards, QR, and e-money wallets** — all through one unified platform.
+Xendit Payment Terminal enables businesses to accept in-person payments using Android payment terminals across Southeast Asia. Teams can process cards, QR, and selected wallet rails for staffed counters, kiosks, and ticketing flows.
 
-With a **single API integration**, you can connect your existing **Point of Sale (POS), ticketing, or kiosk software** to Xendit's terminals across **multiple countries**, including **Indonesia, Thailand, Vietnam, and Malaysia** (coming soon to the **Philippines**).
+Use one API contract to connect your POS, ticketing, or kiosk software in Indonesia, Thailand, Vietnam, and Malaysia, with upcoming support in the Philippines.
 
-## Key Benefits
+## Get Started
 
-### 🌍 Multi-Country Reach with a Single Integration
+Choose the path that matches your rollout stage.
 
-Integrate once with the Xendit Terminal API and deploy in-person payments across Southeast Asia. The same API works in Indonesia, Thailand, Vietnam, and Malaysia — with upcoming support for the Philippines.
+<CardGroup cols={2}>
+  <Card
+    title="Contact Sales"
+    icon="envelope"
+    href="mailto:inpersonpayments@xendit.co"
+  >
+    Request terminals, onboarding guidance, and market enablement support.
+  </Card>
+  <Card
+    title="Start Quickstart"
+    icon="play"
+    href="/guides/getting-started/quickstart"
+  >
+    Set up your first terminal payment flow in less than 10 minutes.
+  </Card>
+</CardGroup>
 
-### 💳 Universal Payment Acceptance
+## Choose Your Integration Path
 
-Accept payments from **Visa, Mastercard, JCB, UnionPay, American Express**, **local debit cards**, and **QR payments**.
-
-### ⚡ Fast Deployment and Go-Live
-
-Our streamlined onboarding and close bank partnerships allow you to receive devices in multiple countries and go live in weeks, not months.
-
-### 🧩 Flexible Integration Options
-
-Connect your POS or software directly to the terminal through our API for self-serve kiosks, automated amount entry, transaction confirmation, and reconciliation.
-
-## Country Availability & Supported Payment Methods
-
-|  | Country | Payment Methods | Payment Channels |
-| :----: | :---- | :---- | :---- |
-| 🇮🇩 | Indonesia | Credit Cards | Visa, MasterCard, JCB |
-|  |  | Debit Cards | GPN |
-|  |  | QR Payments | QRIS |
-|  |  | E-Money | Brizzi |
-| 🇹🇭 | Thailand | Credit Cards | Visa, MasterCard, JCB, UnionPay, American Express (AMEX)  |
-|  |  | Debit Cards | Visa, MasterCard |
-|  |  | QR Payments | Thai QR PromptPay, TrueMoney Wallet, LINE Pay, ShopeePay, Alipay, Alipay+, WeChat Pay, MaxMe Wallet |
-|  |  | Installments | Bangkok Bank, Krungsri (Bank of Ayudhya), SCB (Siam Commercial Bank), Kasikornbank (KBank), Krungthai Bank (KTB), TTB (TMBThanachart Bank), Shopee SPaylater Coming soon: UOB |
-| 🇻🇳 | Vietnam | Credit Cards | Visa, MasterCard, American Express (AMEX), JCB, UnionPay |
-|  |  | Debit Cards | NAPAS |
-|  |  | QR Payments | Viet QR |
-| 🇲🇾 | Malaysia | Credit Cards | Visa, MasterCard |
-|  |  | Debit Cards | MyDebit, Visa, MasterCard |
-|  |  | QR Payments | DuitNow QR (Coming Soon) |
-| 🇵🇭 | Philippines | Coming Soon | Coming Soon |
-
-## How It Works
-
-### POS-Integrated Payment Terminal
-
-In this setup, your POS system communicates directly with Xendit Payment Terminal via our API. This enables automated payment workflows where transaction amounts are sent directly from your system to the terminal.
-
-```mermaid
-sequenceDiagram
-    participant Merchant as Merchant POS System
-    participant Xendit as Terminal API (H2H)
-    participant Gateway as Terminal H2H
-    participant Terminal as Payment Terminal EDC
-    participant Customer as Customer
-    participant Bank as Card Network/Bank
-
-    Merchant->>Xendit: 1. Create payment session<br/>(amount, currency, terminal_id)
-    Xendit-->>Merchant: Session created (session_id)
-
-    Xendit->>Gateway: 2. Notify terminal of new session
-    Gateway->>Terminal: Forward session details
-    Terminal->>Customer: 3. Display payment prompt<br/>(amount to pay)
-
-    Customer->>Terminal: 4. Make payment on device
-    Terminal->>Bank: 5. Process payment
-    Bank-->>Terminal: Payment authorized
-
-    Terminal->>Customer: Display success & receipt
-
-    Terminal->>Gateway: 6. Payment successful
-    Gateway->>Xendit: Update session status
-    Xendit->>Merchant: 7. Webhook notification<br/>(payment status)
-```
-
-<Steps>
-<Step title="Create payment session">
-Your POS system creates a payment session through Terminal API (H2H) with the transaction amount and terminal details.
-</Step>
-
-<Step title="Customer completes payment">
-The terminal prompts the customer to tap, insert, or swipe their payment card or scan QR code.
-</Step>
-
-<Step title="Receive real-time updates">
-Your system receives payment status updates through webhooks.
-</Step>
-
-<Step title="Complete transaction">
-Payment is confirmed, and you can print receipts or update your inventory system.
-</Step>
-</Steps>
-
-## Settlement
-
-Funds are settled into your **Xendit Balance** within **T+1 day** after the transaction settlement is completed on the device.
-
-You can view all in-person transactions and settlements from your **Xendit Dashboard**, alongside your online payments, for a unified reconciliation experience.
-
----
-
-## Getting Started
-
-Ready to start accepting in-person payments? Follow these three simple steps:
-
-<Steps>
-<Step title="Apply for a Terminal">
-Reach out to our team at [inpersonpayments@xendit.co](mailto:inpersonpayments@xendit.co) to request your terminal(s).
-</Step>
-
-<Step title="Integrate with Xendit">
-Use our [API documentation](/api-reference/terminal-api/introduction) to connect your POS or custom software.
-
-<Info>
-**New to Xendit's Payment Terminal?** Start with our [quickstart guide](/guides/getting-started/quickstart) to get your first terminal payment processed in under 10 minutes.
-</Info>
-</Step>
-
-<Step title="Go Live and Accept Payments">
-Once approved, you'll receive your device, complete onboarding, and start accepting in-person payments.
-</Step>
-</Steps>
-
-## Integration Guide
-
-### Prerequisites
-
-Before you begin integration, ensure you have:
-
-- **API credentials** for your chosen integration track from the Xendit In-Person Payment team
-- A terminal device with Terminal ID and network connectivity
-- Your environment base URL:
-  - Development: `https://terminal-dev.xendit.co`
-  - Production: `https://terminal.xendit.co`
-
-<Info>
-**Credentials vary by track**: Contact the Xendit In-Person Payment team to obtain the appropriate credentials. See the [Terminal API (H2H) introduction](/api-reference/terminal-api/introduction) or [Terminal API (C2C) introduction](/api-reference/c2c/introduction) for authentication details.
-</Info>
-
-## Payment Terminal Solutions
-
-Choose the integration approach that fits your use case:
+Select the integration model that best fits your operations and engineering model.
 
 <CardGroup cols={3}>
   <Card
@@ -158,20 +44,78 @@ Choose the integration approach that fits your use case:
     icon="mobile"
     href="/guides/getting-started/standalone-terminal"
   >
-    Use the terminal device directly — enter amounts manually on the device. No API or SDK integration needed. Transactions are visible in your Xendit Dashboard.
+    Use the terminal directly with manual amount entry. API and SDK integration are not required.
   </Card>
   <Card
     title="H2H — Terminal API"
     icon="server"
     href="/api-reference/terminal-api/introduction"
   >
-    Your backend calls Xendit's cloud HTTP API to manage payment sessions and terminal operations.
+    Your backend calls Xendit's cloud HTTP API to create sessions and manage terminal operations centrally.
   </Card>
   <Card
     title="C2C — Terminal C2C API / SDK"
     icon="network-wired"
     href="/api-reference/c2c/introduction"
   >
-    Your POS sends commands to terminals over the local network — via **Terminal C2C API** (HTTP REST) or **Terminal C2C SDK** (native methods).
+    Your POS sends commands over the local network through the C2C API (HTTP) or C2C SDK (native methods).
   </Card>
 </CardGroup>
+
+## Why Teams Choose Xendit Terminal
+
+- **Regional rollout with one integration**: Reuse the same API contract across supported Southeast Asia markets.
+- **Broad payment acceptance**: Support cards, local debit schemes, and QR rails based on country availability.
+- **Faster deployment**: Use streamlined onboarding and operational support to reduce go-live time.
+- **Flexible operating model**: Choose device-only, H2H, or C2C based on checkout flow and device-control requirements.
+
+## Coverage by Country
+
+Current market status:
+
+- **Live markets**: Indonesia, Thailand, Vietnam, Malaysia
+- **Upcoming market**: Philippines
+
+For complete channel-level coverage by country, including card brands, debit schemes, QR rails, and installment support, see the [Country Payment Coverage](/guides/getting-started/country-payment-coverage) guide.
+
+## How Payments Flow
+
+Most integrations follow this high-level sequence:
+
+<Steps>
+<Step title="Create a payment request">
+Your POS or backend creates a payment session and sends transaction amount and terminal details.
+</Step>
+<Step title="Customer pays on terminal">
+The terminal prompts the customer to tap, insert, swipe, or scan, and then processes authorization.
+</Step>
+<Step title="Receive status and reconcile">
+Your system receives payment updates through callbacks or webhooks and closes the transaction.
+</Step>
+</Steps>
+
+<Info>
+For detailed request/response flows, callbacks, and edge-case handling, see [Terminal API Concepts](/api-reference/terminal-api/concepts), [Terminal API (H2H) introduction](/api-reference/terminal-api/introduction), and [Terminal API (C2C) introduction](/api-reference/c2c/introduction).
+</Info>
+
+## Settlement and Operations
+
+Funds are settled into your **Xendit Balance** within **T+1 day** after settlement is completed on the terminal device.
+
+Monitor in-person payments in the **Xendit Dashboard** alongside online transactions for unified reconciliation.
+
+## Next Steps
+
+Move from evaluation to production with this sequence:
+
+<Steps>
+<Step title="Apply for terminals">
+Contact [inpersonpayments@xendit.co](mailto:inpersonpayments@xendit.co) to request terminals and onboarding support.
+</Step>
+<Step title="Integrate and test">
+Follow the [quickstart guide](/guides/getting-started/quickstart) and validate your selected integration track.
+</Step>
+<Step title="Launch and operate">
+Complete certification, deploy terminals, and monitor payments through dashboard reporting and callbacks.
+</Step>
+</Steps>

@@ -66,11 +66,11 @@ Set up your local development environment with the necessary credentials and bas
   const app = express();
   app.use(express.json());
   
-  app.post('/terminal/callbacks', (req, res) => {
-    console.log('Event:', req.body?.type, req.body?.data?.status);
-    console.log('Full payload:', JSON.stringify(req.body, null, 2));
-    res.sendStatus(200);
-  });
+app.post('/terminal/callbacks', (req, res) => {
+  console.log('Event:', req.body?.event, req.body?.data?.status);
+  console.log('Full payload:', JSON.stringify(req.body, null, 2));
+  res.sendStatus(200);
+});
   
   app.listen(3000, () => {
     console.log('Webhook server running on http://localhost:3000');
@@ -421,7 +421,7 @@ Now create a payment session and process it. Choose the approach that matches yo
 Your webhook server (started in step 1) will receive real-time payment updates. Monitor the console output to see callback events.
 
 <Info>
-Callback events include `PAYMENT_CREATED`, `PAYMENT_SUCCEEDED`, `PAYMENT_FAILED`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
+Callback events include `terminal_session.completed`, `terminal_session.canceled`, `terminal_payment.succeeded`, and others. See the [Callbacks documentation](/api-reference/terminal-api/callbacks) for complete event types.
 </Info>
 
 ## 5. Verify payment details
