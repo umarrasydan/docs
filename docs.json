@@ -18,7 +18,8 @@
             "pages": [
               "index",
               "guides/getting-started/quickstart",
-              "guides/getting-started/standalone-terminal"
+              "guides/getting-started/standalone-terminal",
+              "guides/getting-started/country-payment-coverage"
             ]
           },
           {
