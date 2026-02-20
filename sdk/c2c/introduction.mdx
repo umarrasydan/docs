@@ -9,7 +9,7 @@ description: "Integrate Xendit's Terminal C2C SDK for seamless in-person payment
 **The Terminal C2C SDK is a convenience wrapper** around the [Terminal C2C API](/api-reference/c2c/introduction). For providers other than BRI and NTT, you can call the Terminal C2C API directly without the SDK. BRI and NTT terminals require either the [Gateway App](/sdk/gateway/app-configuration) or the C2C SDK as a pre-install.
 </Info>
 
-Xendit's Terminal C2C SDK enables you to integrate secure payment processing directly into your applications. Connect to physical payment terminals and process transactions seamlessly across multiple platforms with our comprehensive Kotlin Multiplatform (KMP) compatible SDK.
+Xendit's Terminal C2C SDK enables direct local-network terminal control from your app. Use it when you need custom command flow ownership and device-side logic.
 
 ## What you can do with Terminal C2C
 
@@ -28,6 +28,10 @@ Terminal C2C works alongside the Terminal Gateway service (the local application
 ## Choose your platform
 
 Get started with Terminal C2C by selecting your development platform:
+
+<Tip>
+If you still need to choose between H2H and C2C, start with [Quick Start](/guides/getting-started/quickstart) for the decision flow first.
+</Tip>
 
 <CardGroup cols={3}>
 <Card title="Android (Kotlin)" icon="android" href="/sdk/c2c/android-sdk">
@@ -75,10 +79,10 @@ Before you begin, ensure you have:
 
 ## Next steps
 
-1. **Set up your development environment** for your chosen platform
-2. **Obtain your client key** and terminal device information
-3. **Follow the platform-specific guide** to integrate the SDK
-4. **Test your integration** using the provided examples
+1. **Set up your platform environment** and install the SDK
+2. **Provision credentials** and terminal device information
+3. **Integrate command flows** from the platform guide
+4. **Validate with simulation and real devices** before rollout
 
 <Check>
 Ready to get started? Choose your platform above to begin the integration process.

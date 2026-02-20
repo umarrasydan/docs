@@ -5,7 +5,7 @@ description: "Integrate Xendit's Payment Terminal H2H for seamless in-person pay
 
 # Terminal H2H
 
-Xendit's Terminal H2H (Host-to-Host) Gateway enables you to connect your applications to physical payment terminals through a centralized gateway service. This solution provides a bridge between your backend systems and terminal devices, handling command polling, device management, and transaction processing seamlessly across multiple terminal providers.
+Terminal H2H (Host-to-Host) connects your backend to physical terminals through a managed gateway layer. Use it when you want centralized orchestration with the Terminal API while keeping device connectivity reliable across multiple providers.
 
 ## What you can do with Terminal H2H
 
@@ -14,17 +14,21 @@ Terminal H2H Gateway provides everything you need to build comprehensive termina
 - **Centralized device management** across multiple terminal types and providers
 - **Automated command polling** from backend services to terminal devices
 - **Real-time connection monitoring** and error handling for all registered terminals
-- **Multi-provider support** including BRI, NTT, Cashup, SHC (Share commerce Malaysia), and other terminal providers
+- **Multi-provider support** including BRI, NTT, Cashup, SHC (Share Commerce Malaysia), and other terminal providers
 - **Concurrent operations** supporting multiple simultaneous transactions across different terminals
 - **Robust retry mechanisms** with configurable timeout and attempt settings
 
 <Info>
-Terminal H2H works alongside the Terminal API to provide a complete in-person payment solution. You'll use the Terminal API to create payment sessions and the Terminal H2H SDKs to interact with physical payment devices.
+H2H SDKs handle terminal connectivity; your payment orchestration remains on [Terminal API (H2H)](/api-reference/terminal-api/introduction).
 </Info>
 
 ## Choose your platform
 
 Get started with Terminal H2H by selecting your development platform:
+
+<Tip>
+If you are choosing an integration path for the first time, start in [Quick Start](/guides/getting-started/quickstart) before diving into platform-specific setup.
+</Tip>
 
 <CardGroup cols={2}>
 <Card title="Android (Kotlin)" icon="android" href="/sdk/h2h/android-sdk">
@@ -73,14 +77,11 @@ Terminal H2H Gateway requires physical payment devices and proper network config
 
 ## Next steps
 
-1. **Set up your development environment** for your chosen platform
-2. **Obtain your client key** and register your terminal devices
-3. **Configure terminal providers** based on your hardware setup
-4. **Follow the platform-specific guide** to integrate the gateway SDK
-5. **Test device connections** and monitor gateway service status
-6. **Implement error handling** for robust terminal management
+1. **Set up your platform environment** and install the SDK
+2. **Provision credentials** and register terminal devices
+3. **Configure providers** for your hardware footprint
+4. **Validate connectivity and error handling** before go-live
 
 <Check>
 Ready to get started? Choose your platform above to begin the integration process.
 </Check>
-

@@ -17,6 +17,7 @@
             "group": "Getting started",
             "pages": [
               "index",
+              "guides/getting-started/quickstart",
               "guides/getting-started/standalone-terminal"
             ]
           },
@@ -25,17 +26,6 @@
             "pages": [
               "guides/migration/xen-bri-to-h2h",
               "guides/migration/xen-bri-sdk-to-c2c"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Quick Start",
-        "groups": [
-          {
-            "group": "Quick Start",
-            "pages": [
-              "guides/getting-started/quickstart"
             ]
           }
         ]

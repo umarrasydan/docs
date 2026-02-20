@@ -40,7 +40,7 @@
     </tbody>
   </table>
 
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '24px' }}>
+  <div className="wizard-button-grid">
     <button
       className="wizard-button-primary green"
       onClick={() => {
@@ -53,6 +53,7 @@
         const c2cBanner = document.getElementById('path-banner-c2c');
         if (h2hBanner) h2hBanner.style.display = 'flex';
         if (c2cBanner) c2cBanner.style.display = 'none';
+        if (window._updateProviderContinueState) window._updateProviderContinueState();
 
         document.getElementById('step3-providers').style.display = 'block';
         window.location.hash = 'step3-providers';
@@ -80,6 +81,7 @@
         const c2cBanner = document.getElementById('path-banner-c2c');
         if (h2hBanner) h2hBanner.style.display = 'none';
         if (c2cBanner) c2cBanner.style.display = 'flex';
+        if (window._updateProviderContinueState) window._updateProviderContinueState();
 
         document.getElementById('step3-providers').style.display = 'block';
         window.location.hash = 'step3-providers';

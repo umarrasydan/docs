@@ -18,6 +18,8 @@
     --terminal-text-primary: #111827;
 }
 
+html.dark,
+body.dark,
 html[data-theme='dark'],
 body[data-theme='dark'],
 [data-theme='dark'] {
@@ -37,27 +39,6 @@ body[data-theme='dark'],
     --terminal-primary-shadow: rgba(22, 98, 238, 0.3);
     --terminal-text-secondary: #94a3b8;
     --terminal-text-primary: #f1f5f9;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --terminal-card-surface: rgba(15, 23, 42, 0.72);
-        --terminal-card-border: rgba(148, 163, 184, 0.4);
-        --terminal-card-shadow: 0 28px 56px -24px rgba(15, 23, 42, 0.65);
-        --terminal-neutral-surface: rgba(148, 163, 184, 0.16);
-        --terminal-link-border: rgba(148, 163, 184, 0.45);
-        --terminal-table-green-bg: rgba(16, 185, 129, 0.16);
-        --terminal-table-green-border: rgba(52, 211, 153, 0.4);
-        --terminal-table-blue-bg: rgba(59, 130, 246, 0.18);
-        --terminal-table-blue-border: rgba(96, 165, 250, 0.45);
-        --terminal-table-neutral-bg: rgba(148, 163, 184, 0.12);
-        --terminal-table-neutral-border: rgba(148, 163, 184, 0.35);
-        --terminal-primary-light: rgba(22, 98, 238, 0.15);
-        --terminal-primary-border: rgba(22, 98, 238, 0.45);
-        --terminal-primary-shadow: rgba(22, 98, 238, 0.3);
-        --terminal-text-secondary: #94a3b8;
-        --terminal-text-primary: #f1f5f9;
-    }
 }
 
 /* ──────────────────────────────────────────────
@@ -119,6 +100,7 @@ body[data-theme='dark'],
     --terminal-card-accent-shadow: var(--terminal-primary-shadow);
     position: relative;
     background: var(--terminal-card-surface);
+    color: var(--terminal-text-primary);
     border: 1.5px solid var(--terminal-card-border);
     border-radius: 12px;
     padding: 16px 20px;
@@ -148,6 +130,21 @@ body[data-theme='dark'],
     height: 18px;
     accent-color: var(--terminal-primary);
     cursor: pointer;
+    pointer-events: none;
+}
+
+.quickstart-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 700px;
+    margin-top: 24px;
+}
+
+.quickstart-provider-container {
+    width: 100%;
+    max-width: 900px;
 }
 
 /* ──────────────────────────────────────────────
@@ -210,6 +207,13 @@ body[data-theme='dark'],
     transform: translateY(0);
 }
 
+.wizard-button-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
 .wizard-button-primary.green {
     background: #047857;
     box-shadow: 0 2px 8px -2px rgba(4, 120, 87, 0.35);
@@ -254,6 +258,20 @@ body[data-theme='dark'],
 
 .wizard-button-secondary:active {
     transform: translateY(0);
+}
+
+.wizard-button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.wizard-helper-text {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: #b45309;
+    font-size: 13px;
 }
 
 /* ──────────────────────────────────────────────
@@ -330,10 +348,13 @@ body[data-theme='dark'],
    ────────────────────────────────────────────── */
 
 .quickstart-elevated {
+    width: 100%;
+    box-sizing: border-box;
     max-width: 1200px;
     margin: 0 auto;
     margin-bottom: 32px;
     background: var(--terminal-card-surface);
+    color: var(--terminal-text-primary);
     border: 1px solid var(--terminal-card-border);
     border-radius: 16px;
     padding: 24px;
@@ -348,6 +369,7 @@ body[data-theme='dark'],
 .quickstart-table-heading {
     padding: 16px 24px;
     text-align: left;
+    color: var(--terminal-text-primary);
 }
 
 .quickstart-table-heading.neutral {
@@ -370,6 +392,7 @@ body[data-theme='dark'],
 .quickstart-table-cell {
     padding: 16px 24px;
     border-bottom: 1px solid var(--terminal-table-neutral-border);
+    color: var(--terminal-text-secondary);
 }
 
 .quickstart-table-cell.green {
@@ -477,4 +500,39 @@ body[data-theme='dark'],
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 12px;
+}
+
+@media (max-width: 768px) {
+    .quickstart-choice-grid,
+    .wizard-button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quickstart-choice-grid {
+        max-width: none;
+    }
+
+    .quickstart-elevated {
+        padding: 16px;
+    }
+
+    .quickstart-table thead tr,
+    .quickstart-table tbody tr {
+        display: block;
+    }
+
+    .quickstart-table th,
+    .quickstart-table td {
+        display: block;
+        width: 100% !important;
+        border-right: none !important;
+    }
+
+    .quickstart-table th {
+        padding: 14px 16px;
+    }
+
+    .quickstart-table td {
+        padding: 14px 16px;
+    }
 }
