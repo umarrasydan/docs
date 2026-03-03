@@ -70,6 +70,8 @@ curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   -u 'your_terminal_api_key:' \
   -H 'Content-Type: application/json' \
   -H 'Idempotency-key: unique-key-123' \
+  -H 'for-user-id: SUB_ACCOUNT_USER_ID' \
+  -H 'with-split-rule: SPLIT_RULE_ID' \
   -d '{
     "session_type": "PAY",
     "mode": "TERMINAL",
@@ -86,6 +88,15 @@ curl -X POST 'https://terminal-dev.xendit.co/v1/terminal/sessions' \
   **Critical**: Always include the colon (`:`) after your API key when encoding
   for Basic Authentication, even though the password is empty.
 </Warning>
+
+## Optional Headers (xenPlatform)
+
+If you have access to **xenPlatform**, you can include these optional headers on the Create Terminal Payment Session request:
+
+| Header | Type | Description |
+|--------|------|-------------|
+| `for-user-id` | string | The sub-account user-id to make this transaction for. See [xenPlatform](https://docs.xendit.co/docs/xenplatform-overview) for more information. |
+| `with-split-rule` | string | The XenPlatform split rule ID that will be applied to this transaction. |
 
 ## Device connectivity
 
