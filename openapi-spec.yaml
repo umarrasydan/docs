@@ -29,7 +29,7 @@ paths:
           required: false
           schema:
             type: string
-          description: The sub-account user-id to make this transaction for. This header is only used if you have access to xenPlatform. See xenPlatform for more information.
+          description: The sub-account user-id to make this transaction for. This header is only used if you have access to xenPlatform. See [xenPlatform](https://docs.xendit.co/docs/xenplatform-overview) for more information.
         - name: with-split-rule
           in: header
           required: false
