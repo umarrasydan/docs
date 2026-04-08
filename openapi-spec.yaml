@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Xendit in-person payments API (H2H)
-  version: "0.4.1"
+  version: "0.5.1"
   description: API specification for Xendit's in-person payments H2H payment sessions and command endpoints.
 servers:
   - url: https://terminal-dev.xendit.co
@@ -10,6 +10,62 @@ servers:
     description: Live
 paths:
   /v1/terminal/sessions:
+    get:
+      tags:
+        - In-person payments H2H API
+      security:
+        - BasicAuth: []
+      operationId: listTerminalPaymentSessions
+      summary: List Terminal Payment Sessions
+      parameters:
+        - name: reference_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Filter sessions by reference ID
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Maximum number of sessions to return
+        - name: after_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: Cursor for forward pagination
+        - name: before_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+          description: Cursor for backward pagination
+      responses:
+        "200":
+          description: Terminal Payment Sessions fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTerminalPaymentSessionsResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     post:
       tags:
         - In-person payments H2H API
@@ -298,6 +354,7 @@ components:
             - IDR
             - VND
             - THB
+            - MYR
         amount:
           type: number
           format: decimal
@@ -308,6 +365,7 @@ components:
             - ID
             - VN
             - TH
+            - MY
         session_type:
           type: string
           enum:
@@ -366,6 +424,7 @@ components:
             - IDR
             - VND
             - THB
+            - MYR
         amount:
           type: number
           format: decimal
@@ -376,6 +435,7 @@ components:
             - ID
             - VN
             - TH
+            - MY
         mode:
           type: string
           enum:
@@ -408,6 +468,35 @@ components:
           type: string
           format: date-time
           example: "2024-11-06T15:32:42Z"
+    ListTerminalPaymentSessionsResponse:
+      type: object
+      required:
+        - has_more
+        - data
+      properties:
+        has_more:
+          type: boolean
+          example: false
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TerminalPaymentSessionResponse"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Link"
+    Link:
+      type: object
+      properties:
+        rel:
+          type: string
+          example: "next"
+        href:
+          type: string
+          example: "/v1/terminal/sessions?reference_id=ref_123456789&after_id=00000000-0000-0000-0000-000000000000"
+        method:
+          type: string
+          example: "GET"
     PaymentDetails:
       type: object
       properties:
@@ -473,6 +562,7 @@ components:
             - ID
             - VN
             - TH
+            - MY
           example: "ID"
         currency:
           type: string
@@ -480,6 +570,7 @@ components:
             - IDR
             - VND
             - THB
+            - MYR
           example: "IDR"
         request_amount:
           type: number
@@ -491,6 +582,7 @@ components:
             - SUCCEEDED
             - VOIDED
             - AUTHORIZED
+            - REVERSED
           example: "SUCCEEDED"
         payment_details:
           $ref: "#/components/schemas/PaymentDetails"
@@ -520,6 +612,7 @@ components:
           enum:
             - PRINT_RECEIPT
             - SETTLE
+            - QUERY
         properties:
           $ref: "#/components/schemas/CommandProperties"
       required:
@@ -548,6 +641,7 @@ components:
           enum:
             - PRINT_RECEIPT
             - SETTLE
+            - QUERY
           example: "PRINT_RECEIPT"
         created:
           type: string

@@ -197,6 +197,27 @@ Explore the complete Terminal API documentation:
 
 ## Changelog
 
+<Update label="Version 0.5.1" description="Released April 8, 2026">
+## New Features
+- Added API endpoint for listing terminal payment sessions with cursor-based pagination
+
+## API Endpoints
+
+- `GET /v1/terminal/sessions` - List payment sessions by reference ID with cursor pagination
+</Update>
+
+<Update label="Version 0.5.0" description="Released March 17, 2026">
+## New Features
+- Added Malaysia (`MY` / `MYR`) as a supported market
+- Added Malaysia payment methods: `MY_QR`, `MY_CARD`, `MY_EWALLET`
+</Update>
+
+<Update label="Version 0.4.3" description="Released February 10, 2026">
+## Improvements
+- Added `REVERSED` payment status for reversed transactions
+- Added `QUERY` command type for terminal operations
+</Update>
+
 <Update label="Version 0.4.2" description="Released December 5, 2025">
 ## New Features
 - Added API endpoint for retrying payment sessions on terminal devices
