@@ -18,9 +18,13 @@ This SDK uses a singleton pattern with the `TerminalC2C` object to communicate w
 ## Version information
 
 <AccordionGroup>
-  <Accordion title="v1.0.0 — 19-Feb-2026">
+  <Accordion title="v1.1.0 — 16-Apr-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+    - Fixed an issue where the C2C server restarted when launching the app
+  </Accordion>
+  <Accordion title="v1.0.0 — 19-Feb-2026">
+    What's new:
     - Added SHC provider support for Malaysian terminals
     - Added multiple-provider support enabling apps to handle different terminal types simultaneously
     - Enhanced TerminalDevice configuration with provider-specific methods
@@ -31,27 +35,6 @@ This SDK uses a singleton pattern with the `TerminalC2C` object to communicate w
 <Note>
 The SDK follows semantic versioning. Breaking changes will bump the major version number.
 </Note>
-
-## Download
-
-Download the Terminal C2C iOS SDK:
-
-<CardGroup cols={1}>
-<Card title="iOS SDK (v1.0.0)" icon="apple">
-  Download the complete iOS SDK package including TerminalC2C.xcframework and documentation
-
-  ```
-  SHA256: 2ca43d04afbfb1c7237f41e07b44de9dcc9fb80386e995dc287a41938fa618d9
-  ```
-
-  <a
-    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalSDK+C2C+iOS-1.0.0.zip"
-    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-  >
-    Download for iOS
-  </a>
-</Card>
-</CardGroup>
 
 import IOSInstallation from '/snippets/ios-installation.mdx';
 
