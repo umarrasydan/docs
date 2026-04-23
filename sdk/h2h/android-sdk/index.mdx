@@ -14,6 +14,10 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.1.1 — 23-Apr-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+  </Accordion>
   <Accordion title="v1.0.0 — 19-Feb-2026">
     What's new:
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
@@ -34,20 +38,24 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
     - Added support for multiple concurrent device connections, enabling simultaneous transactions across different terminals
     - [BRI] Fixed status value handling in void and cancel API responses for improved transaction status accuracy
   </Accordion>
-  <Accordion title="v0.5.0 — 30-Oct-2025">
-    What's new:
-    - Introduced command ID handling for settlement operations
-    - Enhanced retry logic with configurable attempt counts
-    - Improved error handling and logging throughout the gateway service
-  </Accordion>
-  <Accordion title="v0.4.1 — 7-Oct-2025">
-    Bug fixes and improvements:
-    - Fix data mapping for terminal responses
-    - [BRI] Enhanced status verification after transaction timeout for improved reliability
-  </Accordion>
+  <Accordion title="View all versions">
+    <AccordionGroup>
+      <Accordion title="v0.5.0 — 30-Oct-2025">
+        What's new:
+        - Introduced command ID handling for settlement operations
+        - Enhanced retry logic with configurable attempt counts
+        - Improved error handling and logging throughout the gateway service
+      </Accordion>
+      <Accordion title="v0.4.1 — 7-Oct-2025">
+        Bug fixes and improvements:
+        - Fix data mapping for terminal responses
+        - [BRI] Enhanced status verification after transaction timeout for improved reliability
+      </Accordion>
 
-  <Accordion title="v0.4.0 — 13-May-2025">
-    XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+      <Accordion title="v0.4.0 — 13-May-2025">
+        XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+      </Accordion>
+    </AccordionGroup>
   </Accordion>
 </AccordionGroup>
 
@@ -55,36 +63,24 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 The SDK follows semantic versioning. Breaking changes will bump the major version number.
 </Note>
 
-import AndroidDownload from '/snippets/android-download.mdx';
-
-<AndroidDownload />
-
 ## Installation
 
 Follow these steps to add the Terminal H2H Android SDK to your project.
 
 <Steps>
-<Step title="Extract the SDK">
-  Extract the provided SDK zip file so that a `repository` directory is available in your project root.
-  
-  <Check>
-  Verify that the `repository` folder contains the necessary Maven artifacts for the SDK.
-  </Check>
-</Step>
-
 <Step title="Configure Gradle settings">
-  Add the repository to your Gradle configuration. Choose one of the following approaches:
+  Add `mavenCentral()` to your Gradle configuration so Gradle can resolve the SDK artifacts.
   
   <Tabs>
   <Tab title="Modern Approach (Recommended)">
-    Add the repository to your Gradle settings file:
+    Add Maven Central to your Gradle settings file:
     
     <CodeGroup>
     ```kotlin settings.gradle(.kts)
     dependencyResolutionManagement {
       repositories {
         // ... other repositories
-        maven("./repository")
+        mavenCentral()
       }
     }
     ```
@@ -93,7 +89,7 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     dependencyResolutionManagement {
       repositories {
         // ... other repositories
-        maven { url './repository' }
+        mavenCentral()
       }
     }
     ```
@@ -101,14 +97,14 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
   </Tab>
   
   <Tab title="Old Android Project">
-    Add the repository to your root build.gradle file:
+    Add Maven Central to your root build.gradle file:
     
     <CodeGroup>
     ```kotlin build.gradle.kts (root)
     allprojects {
       repositories {
         // ... other repositories
-        maven("../repository")
+        mavenCentral()
       }
     }
     ```
@@ -117,13 +113,17 @@ Follow these steps to add the Terminal H2H Android SDK to your project.
     allprojects {
       repositories {
         // ... other repositories
-        maven { url '../repository' }
+        mavenCentral()
       }
     }
     ```
     </CodeGroup>
   </Tab>
   </Tabs>
+
+  <Check>
+  Verify `mavenCentral()` is available in the repository list used by your app module.
+  </Check>
 </Step>
 
 <Step title="Add dependencies">
@@ -247,6 +247,17 @@ implementation("co.xendit.terminal:th-ntt-android:<latest_version>")
 
 <Info>
 NTT provider supports multi-function terminals with card payments and QR code transactions.
+</Info>
+</Tab>
+
+<Tab title="Cashup (Indonesia)">
+```kotlin
+// Cashup terminals use the Gateway app flow.
+// No TerminalH2H.addProvider(...) call is required.
+```
+
+<Info>
+Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
 </Info>
 </Tab>
 

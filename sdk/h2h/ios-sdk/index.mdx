@@ -14,6 +14,10 @@ This SDK works alongside the Terminal API to provide a complete in-person paymen
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.1.1 — 23-Apr-2026">
+    What's new:
+    - Added Cashup provider support for Indonesian terminals
+  </Accordion>
   <Accordion title="v1.0.0 — 19-Feb-2026">
     What's new:
     - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
@@ -29,52 +33,35 @@ This SDK works alongside the Terminal API to provide a complete in-person paymen
     - Added timeout configuration for card and QR transactions to auto-cancel and retry stalled requests
     - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
   </Accordion>
-  <Accordion title="v0.6.0 — 20-Nov-2025">
-    What's new:
-    - Added support for multiple concurrent device connections, enabling simultaneous transactions across different terminals
-    - [BRI] Fixed status value handling in void and cancel API responses for improved transaction status accuracy
-  </Accordion>
-  <Accordion title="v0.5.0 — 30-Oct-2025">
-    What's new:
-    - Introduced command ID handling for settlement operations
-    - Enhanced retry logic with configurable attempt counts
-    - Improved error handling and logging throughout the gateway service
-  </Accordion>
-  <Accordion title="v0.4.1 — 7-Oct-2025">
-    Bug fixes and improvements:
-    - Fix data mapping for terminal responses
-    - [BRI] Enhanced status verification after transaction timeout for improved reliability
-  </Accordion>
+  <Accordion title="View all versions">
+    <AccordionGroup>
+      <Accordion title="v0.6.0 — 20-Nov-2025">
+        What's new:
+        - Added support for multiple concurrent device connections, enabling simultaneous transactions across different terminals
+        - [BRI] Fixed status value handling in void and cancel API responses for improved transaction status accuracy
+      </Accordion>
+      <Accordion title="v0.5.0 — 30-Oct-2025">
+        What's new:
+        - Introduced command ID handling for settlement operations
+        - Enhanced retry logic with configurable attempt counts
+        - Improved error handling and logging throughout the gateway service
+      </Accordion>
+      <Accordion title="v0.4.1 — 7-Oct-2025">
+        Bug fixes and improvements:
+        - Fix data mapping for terminal responses
+        - [BRI] Enhanced status verification after transaction timeout for improved reliability
+      </Accordion>
 
-  <Accordion title="v0.4.0 — 13-May-2025">
-    XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+      <Accordion title="v0.4.0 — 13-May-2025">
+        XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+      </Accordion>
+    </AccordionGroup>
   </Accordion>
 </AccordionGroup>
 
 <Note>
 The SDK follows semantic versioning. Breaking changes will bump the major version number.
 </Note>
-
-## Download
-
-Download the Terminal H2H iOS SDK:
-
-<CardGroup cols={1}>
-<Card title="iOS SDK (v1.0.0)" icon="apple">
-  Download the complete iOS SDK package including TerminalH2H.xcframework and documentation
-
-  ```
-  SHA256: 61a97854a65501d0c1c14dc7fe94005cd6c0d72b35ee6157ec5a65c74b52e8b7
-  ```
-
-  <a
-    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/TerminalSDK+H2H+iOS-1.0.0.zip"
-    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-  >
-    Download for iOS
-  </a>
-</Card>
-</CardGroup>
 
 import IOSInstallation from '/snippets/ios-installation.mdx';
 
@@ -141,6 +128,17 @@ TerminalH2H.shared.addProvider(provider: TerminalNTT.shared)
 
 <Info>
 NTT provider supports multi-function terminals with card payments and QR code transactions.
+</Info>
+</Tab>
+
+<Tab title="Cashup (Indonesia)">
+```swift
+// Cashup terminals use the Gateway app flow.
+// No TerminalH2H.shared.addProvider(...) call is required.
+```
+
+<Info>
+Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
 </Info>
 </Tab>
 

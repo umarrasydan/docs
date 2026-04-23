@@ -18,9 +18,12 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
 ## Version information
 
 <AccordionGroup>
-  <Accordion title="v1.0.0 — 19-Feb-2026">
+  <Accordion title="v1.1.1 — 23-Apr-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
+  </Accordion>
+  <Accordion title="v1.0.0 — 19-Feb-2026">
+    What's new:
     - Added SHC provider support for Malaysian terminals
     - Added multiple-provider support enabling apps to handle different terminal types simultaneously
     - Enhanced TerminalDevice configuration with provider-specific methods
@@ -32,36 +35,24 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
 The SDK follows semantic versioning. Breaking changes will bump the major version number.
 </Note>
 
-import AndroidDownload from '/snippets/android-download.mdx';
-
-<AndroidDownload />
-
 ## Installation
 
 Follow these steps to add the Terminal C2C Android SDK to your project.
 
 <Steps>
-<Step title="Extract the SDK">
-  Extract the provided SDK zip file so that a `repository` directory is available in your project root.
-  
-  <Check>
-  Verify that the `repository` folder contains the necessary Maven artifacts for the SDK.
-  </Check>
-</Step>
-
 <Step title="Configure Gradle settings">
-  Add the repository to your Gradle configuration. Choose one of the following approaches:
+  Add `mavenCentral()` to your Gradle configuration so Gradle can resolve the SDK artifacts.
   
   <Tabs>
   <Tab title="Modern Approach (Recommended)">
-    Add the repository to your Gradle settings file:
+    Add Maven Central to your Gradle settings file:
     
     <CodeGroup>
     ```kotlin settings.gradle(.kts)
     dependencyResolutionManagement {
       repositories {
         // ... other repositories
-        maven("./repository")
+        mavenCentral()
       }
     }
     ```
@@ -70,7 +61,7 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
     dependencyResolutionManagement {
       repositories {
         // ... other repositories
-        maven { url './repository' }
+        mavenCentral()
       }
     }
     ```
@@ -78,14 +69,14 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
   </Tab>
   
   <Tab title="Old Android Project">
-    Add the repository to your root build.gradle file:
+    Add Maven Central to your root build.gradle file:
     
     <CodeGroup>
     ```kotlin build.gradle.kts (root)
     allprojects {
       repositories {
         // ... other repositories
-        maven("../repository")
+        mavenCentral()
       }
     }
     ```
@@ -94,13 +85,17 @@ Follow these steps to add the Terminal C2C Android SDK to your project.
     allprojects {
       repositories {
         // ... other repositories
-        maven { url '../repository' }
+        mavenCentral()
       }
     }
     ```
     </CodeGroup>
   </Tab>
   </Tabs>
+
+  <Check>
+  Verify `mavenCentral()` is available in the repository list used by your app module.
+  </Check>
 </Step>
 
 <Step title="Add dependencies">
@@ -222,7 +217,7 @@ For Share Commerce (SHC) and Cashup terminals, make sure the Gateway app is inst
     </Info>
   </Tab>
   
-  <Tab title="Cashup Indonesia (Coming Soon)">
+  <Tab title="Cashup Indonesia">
     ```kotlin
     // Add Cashup provider for Indonesian terminals
     TerminalC2C.addProvider(TerminalCashup)
@@ -419,7 +414,7 @@ BRI terminals support both physical card payments and digital payment methods po
 
 </Tab>
 
-<Tab title="Cashup Terminals (Coming Soon)">
+<Tab title="Cashup Terminals">
 
 When using `co.xendit.terminal:id-cashup-android` dependency:
 
