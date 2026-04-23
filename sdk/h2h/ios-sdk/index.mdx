@@ -132,6 +132,17 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 </Info>
 </Tab>
 
+<Tab title="Cashup (Indonesia)">
+```swift
+// Cashup terminals use the Gateway app flow.
+// No TerminalH2H.shared.addProvider(...) call is required.
+```
+
+<Info>
+Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
+</Info>
+</Tab>
+
 <Tab title="Multiple Providers">
 ```swift
 // Add multiple providers for supporting different terminal types

@@ -98,19 +98,24 @@
             "pages": [
               "sdk/terminal-sdk/index",
               {
-                "group": "H2H",
+                "group": "SDK",
                 "pages": [
-                  "sdk/h2h/introduction",
-                  "sdk/h2h/android-sdk/index",
-                  "sdk/h2h/ios-sdk/index"
-                ]
-              },
-              {
-                "group": "C2C",
-                "pages": [
-                  "sdk/c2c/introduction",
-                  "sdk/c2c/android-sdk/index",
-                  "sdk/c2c/ios-sdk/index"
+                  {
+                    "group": "Terminal H2H",
+                    "pages": [
+                      "sdk/h2h/introduction",
+                      "sdk/h2h/android-sdk/index",
+                      "sdk/h2h/ios-sdk/index"
+                    ]
+                  },
+                  {
+                    "group": "Terminal C2C",
+                    "pages": [
+                      "sdk/c2c/introduction",
+                      "sdk/c2c/android-sdk/index",
+                      "sdk/c2c/ios-sdk/index"
+                    ]
+                  }
                 ]
               }
             ]
