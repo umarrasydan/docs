@@ -628,6 +628,95 @@ let historyJob = TerminalC2C.shared.getHistoryAsync(histories: histories) { valu
 historyJob.cancel()
 ```
 
+## Configuration and Management
+
+### Test Device Connection
+
+Check if the terminal device is reachable before making requests:
+
+```swift
+import TerminalC2C
+
+func checkConnection(device: TerminalDevice) async -> Bool {
+  let result = await TerminalC2C.shared.testDeviceConnection(device: device)
+  return result != nil
+}
+```
+
+### Observe Error State
+
+Listen for error updates using Combine or callback approach:
+
+```swift
+import TerminalC2C
+
+// Using Combine-style StateFlow observation
+let errorStateFlow = TerminalC2C.shared.errorState()
+
+// Collect error state changes
+Task {
+  for await error in errorStateFlow {
+    if let error = error {
+      print("Terminal error: \(error.message)")
+    }
+  }
+}
+```
+
+### Observe Connection State
+
+Monitor connection state changes:
+
+```swift
+import TerminalC2C
+
+let device = TerminalDevice.companion.create(
+  id: "TERMINAL_ID",
+  ipAddress: "192.168.1.100",
+  provider: "BRI"
+)
+
+// Get connection state flow
+let connectionFlow = TerminalC2C.shared.connectionState(device: device)
+
+// Observe connection state changes
+Task {
+  for await state in connectionFlow {
+    print("Connection state: \(state)")
+  }
+}
+```
+
+### Observe Error and Connection with Callbacks
+
+For callback-based observation:
+
+```swift
+import TerminalC2C
+
+// Observe error
+let errorJob = TerminalC2C.shared.observeError { error in
+  if let error = error {
+    print("Terminal error: \(error.message)")
+  }
+}
+
+// Observe connection
+let device = TerminalDevice.companion.create(
+  id: "TERMINAL_ID",
+  ipAddress: "192.168.1.100",
+  provider: "BRI"
+)
+
+let connectionJob = TerminalC2C.shared.observeConnection(device: device) { state in
+  print("Connection state: \(state)")
+}
+
+// Cancel observations when no longer needed
+errorJob.cancel()
+connectionJob.cancel()
+```
+
 ## Error Handling
 
 ### TerminalException
