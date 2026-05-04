@@ -442,8 +442,8 @@ paths:
     post:
       tags:
         - In-person payments C2C API
-      summary: Cancel Payment
-      description: Cancels an ongoing payment transaction.
+      summary: Void Payment
+      description: Voids a completed payment transaction.
       operationId: cancelPayment
       parameters:
         - name: provider
