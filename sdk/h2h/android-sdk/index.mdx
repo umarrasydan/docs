@@ -263,6 +263,11 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 // No TerminalH2H.addProvider(...) call is required.
 ```
 
+**Required dependency (Cashup provider-specific methods):**
+```kotlin
+implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+```
+
 <Info>
 Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
 </Info>
@@ -351,6 +356,20 @@ You're now ready to process payments using the Terminal H2H SDK integrated with 
 </Check>
 
 ## Configuration and Management
+
+### Cashup print receipt
+
+If you integrate Cashup terminals, you can control whether the terminal prints a receipt after a transaction.
+
+```kotlin
+import co.xendit.terminal.cashup.utils.setPrintReceiptEnabled
+
+// Enable receipt printing
+TerminalH2H.setPrintReceiptEnabled(true)
+
+// Disable receipt printing
+TerminalH2H.setPrintReceiptEnabled(false)
+```
 
 ### Set Operation Timeout
 
