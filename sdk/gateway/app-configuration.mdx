@@ -339,6 +339,74 @@ Use transaction timeouts to auto-cancel in the app and reissue transactions when
 </Step>
 </Steps>
 
+## Use System Overlay (Android)
+
+Enable system overlay to display pending transactions as an overlay window instead of a notification. This provides better visibility for ongoing transactions on Android devices.
+
+<Note>
+This feature is only available on Android devices and requires system permission to display over other apps. Note that this feature may not be accessible on certain terminal devices due to system restrictions.
+</Note>
+
+<Steps>
+<Step title="Open Settings and Enable Overlay">
+  Navigate to the app settings and toggle on "Use System Overlay". Click the "Open Settings" button to grant the required permission.
+
+  <Frame>
+  <img src="/images/app/use-system-overlay.png" alt="Gateway app settings showing Use System Overlay toggle and Open Settings button" />
+  </Frame>
+</Step>
+
+<Step title="Find Xendit App">
+  In the system settings list, find and click on the Xendit app.
+
+  <Frame>
+  <img src="/images/app/finding-xendit.png" alt="Android system settings showing list of apps with Xendit app highlighted" />
+  </Frame>
+</Step>
+
+<Step title="Enable Display Over Other Apps">
+  Enable the "Allow display over other apps" permission to allow the overlay to appear.
+
+  <Frame>
+  <img src="/images/app/enable-display-over-other.png" alt="Xendit app permission screen showing Allow display over other apps toggle" />
+  </Frame>
+
+  <Check>
+  System overlay is now enabled. Pending transactions will appear as overlay windows instead of notifications.
+  </Check>
+</Step>
+</Steps>
+
+<Tip>
+System overlay provides better visibility for pending transactions compared to notifications, making it easier to track ongoing payment processing.
+</Tip>
+
+## Print Receipt (Cashup Provider)
+
+Control whether the Cashup terminal automatically prints receipts after completing transactions. You can disable receipt printing to reduce paper usage or enable it for customer documentation requirements.
+
+<Note>
+This setting only applies to Cashup terminals. Other terminal providers use their own receipt printing configuration.
+</Note>
+
+<Steps>
+<Step title="Open Settings and Configure Print Receipt">
+  Navigate to the app settings and toggle "Print Receipt" off to disable automatic receipt printing after transactions. Toggle it on to enable receipt printing.
+
+  <Frame>
+  <img src="/images/app/print-receipt.png" alt="Gateway app settings showing Print Receipt toggle for Cashup provider" />
+  </Frame>
+
+  <Check>
+  Receipt printing is now configured. The Cashup terminal will follow this setting for all future transactions.
+  </Check>
+</Step>
+</Steps>
+
+<Tip>
+Disable receipt printing to save paper costs or enable it when customers require physical transaction records.
+</Tip>
+
 ## Device Status Monitoring
 
 Each device in the terminal list displays a status indicator that changes color based on its current state. Monitor these indicators to ensure your terminal fleet is operating correctly.
