@@ -259,18 +259,19 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 
 <Tab title="Cashup (Indonesia)">
 ```kotlin
-// Cashup terminals use the Gateway app flow.
-// No TerminalH2H.addProvider(...) call is required.
+// Add Cashup provider for Indonesian terminals
+TerminalH2H.addProvider(TerminalCashup)
 ```
 
-**Required dependency (Cashup provider-specific methods):**
+**Required dependency:**
 ```kotlin
 implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
 ```
 
-<Info>
-Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
-</Info>
+<Note>
+Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments. 
+Only add the Cashup provider if you plan to install your app directly in the terminal device.
+</Note>
 </Tab>
 
 <Tab title="Multiple Providers">
