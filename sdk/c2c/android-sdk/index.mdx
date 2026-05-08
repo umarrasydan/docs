@@ -18,6 +18,12 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.2.0 — 8-May-2026">
+    What's new:
+    - **Device Connection Observability**: Added `observeConnection()` and `connectionState()` APIs to monitor real-time connection state changes (CONNECTING, CONNECTED, DISCONNECTED, CONNECTING_FAILED)
+    - **Error State Observability**: Added `observeError()` and `errorState()` APIs to track terminal errors in real-time with device context
+    - **Connection Testing**: New `testDeviceConnection()` method to verify terminal reachability before making requests
+  </Accordion>
   <Accordion title="v1.1.3 — 26-Apr-2026">
     What's new:
     - Fixed casting issue on C2C request payload to improve compatibility and prevent runtime errors.
@@ -26,12 +32,14 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
     What's new:
     - Added Cashup provider support for Indonesian terminals
   </Accordion>
-  <Accordion title="v1.0.0 — 19-Feb-2026">
-    What's new:
-    - Added SHC provider support for Malaysian terminals
-    - Added multiple-provider support enabling apps to handle different terminal types simultaneously
-    - Enhanced TerminalDevice configuration with provider-specific methods
-    - Improved terminal selection for apps managing multiple EDC devices
+  <Accordion title="View all versions">
+    <Accordion title="v1.0.0 — 19-Feb-2026">
+      What's new:
+      - Added SHC provider support for Malaysian terminals
+      - Added multiple-provider support enabling apps to handle different terminal types simultaneously
+      - Enhanced TerminalDevice configuration with provider-specific methods
+      - Improved terminal selection for apps managing multiple EDC devices
+    </Accordion>
   </Accordion>
 </AccordionGroup>
 
@@ -780,6 +788,88 @@ val historyJob = TerminalC2C.getHistoryAsync(
 }
 
 historyJob.cancel()
+```
+
+## Configuration and Management
+
+### Test Device Connection
+
+Check if the terminal device is reachable before making requests:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.data.TerminalDevice
+
+suspend fun checkConnection(device: TerminalDevice): Boolean {
+  val result = TerminalC2C.testDeviceConnection(device)
+  return result != null
+}
+```
+
+### Observe Error State (Flow)
+
+Listen for error updates using Kotlin Flow:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+
+val errorFlow = TerminalC2C.errorState()
+errorFlow.onEach { error ->
+  if (error != null) {
+    println("Terminal error: ${error.message}")
+  }
+}.launchIn(CoroutineScope(Dispatchers.Main))
+```
+
+### Observe Connection State (Flow)
+
+Monitor connection state changes:
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.data.TerminalDevice
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+
+val device = TerminalDevice.create(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.100",
+  provider = "BRI"
+)
+val connectionFlow = TerminalC2C.connectionState(device)
+connectionFlow.onEach { state ->
+  println("Connection state: $state")
+}.launchIn(CoroutineScope(Dispatchers.Main))
+```
+
+### Observe Error and Connection with Callbacks
+
+For callback-based observation (Java interoperability):
+
+```kotlin
+import co.xendit.terminal.c2c.TerminalC2C
+import co.xendit.terminal.core.data.TerminalDevice
+
+// Observe error
+TerminalC2C.observeError { error ->
+  if (error != null) println("Terminal error: ${error.message}")
+}
+
+// Observe connection
+val device = TerminalDevice.create(
+  id = "TERMINAL_ID",
+  ipAddress = "192.168.1.100",
+  provider = "BRI"
+)
+TerminalC2C.observeConnection(device) { state ->
+  println("Connection state: $state")
+}
 ```
 
 ## Error Handling

@@ -15,6 +15,11 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 
 <AccordionGroup>
 
+  <Accordion title="v1.2.0 — 8-May-2026">
+    What's new:
+    - **Core Stability**: Fixed activity tracking bug in TerminalApplication where paused activities were not properly removed from internal tracking list
+  </Accordion>
+
   <Accordion title="v1.1.3 — 26-Apr-2026">
     What's new:
     - Fixed casting issue on C2C request payload to improve compatibility and prevent runtime errors.
@@ -23,44 +28,41 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
     What's new:
     - Added Cashup provider support for Indonesian terminals
   </Accordion>
-  <Accordion title="v1.0.0 — 19-Feb-2026">
-    What's new:
-    - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
-    
-    <Warning>
-    **Breaking Change**: Class name changed from `TerminalGateway` to `TerminalH2H`. Update your imports and references accordingly.
-    </Warning>
-  </Accordion>
-  <Accordion title="v0.7.0 — 5-Dec-2025">
-    What's new:
-    - Fixed NTT payment method value maping to ensure correct provider selection
-    - Updated BRI payment flow to validate transaction data before executing terminal actions
-    - Added timeout configuration for card and QR transactions to auto-cancel and retry stalled requests
-    - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
-  </Accordion>
   <Accordion title="View all versions">
+    <Accordion title="v1.0.0 — 19-Feb-2026">
+      What's new:
+      - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
+      
+      <Warning>
+      **Breaking Change**: Class name changed from `TerminalGateway` to `TerminalH2H`. Update your imports and references accordingly.
+      </Warning>
+    </Accordion>
+    <Accordion title="v0.7.0 — 5-Dec-2025">
+      What's new:
+      - Fixed NTT payment method value maping to ensure correct provider selection
+      - Updated BRI payment flow to validate transaction data before executing terminal actions
+      - Added timeout configuration for card and QR transactions to auto-cancel and retry stalled requests
+      - Added support to handle retry requests via <a href="/api-reference/payments-terminal-api/retry-terminal-payment-session">`/v1/terminal/sessions/{id}/retry`</a> endpoint
+    </Accordion>
     <Accordion title="v0.6.0 — 20-Nov-2025">
       What's new:
       - Added support for multiple concurrent device connections, enabling simultaneous transactions across different terminals
       - [BRI] Fixed status value handling in void and cancel API responses for improved transaction status accuracy
     </Accordion>
-    <AccordionGroup>
-      <Accordion title="v0.5.0 — 30-Oct-2025">
-        What's new:
-        - Introduced command ID handling for settlement operations
-        - Enhanced retry logic with configurable attempt counts
-        - Improved error handling and logging throughout the gateway service
-      </Accordion>
-      <Accordion title="v0.4.1 — 7-Oct-2025">
-        Bug fixes and improvements:
-        - Fix data mapping for terminal responses
-        - [BRI] Enhanced status verification after transaction timeout for improved reliability
-      </Accordion>
-
-      <Accordion title="v0.4.0 — 13-May-2025">
-        XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
-      </Accordion>
-    </AccordionGroup>
+    <Accordion title="v0.5.0 — 30-Oct-2025">
+      What's new:
+      - Introduced command ID handling for settlement operations
+      - Enhanced retry logic with configurable attempt counts
+      - Improved error handling and logging throughout the gateway service
+    </Accordion>
+    <Accordion title="v0.4.1 — 7-Oct-2025">
+      Bug fixes and improvements:
+      - Fix data mapping for terminal responses
+      - [BRI] Enhanced status verification after transaction timeout for improved reliability
+    </Accordion>
+    <Accordion title="v0.4.0 — 13-May-2025">
+      XenTerminal is the companion SDK to In-Person Payment Sessions API. This version provides core functionality for connecting to payment terminals and processing transactions.
+    </Accordion>
   </Accordion>
 </AccordionGroup>
 
@@ -257,13 +259,19 @@ NTT provider supports multi-function terminals with card payments and QR code tr
 
 <Tab title="Cashup (Indonesia)">
 ```kotlin
-// Cashup terminals use the Gateway app flow.
-// No TerminalH2H.addProvider(...) call is required.
+// Add Cashup provider for Indonesian terminals
+TerminalH2H.addProvider(TerminalCashup)
 ```
 
-<Info>
-Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments.
-</Info>
+**Required dependency:**
+```kotlin
+implementation("co.xendit.terminal:id-cashup-android:<latest_version>")
+```
+
+<Note>
+Cashup terminals run terminal logic through the Gateway app on the device. Ensure the Gateway app is installed and your terminal is registered before processing payments. 
+Only add the Cashup provider if you plan to install your app directly in the terminal device.
+</Note>
 </Tab>
 
 <Tab title="Multiple Providers">
@@ -349,6 +357,20 @@ You're now ready to process payments using the Terminal H2H SDK integrated with 
 </Check>
 
 ## Configuration and Management
+
+### Cashup print receipt
+
+If you integrate Cashup terminals, you can control whether the terminal prints a receipt after a transaction.
+
+```kotlin
+import co.xendit.terminal.cashup.utils.setPrintReceiptEnabled
+
+// Enable receipt printing
+TerminalH2H.setPrintReceiptEnabled(true)
+
+// Disable receipt printing
+TerminalH2H.setPrintReceiptEnabled(false)
+```
 
 ### Set Operation Timeout
 

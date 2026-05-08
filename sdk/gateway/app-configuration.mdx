@@ -16,6 +16,14 @@ The Terminal Gateway app helps developers integrate their application with Xendi
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.9.0 — 8-May-2026">
+    What's new:
+    - **Improved Resource Management**: Proper cleanup of observer jobs to prevent memory leaks and ensure optimal performance
+    - **Activity Tracking Fix**: Resolved bug where paused activities were not properly removed from the internal tracking list
+    - **Enhanced Error Handling**: Show Unsupported error for any invalid action to improve error visibility and debugging
+    - **Use System Overlay** [Android]: New setting to show pending transactions as overlay instead of notification for better visibility
+    - **Print Receipt Setting**: Added Cashup provider setting to enable or disable receipt printing after transactions
+  </Accordion>
   <Accordion title="v1.8.0 — 23-Apr-2026">
     What's new:
     - Added Cashup provider support for Indonesian terminals
@@ -26,12 +34,12 @@ The Terminal Gateway app helps developers integrate their application with Xendi
     - Fixed text field not editable in configuration and input screens
     - [Android] Fixed export log issue so logs export correctly
   </Accordion>
-  <Accordion title="v1.7.0 — 19-Feb-2026">
-    What's new:
-    - Added Cashup provider support for Indonesian terminals
-    - Made the client-to-client port static at 8189 for consistent POS connectivity
-  </Accordion>
   <Accordion title="View all versions">
+    <Accordion title="v1.7.0 — 19-Feb-2026">
+      What's new:
+      - Added Cashup provider support for Indonesian terminals
+      - Made the client-to-client port static at 8189 for consistent POS connectivity
+    </Accordion>
     <AccordionGroup>
       <Accordion title="v1.6.0 — 5-Dec-2025">
         What's new:
@@ -98,14 +106,14 @@ Choose your operating system to download the Terminal Gateway app installer:
 
 <CardGroup cols={2}>
 <Card title="macOS (.dmg)" icon="apple">
-  Download the macOS installer (v1.8.0).
+  Download the macOS installer (v1.9.0).
 
   ```
-  SHA256:941cb7b190f6d218d40aa8bd3b927013f7d1a3f43b4adcdda9725652dc7d30d9
+  SHA256:98cae57b63bd56bfc7ea94f93efd4abcf66103a953f2001e48dc9c5da74fabe3
   ```
 
   <a
-    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.8.0.dmg"
+    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.9.0.dmg"
     className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
   >
     Download for macOS
@@ -113,14 +121,14 @@ Choose your operating system to download the Terminal Gateway app installer:
 </Card>
 
 <Card title="Windows (.msi)" icon="windows">
-  Download the Windows installer (v1.8.0).
+  Download the Windows installer (v1.9.0).
 
   ```
-  SHA256:111d0aaf98b48c97ce6f7a111e657bee69841f7c93426504dd9f9f8ae76366c9
+  SHA256:bbd1af76d4f5cdfd146aadb72b0824f1fc0a8f459c0e4a6c2d500508de4bc509
   ```
 
   <a
-    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.8.0.msi"
+    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.9.0.msi"
     className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
   >
     Download for Windows
@@ -128,14 +136,14 @@ Choose your operating system to download the Terminal Gateway app installer:
 </Card>
 
 <Card title="Android (.apk)" icon="android">
-  Download the Android APK (v1.8.0).
+  Download the Android APK (v1.9.0).
 
   ```
-  SHA256:2ec5be58a6d8b4fe335c37d99e9b21364b2d927d3d22c524f4ba27f7d47d1380
+  SHA256:4bf973549d0a305eb517a366f5b7c8a9340c54c40bfed09dc077a54cb77b7f74
   ```
 
   <a
-    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.8.0.apk"
+    href="https://xnd-secops.s3.ap-southeast-1.amazonaws.com/inpersonpayments/Xendit+Terminal+Gateway-1.9.0.apk"
     className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
   >
     Download for Android
@@ -330,6 +338,74 @@ Use transaction timeouts to auto-cancel in the app and reissue transactions when
   Click **Save Changes** to apply the new timeouts.
 </Step>
 </Steps>
+
+## Use System Overlay (Android)
+
+Enable system overlay to display pending transactions as an overlay window instead of a notification. This provides better visibility for ongoing transactions on Android devices.
+
+<Note>
+This feature is only available on Android devices and requires system permission to display over other apps. Note that this feature may not be accessible on certain terminal devices due to system restrictions.
+</Note>
+
+<Steps>
+<Step title="Open Settings and Enable Overlay">
+  Navigate to the app settings and toggle on "Use System Overlay". Click the "Open Settings" button to grant the required permission.
+
+  <Frame>
+  <img src="/images/app/use-system-overlay.png" alt="Gateway app settings showing Use System Overlay toggle and Open Settings button" />
+  </Frame>
+</Step>
+
+<Step title="Find Xendit App">
+  In the system settings list, find and click on the Xendit app.
+
+  <Frame>
+  <img src="/images/app/finding-xendit.png" alt="Android system settings showing list of apps with Xendit app highlighted" />
+  </Frame>
+</Step>
+
+<Step title="Enable Display Over Other Apps">
+  Enable the "Allow display over other apps" permission to allow the overlay to appear.
+
+  <Frame>
+  <img src="/images/app/enable-display-over-other.png" alt="Xendit app permission screen showing Allow display over other apps toggle" />
+  </Frame>
+
+  <Check>
+  System overlay is now enabled. Pending transactions will appear as overlay windows instead of notifications.
+  </Check>
+</Step>
+</Steps>
+
+<Tip>
+System overlay provides better visibility for pending transactions compared to notifications, making it easier to track ongoing payment processing.
+</Tip>
+
+## Print Receipt (Cashup Provider)
+
+Control whether the Cashup terminal automatically prints receipts after completing transactions. You can disable receipt printing to reduce paper usage or enable it for customer documentation requirements.
+
+<Note>
+This setting only applies to Cashup terminals. Other terminal providers use their own receipt printing configuration.
+</Note>
+
+<Steps>
+<Step title="Open Settings and Configure Print Receipt">
+  Navigate to the app settings and toggle "Print Receipt" off to disable automatic receipt printing after transactions. Toggle it on to enable receipt printing.
+
+  <Frame>
+  <img src="/images/app/print-receipt.png" alt="Gateway app settings showing Print Receipt toggle for Cashup provider" />
+  </Frame>
+
+  <Check>
+  Receipt printing is now configured. The Cashup terminal will follow this setting for all future transactions.
+  </Check>
+</Step>
+</Steps>
+
+<Tip>
+Disable receipt printing to save paper costs or enable it when customers require physical transaction records.
+</Tip>
 
 ## Device Status Monitoring
 
