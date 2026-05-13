@@ -15,6 +15,15 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
 
 <AccordionGroup>
 
+  <Accordion title="v1.2.1 — 13-May-2026">
+    What's new:
+    - **Activity Lifecycle Management**: Introduced `TerminalActivityLifecycleObserver` interface for reusable activity lifecycle tracking, intent queuing, and dispatch logic
+    - **Enhanced Provider App Launching**: Refactored Atom and SHC provider app launchers with improved background app launch handling
+    - **Launch Failure Notifications**: Added notification mechanism to prompt users when provider app launch fails while app is in background
+    - **Callback Interface**: New `TerminalAppLauncherCallback` interface for custom handling of provider app launch failures
+    - **Improved Maintainability**: Centralized lifecycle and launcher logic for better extensibility across different application contexts
+  </Accordion>
+
   <Accordion title="v1.2.0 — 8-May-2026">
     What's new:
     - **Core Stability**: Fixed activity tracking bug in TerminalApplication where paused activities were not properly removed from internal tracking list
@@ -24,11 +33,11 @@ This SDK works alongside the Terminal API to provide complete in-person payment 
     What's new:
     - Fixed casting issue on C2C request payload to improve compatibility and prevent runtime errors.
   </Accordion>
-  <Accordion title="v1.1.1 — 23-Apr-2026">
-    What's new:
-    - Added Cashup provider support for Indonesian terminals
-  </Accordion>
   <Accordion title="View all versions">
+    <Accordion title="v1.1.1 — 23-Apr-2026">
+      What's new:
+      - Added Cashup provider support for Indonesian terminals
+    </Accordion>
     <Accordion title="v1.0.0 — 19-Feb-2026">
       What's new:
       - Renamed class name `TerminalGateway` to `TerminalH2H` for better consistency
@@ -356,21 +365,241 @@ The Terminal H2H SDK automatically manages the connection to your registered ter
 You're now ready to process payments using the Terminal H2H SDK integrated with Terminal API.
 </Check>
 
+## Configuring App for Terminal Device
+
+<Tabs>
+<Tab title="Cashup Indonesia">
+When running your application on a Terminal device, additional configuration is required to enable the terminal to communicate with the Cashup payment system. Follow these steps:
+
+<Steps>
+<Step title="Configure AndroidManifest.xml">
+  Add the Cashup result activity to your `AndroidManifest.xml` file:
+  
+  ```xml AndroidManifest.xml
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="cashlez" />
+      </intent>
+      <package android:name="com.cz.app" />
+    </queries>
+    
+    <application>
+      <!-- Your other activities -->
+      
+      <!-- Cashup Result Activity -->
+      <activity
+        android:exported="true"
+        android:name="co.xendit.terminal.cashup.activity.ResultActivity" />
+    </application>
+  </manifest>
+  ```
+  
+  <Warning>
+  The `android:exported="true"` attribute is required to allow the Cashup system to return results to your application.
+  </Warning>
+</Step>
+
+<Step title="Configure Application Class">
+  Choose one of the following approaches to configure your Application class:
+  
+  <Tabs>
+  <Tab title="Extend TerminalApplication">
+  Make your `Application` class extend `TerminalApplication` and configure the Cashup provider launcher:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalApplication
+  import co.xendit.terminal.cashup.TerminalCashup
+  import co.xendit.terminal.cashup.launcher.CashupAppLauncher
+  
+  class MyApplication : TerminalApplication() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Configure Cashup provider app launcher
+      TerminalCashup.providerAppLauncher = CashupAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  
+  <Tab title="Use TerminalAppLauncherCallback">
+  Create a custom `Application` class and register the `TerminalAppLauncherCallback`:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalAppLauncherCallback
+  import co.xendit.terminal.cashup.TerminalCashup
+  import co.xendit.terminal.cashup.launcher.CashupAppLauncher
+  
+  class MyApplication : Application() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Register the callback
+      TerminalAppLauncherCallback.register(this)
+      
+      // Configure Cashup provider app launcher
+      TerminalCashup.providerAppLauncher = CashupAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  </Tabs>
+  
+  <Check>
+  Your app is now configured to run on Cashup Terminal devices and can communicate with the Cashup payment system.
+  </Check>
+</Step>
+
+<Step title="Configure Receipt Printing">
+  Control whether the terminal prints a receipt after a transaction:
+  
+  ```kotlin
+  import co.xendit.terminal.cashup.utils.setCashupPrintReceiptEnabled
+  
+  // Enable receipt printing
+  TerminalH2H.setCashupPrintReceiptEnabled(true)
+  
+  // Disable receipt printing
+  TerminalH2H.setCashupPrintReceiptEnabled(false)
+  ```
+  
+  <Info>
+  This setting allows you to control the default receipt printing behavior for Cashup terminals.
+  </Info>
+</Step>
+</Steps>
+</Tab>
+
+<Tab title="SHC Malaysia">
+When running your application on a Terminal device, additional configuration is required to enable the terminal to communicate with the SHC payment system. Follow these steps:
+
+<Steps>
+<Step title="Configure AndroidManifest.xml">
+  Add the SHC result activity to your `AndroidManifest.xml` file:
+  
+  ```xml AndroidManifest.xml
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+      <!-- Your other activities -->
+      
+      <!-- SHC Result Activity -->
+      <activity
+        android:exported="true"
+        android:name="co.xendit.terminal.shc.activity.ResultActivity" />
+    </application>
+  </manifest>
+  ```
+  
+  <Warning>
+  The `android:exported="true"` attribute is required to allow the SHC system to return results to your application.
+  </Warning>
+</Step>
+
+<Step title="Configure Application Class">
+  Choose one of the following approaches to configure your Application class:
+  
+  <Tabs>
+  <Tab title="Extend TerminalApplication">
+  Make your `Application` class extend `TerminalApplication` and configure the SHC provider launcher:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalApplication
+  import co.xendit.terminal.shc.TerminalSHC
+  import co.xendit.terminal.shc.launcher.SHCAppLauncher
+  
+  class MyApplication : TerminalApplication() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Configure SHC provider app launcher
+      TerminalSHC.providerAppLauncher = SHCAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  
+  <Tab title="Use TerminalAppLauncherCallback">
+  Create a custom `Application` class and register the `TerminalAppLauncherCallback`:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalAppLauncherCallback
+  import co.xendit.terminal.shc.TerminalSHC
+  import co.xendit.terminal.shc.launcher.SHCAppLauncher
+  
+  class MyApplication : Application() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Register the callback
+      TerminalAppLauncherCallback.register(this)
+      
+      // Configure SHC provider app launcher
+      TerminalSHC.providerAppLauncher = SHCAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  </Tabs>
+  
+  <Check>
+  Your app is now configured to run on SHC Terminal devices and can communicate with the SHC payment system.
+  </Check>
+</Step>
+</Steps>
+</Tab>
+</Tabs>
+
 ## Configuration and Management
-
-### Cashup print receipt
-
-If you integrate Cashup terminals, you can control whether the terminal prints a receipt after a transaction.
-
-```kotlin
-import co.xendit.terminal.cashup.utils.setPrintReceiptEnabled
-
-// Enable receipt printing
-TerminalH2H.setPrintReceiptEnabled(true)
-
-// Disable receipt printing
-TerminalH2H.setPrintReceiptEnabled(false)
-```
 
 ### Set Operation Timeout
 
