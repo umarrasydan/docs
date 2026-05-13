@@ -433,7 +433,11 @@ When running your application on a Terminal device, additional configuration is 
   </Warning>
 </Step>
 
-<Step title="Extend TerminalApplication">
+<Step title="Configure Application Class">
+  Choose one of the following approaches to configure your Application class:
+  
+  <Tabs>
+  <Tab title="Extend TerminalApplication">
   Make your `Application` class extend `TerminalApplication` and configure the Cashup provider launcher:
   
   ```kotlin Application.kt
@@ -462,10 +466,64 @@ When running your application on a Terminal device, additional configuration is 
   </application>
   ```
   </Info>
+  </Tab>
+  
+  <Tab title="Use TerminalAppLauncherCallback">
+  Create a custom `Application` class and register the `TerminalAppLauncherCallback`:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalAppLauncherCallback
+  import co.xendit.terminal.cashup.TerminalCashup
+  import co.xendit.terminal.cashup.launcher.CashupAppLauncher
+  
+  class MyApplication : Application() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Register the callback
+      TerminalAppLauncherCallback.register(this)
+      
+      // Configure Cashup provider app launcher
+      TerminalCashup.providerAppLauncher = CashupAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  </Tabs>
   
   <Check>
   Your app is now configured to run on Cashup Terminal devices and can communicate with the Cashup payment system.
   </Check>
+</Step>
+
+<Step title="Configure Receipt Printing">
+  Control whether the terminal prints a receipt after a transaction:
+  
+  ```kotlin
+  import co.xendit.terminal.cashup.utils.setCashupPrintReceiptEnabled
+  
+  // Enable receipt printing
+  TerminalC2C.setCashupPrintReceiptEnabled(true)
+  
+  // Disable receipt printing
+  TerminalC2C.setCashupPrintReceiptEnabled(false)
+  ```
+  
+  <Info>
+  This setting allows you to control the default receipt printing behavior for Cashup terminals.
+  </Info>
 </Step>
 </Steps>
 </Tab>
@@ -495,7 +553,11 @@ When running your application on a Terminal device, additional configuration is 
   </Warning>
 </Step>
 
-<Step title="Extend TerminalApplication">
+<Step title="Configure Application Class">
+  Choose one of the following approaches to configure your Application class:
+  
+  <Tabs>
+  <Tab title="Extend TerminalApplication">
   Make your `Application` class extend `TerminalApplication` and configure the SHC provider launcher:
   
   ```kotlin Application.kt
@@ -524,6 +586,42 @@ When running your application on a Terminal device, additional configuration is 
   </application>
   ```
   </Info>
+  </Tab>
+  
+  <Tab title="Use TerminalAppLauncherCallback">
+  Create a custom `Application` class and register the `TerminalAppLauncherCallback`:
+  
+  ```kotlin Application.kt
+  import android.app.Application
+  import co.xendit.terminal.core.application.TerminalAppLauncherCallback
+  import co.xendit.terminal.shc.TerminalSHC
+  import co.xendit.terminal.shc.launcher.SHCAppLauncher
+  
+  class MyApplication : Application() {
+    override fun onCreate() {
+      super.onCreate()
+      
+      // Register the callback
+      TerminalAppLauncherCallback.register(this)
+      
+      // Configure SHC provider app launcher
+      TerminalSHC.providerAppLauncher = SHCAppLauncher(this)
+    }
+  }
+  ```
+  
+  <Info>
+  Don't forget to register your custom `Application` class in the `AndroidManifest.xml`:
+  
+  ```xml AndroidManifest.xml
+  <application
+    android:name=".MyApplication"
+    ...>
+  </application>
+  ```
+  </Info>
+  </Tab>
+  </Tabs>
   
   <Check>
   Your app is now configured to run on SHC Terminal devices and can communicate with the SHC payment system.
