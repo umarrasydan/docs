@@ -18,6 +18,14 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
 ## Version information
 
 <AccordionGroup>
+  <Accordion title="v1.2.1 — 13-May-2026">
+    What's new:
+    - **Activity Lifecycle Management**: Introduced `TerminalActivityLifecycleObserver` interface for reusable activity lifecycle tracking, intent queuing, and dispatch logic
+    - **Enhanced Provider App Launching**: Refactored Atom and SHC provider app launchers with improved background app launch handling
+    - **Launch Failure Notifications**: Added notification mechanism to prompt users when provider app launch fails while app is in background
+    - **Callback Interface**: New `TerminalAppLauncherCallback` interface for custom handling of provider app launch failures
+    - **Improved Maintainability**: Centralized lifecycle and launcher logic for better extensibility across different application contexts
+  </Accordion>
   <Accordion title="v1.2.0 — 8-May-2026">
     What's new:
     - **Device Connection Observability**: Added `observeConnection()` and `connectionState()` APIs to monitor real-time connection state changes (CONNECTING, CONNECTED, DISCONNECTED, CONNECTING_FAILED)
@@ -28,11 +36,11 @@ TerminalC2C is a singleton object that provides both synchronous (suspend) and a
     What's new:
     - Fixed casting issue on C2C request payload to improve compatibility and prevent runtime errors.
   </Accordion>
-  <Accordion title="v1.1.1 — 23-Apr-2026">
-    What's new:
-    - Added Cashup provider support for Indonesian terminals
-  </Accordion>
   <Accordion title="View all versions">
+    <Accordion title="v1.1.1 — 23-Apr-2026">
+      What's new:
+      - Added Cashup provider support for Indonesian terminals
+    </Accordion>
     <Accordion title="v1.0.0 — 19-Feb-2026">
       What's new:
       - Added SHC provider support for Malaysian terminals
