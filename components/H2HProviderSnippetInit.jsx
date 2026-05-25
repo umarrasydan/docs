@@ -117,7 +117,7 @@ class App : Application() {
     super.onCreate()
 
     TerminalApp.initialize(
-      application = this,
+      context = this,
       clientKey = CLIENT_KEY,
       mode = TerminalMode.LIVE // or TerminalMode.INTEGRATION
     )

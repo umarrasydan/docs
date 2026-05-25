@@ -213,7 +213,7 @@ class MyApp : Application() {
     super.onCreate()
 
     TerminalApp.initialize(
-      application = this,
+      context = this,
       clientKey = TEST_CLIENT_KEY,
       mode = TerminalMode.INTEGRATION
     )
